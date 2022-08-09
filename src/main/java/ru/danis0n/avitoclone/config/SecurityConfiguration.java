@@ -14,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.danis0n.avitoclone.config.filter.JwtAuthenticationFilter;
 import ru.danis0n.avitoclone.config.filter.JwtAuthorizationFilter;
+import ru.danis0n.avitoclone.service.appuser.AppUserServiceImpl;
 import ru.danis0n.avitoclone.util.JwtUtil;
 
 
@@ -37,7 +38,10 @@ public class SecurityConfiguration {
         http.sessionManagement().sessionCreationPolicy(STATELESS);
 
         http.authorizeRequests().
-                antMatchers("/api/login","/api/token/refresh/**","/api/user/save").permitAll();
+                antMatchers("/api/new-token").hasAnyAuthority("ROLE_NOT_CONFIRMED");
+
+        http.authorizeRequests().
+                antMatchers("/api/login","/api/token/refresh/**","/api/register/**").permitAll();
 
         http.authorizeRequests().
                 antMatchers(GET,"/api/user/**").hasAnyAuthority("ROLE_USER");

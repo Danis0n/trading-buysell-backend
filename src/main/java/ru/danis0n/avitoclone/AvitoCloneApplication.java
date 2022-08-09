@@ -23,18 +23,16 @@ public class AvitoCloneApplication {
 //    @Bean
     CommandLineRunner run(AppUserServiceImpl userService){
         return args -> {
-//            userService.saveRole(new Role(null,"ROLE_USER"));
-//            userService.saveRole(new Role(null,"ROLE_MANAGER"));
-//            userService.saveRole(new Role(null,"ROLE_ADMIN"));
-//            userService.saveRole(new Role(null,"ROLE_SUPER_ADMIN"));
 
-            userService.saveAppUser(new AppUser(null,"Daniel", "dan","1234",
-                    "ivans@mail.com",true,false, LocalDateTime.now(),new ArrayList<>(),new ArrayList<>()));
+            userService.saveRole(new Role(null,"ROLE_NOT_CONFIRMED"));
+
+//            userService.saveAppUser(new AppUser(null,"Daniel", "dan","1234",
+//                    "ivans@mail.com",true,false, LocalDateTime.now(),new ArrayList<>(),new ArrayList<>()));
 
 
-//            userService.addRoleToAppUser("ivan","ROLE_USER");
 //            userService.addRoleToAppUser("alex","ROLE_MANAGER");
 //            userService.addRoleToAppUser("alex","ROLE_ADMIN");
+//            userService.addRoleToAppUser("alex","ROLE_SUPER_ADMIN");
 
         };
     }

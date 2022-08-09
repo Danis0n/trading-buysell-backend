@@ -12,14 +12,18 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.danis0n.avitoclone.dto.AppUser;
 import ru.danis0n.avitoclone.dto.Role;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
+import ru.danis0n.avitoclone.entity.ConfirmationToken;
 import ru.danis0n.avitoclone.entity.RoleEntity;
 import ru.danis0n.avitoclone.repository.AppUserRepository;
 import ru.danis0n.avitoclone.repository.RoleRepository;
 import ru.danis0n.avitoclone.service.advert.AdvertService;
+import ru.danis0n.avitoclone.service.confirm.ConfirmationTokenService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -31,6 +35,8 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AdvertService advertService;
+    private final ConfirmationTokenService confirmationTokenService;
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -53,26 +59,21 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public AppUser saveAppUser(AppUser user) {
-
-        if(appUserRepository.existsAppUserEntityByEmail(user.getEmail()) ||
-                appUserRepository.existsAppUserEntityByUsername(user.getUsername()))
-        {
-            AppUser notExists = new AppUser();
-            notExists.setUsername("Email or Username is already exists");
-            notExists.setEmail("Email or Username is already exists");
-            return notExists;
-        }
-
+    public String saveAppUser(AppUser user) {
         AppUserEntity entity = mapToAppUserEntity(user);
         appUserRepository.save(entity);
-        addRoleToAppUser(entity.getUsername(),"ROLE_USER");
+        addRoleToAppUser(entity.getUsername(),"ROLE_NOT_CONFIRMED");
 
-        entity.getRoles().forEach(e -> {
-            user.addRoleToAppUser(mapToRole(e));
-        });
+        String token = UUID.randomUUID().toString();
 
-        return user;
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                entity
+        );
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        return token;
     }
 
     @Override
@@ -92,6 +93,13 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
+    public void removeRoleFromAppUser(String username, String roleName) {
+        AppUserEntity user = appUserRepository.findByUsername(username);
+        RoleEntity role = roleRepository.findByName(roleName);
+        user.getRoles().remove(role);
+    }
+
+    @Override
     public AppUser getAppUser(String username) {
         AppUserEntity entity = appUserRepository.findByUsername(username);
         return mapToAppUser(entity);
@@ -106,6 +114,11 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         });
 
         return users;
+    }
+
+    @Override
+    public void enabledAppUser(String email) {
+        appUserRepository.enableAppUser(email);
     }
 
     private AppUser mapToAppUser(AppUserEntity entity){
@@ -139,7 +152,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         entity.setUsername(user.getUsername());
         entity.setEmail(user.getEmail());
         entity.setPassword(passwordEncoder.encode(user.getPassword()));
-        entity.setEnabled(true);
+        entity.setEnabled(false);
         entity.setLocked(false);
 
         return entity;
