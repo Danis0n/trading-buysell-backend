@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
 import ru.danis0n.avitoclone.entity.ConfirmationToken;
 import ru.danis0n.avitoclone.repository.ConfirmationTokenRepository;
-import ru.danis0n.avitoclone.service.appuser.AppUserService;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -38,6 +37,4 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
         return confirmationTokenRepository.updateConfirmedAt(
                 token, LocalDateTime.now());
     }
-
-
 }

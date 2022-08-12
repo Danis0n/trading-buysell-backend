@@ -25,6 +25,8 @@ public class AppUser {
 
     private String password;
 
+    private String phoneNumber;
+
     private String email;
 
     private boolean enabled;

@@ -129,6 +129,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         user.setUsername(entity.getUsername());
         user.setEmail(entity.getEmail());
         user.setPassword(entity.getPassword());
+        user.setPhoneNumber(entity.getPhoneNumber());
         user.setEnabled(entity.isEnabled());
         user.setLocked(entity.isLocked());
         user.setDateOfCreated(entity.getDateOfCreated());
@@ -150,6 +151,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         entity.setName(user.getName());
         entity.setUsername(user.getUsername());
         entity.setEmail(user.getEmail());
+        entity.setPhoneNumber(user.getPhoneNumber());
         entity.setPassword(passwordEncoder.encode(user.getPassword()));
         entity.setEnabled(false);
         entity.setLocked(false);

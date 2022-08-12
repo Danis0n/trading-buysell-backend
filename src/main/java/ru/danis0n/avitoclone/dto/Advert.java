@@ -17,6 +17,7 @@ public class Advert {
     private String title;
     private String price;
     private String description;
+    private AdvertType type;
     private LocalDateTime dateOfCreation;
     List<Image> images = new ArrayList<>();
 

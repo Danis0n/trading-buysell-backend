@@ -34,7 +34,7 @@ public class RegistrationController {
     }
 
     @GetMapping("/new-token")
-    public String update(HttpServletRequest request, HttpServletResponse response){
+    public String update(HttpServletRequest request){
         return registrationService.updateToken(request);
     }
 
