@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import ru.danis0n.avitoclone.dto.AppUser;
@@ -15,10 +16,10 @@ import ru.danis0n.avitoclone.entity.RoleEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 
 @Slf4j
 @Component
@@ -36,7 +37,8 @@ public class JwtUtil implements Serializable {
         return tokens;
     }
 
-    public Map<String, String> generateTokenMap(AppUser user, Algorithm algorithm, HttpServletRequest request) {
+    public Map<String, String> generateTokenMap(AppUser user, HttpServletRequest request) {
+        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
         Map<String,String> tokens = new HashMap<>();
         tokens.put("access_token",generateAccessToken(user,algorithm,request));
         tokens.put("refresh_token",generateRefreshToken(user.getUsername(),algorithm,request));
@@ -71,4 +73,27 @@ public class JwtUtil implements Serializable {
                 sign(algorithm);
     }
 
+    public String getUsernameFromToken(String token){
+        DecodedJWT decodedJWT = getDecodedJwt("secret",token);
+        return decodedJWT.getSubject();
+    }
+
+    public String[] getRolesFromToken(String token){
+        DecodedJWT decodedJWT = getDecodedJwt("secret",token);
+        return decodedJWT.getClaim("roles").asArray(String.class);
+    }
+
+    public DecodedJWT getDecodedJwt(String secret,String token){
+        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
+        return getDecodedJwt(algorithm,token);
+    }
+
+    public Collection<SimpleGrantedAuthority> getAuthorities(String[] roles, String username) {
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        stream(roles).forEach( role -> {
+            log.info("{} - {}",username, role);
+            authorities.add(new SimpleGrantedAuthority(role));
+        });
+        return authorities;
+    }
 }

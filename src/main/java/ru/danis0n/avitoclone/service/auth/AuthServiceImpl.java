@@ -35,16 +35,12 @@ public class AuthServiceImpl implements AuthService{
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 
             try {
+                String username = jwtUtil.getUsernameFromToken(authorizationHeader);
 
-                String refreshToken = authorizationHeader.substring("Bearer ".length());
-                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-
-                DecodedJWT decodedJWT = jwtUtil.getDecodedJwt(algorithm,refreshToken);
-
-                String username = decodedJWT.getSubject();
                 log.info("Refresh with Username {}", username);
                 AppUser user = userService.getAppUser(username);
-                Map<String,String> tokens = jwtUtil.generateTokenMap(user,algorithm,request);
+
+                Map<String,String> tokens = jwtUtil.generateTokenMap(user,request);
 
                 response.setContentType(APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(),tokens);

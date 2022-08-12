@@ -1,23 +1,21 @@
 package ru.danis0n.avitoclone.service.register;
 
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.danis0n.avitoclone.dto.AppUser;
+import ru.danis0n.avitoclone.dto.Email;
 import ru.danis0n.avitoclone.dto.RegistrationRequest;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
 import ru.danis0n.avitoclone.entity.ConfirmationToken;
 import ru.danis0n.avitoclone.repository.AppUserRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.confirm.ConfirmationTokenService;
-import ru.danis0n.avitoclone.service.register.email.EmailSender;
+import ru.danis0n.avitoclone.service.register.email.EmailService;
 import ru.danis0n.avitoclone.util.JwtUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.http.HttpRequest;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -30,9 +28,31 @@ public class RegistrationServiceImpl implements RegistrationService{
 
     private final AppUserRepository appUserRepository;
     private final AppUserService appUserService;
-    private final EmailSender emailSender;
+    private final EmailService emailService;
     private final JwtUtil jwtUtil;
     private final ConfirmationTokenService confirmationTokenService;
+
+    @Value("${spring.config.registration.confirm.link}")
+    private String confirmLink;
+
+    @Value("${spring.config.registration.not.valid.email}")
+    private String emailIsNotValid;
+
+    @Value("${spring.config.registration.mail.token.already.confirmed}")
+    private String emailAlreadyConfirmed;
+
+    @Value("${spring.config.registration.not.valid.username}")
+    private String usernameIsNotValid;
+
+    @Value("${spring.config.registration.not.valid.token}")
+    private String tokenNotFound;
+
+    @Value("${spring.config.registration.mail.token.expired}")
+    private String tokenExpired;
+
+    @Value("${spring.config.registration.mail.token.confirmed}")
+    private String tokenConfirmed;
+
 
     @Override
     public boolean isValidEmail(String email) {
@@ -51,10 +71,10 @@ public class RegistrationServiceImpl implements RegistrationService{
         boolean isUsername = isValidUsername(request.getUsername());
 
         if(isEmail){
-            return("email is not valid");
+            return(emailIsNotValid);
         }
         if(isUsername){
-            return("username is not valid");
+            return(usernameIsNotValid);
         }
 
         AppUser user = new AppUser();
@@ -65,30 +85,34 @@ public class RegistrationServiceImpl implements RegistrationService{
 
         String token = appUserService.saveAppUser(user);
 
-        String link = "http://localhost:8080/api/register/confirm?token=" + token;
+        String link = confirmLink + token;
 
-//        emailSender.send(
-//                request.getEmail(),buildEmail(request.getName(),link)
-//        );
+        emailService.sendSimpleMail(new Email(
+                user.getEmail(),
+                link,
+                "Hey!",
+                null
+        ));
+
         return token;
     }
 
     @Override
     public String confirmToken(String token) {
         ConfirmationToken confirmationToken = confirmationTokenService.
-                getToken(token).
-                orElseThrow(() ->
-                        new IllegalStateException("token not found")
-                );
+                getToken(token).orElse(null);
+
+        if(confirmationToken == null){
+            return tokenNotFound;
+        }
 
         if(confirmationToken.getConfirmedAt() != null){
-            return("email already confirmed");
+            return(emailAlreadyConfirmed);
         }
 
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
-
         if (expiredAt.isBefore(LocalDateTime.now())) {
-            return("token expired");
+            return(tokenExpired);
         }
 
         confirmationTokenService.setConfirmedAt(token);
@@ -99,7 +123,7 @@ public class RegistrationServiceImpl implements RegistrationService{
         appUserService.removeRoleFromAppUser(username,"ROLE_NOT_CONFIRMED");
         appUserService.addRoleToAppUser(username,"ROLE_USER");
 
-        return "confirmed";
+        return tokenConfirmed;
     }
 
     @Override
@@ -109,14 +133,8 @@ public class RegistrationServiceImpl implements RegistrationService{
 
         if(tokenFromRequest != null && tokenFromRequest.startsWith("Bearer ")){
 
-            String jwtToken = tokenFromRequest.substring("Bearer ".length());
-            Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-            DecodedJWT decodedJWT = jwtUtil.getDecodedJwt(algorithm,jwtToken);
-
-            String username = decodedJWT.getSubject();
-
+            String username = jwtUtil.getUsernameFromToken(tokenFromRequest);
             AppUserEntity user = appUserRepository.findByUsername(username);
-
             String token = UUID.randomUUID().toString();
 
             ConfirmationToken confirmationToken = new ConfirmationToken(
@@ -129,7 +147,7 @@ public class RegistrationServiceImpl implements RegistrationService{
 
             return token;
         }
-        else return "JWT: null";
+        else return tokenFromRequest;
     }
 
     private String buildEmail(String name, String link) {

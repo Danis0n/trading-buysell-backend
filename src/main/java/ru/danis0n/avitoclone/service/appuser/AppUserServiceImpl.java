@@ -37,7 +37,6 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     private final AdvertService advertService;
     private final ConfirmationTokenService confirmationTokenService;
 
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AppUserEntity user = appUserRepository.findByUsername(username);
