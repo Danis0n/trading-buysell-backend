@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,29 +23,21 @@ public class AppUserEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
-
     @Column(name = "username")
     private String username;
 
     @Column(name = "password")
     private String password;
 
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "phone_number")
-    private String phoneNumber;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_info_id", referencedColumnName = "id")
+    private AppUserInfoEntity userInfo;
 
     @Column(name = "enabled")
     private boolean enabled;
 
     @Column(name = "locked")
     private boolean locked;
-
-    @Column(name = "date_of_created")
-    private LocalDateTime dateOfCreated;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<RoleEntity> roles = new ArrayList<>();
@@ -57,11 +48,6 @@ public class AppUserEntity {
             mappedBy = "user"
     )
     private List<AdvertEntity> adverts = new ArrayList<>();
-
-    @PrePersist
-    private void initTime(){
-        dateOfCreated = LocalDateTime.now();
-    }
 
     public void addRoleToAppUser(RoleEntity role){
         roles.add(role);

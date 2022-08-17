@@ -10,8 +10,6 @@ import ru.danis0n.avitoclone.entity.AppUserEntity;
 @Repository
 public interface AppUserRepository extends JpaRepository<AppUserEntity,Long> {
     AppUserEntity findByUsername(String username);
-    AppUserEntity findByEmail(String email);
-    boolean existsAppUserEntityByEmail(String email);
     boolean existsAppUserEntityByUsername(String username);
     @Transactional
     @Modifying

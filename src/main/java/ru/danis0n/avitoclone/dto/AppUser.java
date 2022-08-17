@@ -19,21 +19,15 @@ public class AppUser {
 
     private Long id;
 
-    private String name;
-
     private String username;
 
     private String password;
 
-    private String phoneNumber;
-
-    private String email;
+    private AppUserInfo info;
 
     private boolean enabled;
 
     private boolean locked;
-
-    private LocalDateTime dateOfCreated;
 
     private Collection<Role> roles = new ArrayList<>();
 

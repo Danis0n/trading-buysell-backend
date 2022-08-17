@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.danis0n.avitoclone.dto.AppUser;
 import ru.danis0n.avitoclone.dto.Role;
 import ru.danis0n.avitoclone.entity.*;
+import ru.danis0n.avitoclone.repository.AppUserInfoRepository;
 import ru.danis0n.avitoclone.repository.AppUserRepository;
 import ru.danis0n.avitoclone.repository.RoleRepository;
 import ru.danis0n.avitoclone.service.confirm.ConfirmationTokenService;
@@ -29,6 +30,7 @@ import java.util.UUID;
 public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     private final AppUserRepository appUserRepository;
+    private final AppUserInfoRepository appUserInfoRepository;
     private final RoleRepository roleRepository;
     private final ObjectMapperUtil mapperUtil;
     private final ConfirmationTokenService confirmationTokenService;
@@ -128,7 +130,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     @Override
     public boolean existsAppUserEntityByEmail(String email) {
-        return appUserRepository.existsAppUserEntityByEmail(email);
+        return appUserInfoRepository.existsAppUserInfoEntityByEmail(email);
     }
 
     @Override

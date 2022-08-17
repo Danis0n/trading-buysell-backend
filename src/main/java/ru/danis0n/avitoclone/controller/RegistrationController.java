@@ -21,9 +21,10 @@ public class RegistrationController {
     public String register(@RequestParam("name")String name,
                            @RequestParam("username") String username,
                            @RequestParam("password") String password,
+                           @RequestParam("phone") String phone,
                            @RequestParam("email") String email){
         RegistrationRequest request = new RegistrationRequest(
-                name,username,password,email);
+                name,username,password,email,phone);
 
         return registrationService.register(request);
     }

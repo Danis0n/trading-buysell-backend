@@ -16,6 +16,7 @@ public class Advert {
     private Long id;
     private String title;
     private String price;
+    private String location;
     private String description;
     private AppUser user;
     private AdvertType type;

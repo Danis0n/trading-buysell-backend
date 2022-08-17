@@ -14,7 +14,9 @@ import ru.danis0n.avitoclone.dto.Email;
 import ru.danis0n.avitoclone.dto.Role;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
 import ru.danis0n.avitoclone.entity.RoleEntity;
+import ru.danis0n.avitoclone.repository.RoleRepository;
 import ru.danis0n.avitoclone.service.advert.AdvertService;
+import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.appuser.AppUserServiceImpl;
 import ru.danis0n.avitoclone.service.register.email.EmailService;
 
@@ -29,11 +31,21 @@ public class AvitoCloneApplication {
     }
 
 //    @Bean
-    CommandLineRunner fill(AdvertService advertService){
+    CommandLineRunner fill(AdvertService advertService, AppUserService appUserService){
         return args -> {
-            advertService.createType(new AdvertType(null,"AUTO"));
-            advertService.createType(new AdvertType(null,"JOB"));
-            advertService.createType(new AdvertType(null,"ANIMALS"));
+//            advertService.createType(new AdvertType(null,"AUTO"));
+//            advertService.createType(new AdvertType(null,"JOB"));
+//            advertService.createType(new AdvertType(null,"ANIMALS"));
+//
+//            appUserService.saveRole(new Role(null,"ROLE_NOT_CONFIRMED"));
+//            appUserService.saveRole(new Role(null,"ROLE_USER"));
+//            appUserService.saveRole(new Role(null,"ROLE_ADMIN"));
+//            appUserService.saveRole(new Role(null,"ROLE_SUPER_ADMIN"));
+//            appUserService.saveRole(new Role(null,"ROLE_MANAGER"));
+
+            appUserService.addRoleToAppUser("Alex","ROLE_ADMIN");
+            appUserService.addRoleToAppUser("Alex","ROLE_SUPER_ADMIN");
+            appUserService.addRoleToAppUser("Alex","ROLE_MANAGER");
 
 
         };

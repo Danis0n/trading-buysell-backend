@@ -3,14 +3,8 @@ package ru.danis0n.avitoclone.util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ru.danis0n.avitoclone.dto.Advert;
-import ru.danis0n.avitoclone.dto.AdvertType;
-import ru.danis0n.avitoclone.dto.AppUser;
-import ru.danis0n.avitoclone.dto.Role;
-import ru.danis0n.avitoclone.entity.AdvertEntity;
-import ru.danis0n.avitoclone.entity.AppUserEntity;
-import ru.danis0n.avitoclone.entity.ImageEntity;
-import ru.danis0n.avitoclone.entity.RoleEntity;
+import ru.danis0n.avitoclone.dto.*;
+import ru.danis0n.avitoclone.entity.*;
 import ru.danis0n.avitoclone.service.image.ImageService;
 
 @Component
@@ -19,22 +13,6 @@ public class ObjectMapperUtil {
 
     private final ImageService imageService;
     private final PasswordEncoder passwordEncoder;
-
-    public Advert mapToAdvert(AdvertEntity entity) {
-        Advert ad = new Advert();
-
-        ad.setId(entity.getId());
-        ad.setType(new AdvertType(entity.getType().getId(),entity.getType().getType()));
-        ad.setTitle(entity.getTitle());
-        ad.setPrice(entity.getPrice());
-        ad.setDescription(entity.getDescription());
-        ad.setDateOfCreation(entity.getDateOfCreation());
-
-        for(ImageEntity image : entity.getImages()){
-            ad.addImageToAdvert(imageService.mapToImage(image));
-        }
-        return ad;
-    }
 
     public Role mapToRole(RoleEntity entity){
         Role role = new Role();
@@ -51,7 +29,7 @@ public class ObjectMapperUtil {
         });
 
         entity.getAdverts().forEach(e -> {
-            user.addAdvertToAppUser(mapToAdvert(e));
+            user.addAdvertToAppUser(mapToAdvertForList(e));
             System.out.println(e.getId());
         });
         return user;
@@ -59,32 +37,71 @@ public class ObjectMapperUtil {
 
     public AppUser mapToAppUser(AppUserEntity entity){
         AppUser user = new AppUser();
+        AppUserInfo info = new AppUserInfo();
 
         user.setId(entity.getId());
-        user.setName(entity.getName());
         user.setUsername(entity.getUsername());
-        user.setEmail(entity.getEmail());
-        user.setPassword(entity.getPassword());
-        user.setPhoneNumber(entity.getPhoneNumber());
-        user.setEnabled(entity.isEnabled());
-        user.setLocked(entity.isLocked());
-        user.setDateOfCreated(entity.getDateOfCreated());
 
+        info.setName(entity.getUserInfo().getName());
+        info.setEmail(entity.getUserInfo().getEmail());
+        info.setPhoneNumber(entity.getUserInfo().getPhoneNumber());
+        info.setRating(entity.getUserInfo().getRating());
+
+        user.setInfo(info);
         return user;
     }
 
     public AppUserEntity mapToAppUserEntity(AppUser user){
         AppUserEntity entity = new AppUserEntity();
 
-        entity.setName(user.getName());
         entity.setUsername(user.getUsername());
-        entity.setEmail(user.getEmail());
-        entity.setPhoneNumber(user.getPhoneNumber());
         entity.setPassword(passwordEncoder.encode(user.getPassword()));
         entity.setEnabled(false);
         entity.setLocked(false);
 
+        AppUserInfoEntity info = new AppUserInfoEntity();
+        info.setName(user.getInfo().getName());
+        info.setEmail(user.getInfo().getEmail());
+        info.setPhoneNumber(user.getInfo().getPhoneNumber());
+
+        entity.setUserInfo(info);
         return entity;
+    }
+
+    public Advert mapToAdvertForList(AdvertEntity entity) {
+        Advert ad = new Advert();
+
+        // no user
+        ad.setId(entity.getId());
+        ad.setType(new AdvertType(entity.getType().getId(),entity.getType().getType()));
+        ad.setLocation(entity.getLocation());
+        ad.setTitle(entity.getTitle());
+        ad.setPrice(entity.getPrice());
+        ad.setDescription(entity.getDescription());
+        ad.setDateOfCreation(entity.getDateOfCreation());
+
+        for(ImageEntity image : entity.getImages()){
+            ad.addImageToAdvert(imageService.mapToImage(image));
+        }
+        return ad;
+    }
+
+    public Advert mapToAdvert(AdvertEntity entity) {
+        Advert ad = new Advert();
+
+        ad.setUser(mapToAppUser(entity.getUser()));
+        ad.setId(entity.getId());
+        ad.setType(new AdvertType(entity.getType().getId(),entity.getType().getType()));
+        ad.setLocation(entity.getLocation());
+        ad.setTitle(entity.getTitle());
+        ad.setPrice(entity.getPrice());
+        ad.setDescription(entity.getDescription());
+        ad.setDateOfCreation(entity.getDateOfCreation());
+
+        for(ImageEntity image : entity.getImages()){
+            ad.addImageToAdvert(imageService.mapToImage(image));
+        }
+        return ad;
     }
 
 }

@@ -69,7 +69,6 @@ public class SecurityConfiguration {
                 and().
                 logout().logoutSuccessUrl("/api/");
 
-        // think about it..
         http.addFilter(jwtAuthenticationFilter);
         http.addFilterBefore(new JwtAuthorizationFilter(new JwtUtil()), UsernamePasswordAuthenticationFilter.class);
         return http.build();

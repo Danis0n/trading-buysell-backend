@@ -137,7 +137,16 @@ public class AdvertServiceImpl implements AdvertService{
         List<Advert> adverts = new ArrayList<>();
 
         for (AdvertEntity advert : advertsByType){
-            adverts.add(mapperUtil.mapToAdvert(advert));
+            adverts.add(mapperUtil.mapToAdvertForList(advert));
+        }
+        return adverts;
+    }
+
+    @Override
+    public List<Advert> getAll() {
+        List<Advert> adverts = new ArrayList<>();
+        for (AdvertEntity advert : advertRepository.findAll()){
+            adverts.add(mapperUtil.mapToAdvertForList(advert));
         }
         return adverts;
     }
@@ -149,19 +158,11 @@ public class AdvertServiceImpl implements AdvertService{
         List<Advert> adverts = new ArrayList<>();
 
         for (AdvertEntity advert : advertsByUser){
-            adverts.add(mapperUtil.mapToAdvert(advert));
+            adverts.add(mapperUtil.mapToAdvertForList(advert));
         }
         return adverts;
     }
 
-    @Override
-    public List<Advert> getAll() {
-        List<Advert> adverts = new ArrayList<>();
-        for (AdvertEntity advert : advertRepository.findAll()){
-            adverts.add(mapperUtil.mapToAdvert(advert));
-        }
-        return adverts;
-    }
 
     @Override
     public void createType(AdvertType advertType) {
