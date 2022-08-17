@@ -26,6 +26,11 @@ public class AppUserController {
         return ResponseEntity.ok().body(userService.getAppUsers());
     }
 
+    @GetMapping("/users/{id}")
+    public ResponseEntity<AppUser> getUser(@PathVariable Long id){
+        return ResponseEntity.ok().body(userService.getAppUserById(id));
+    }
+
     @PostMapping("/role/save")
     public ResponseEntity<Role> saveRole(@RequestBody Role role){
         URI uri = URI.create(
@@ -35,7 +40,7 @@ public class AppUserController {
         return ResponseEntity.created(uri).body(userService.saveRole(role));
     }
 
-    @PostMapping("/role/add-role-to-user")
+    @PostMapping("/role/add/user")
     public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form){
         userService.addRoleToAppUser(form.getRoleName(), form.getRoleName());
         return ResponseEntity.ok().build();

@@ -26,7 +26,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequiredArgsConstructor
 public class RegistrationServiceImpl implements RegistrationService{
 
-    private final AppUserRepository appUserRepository;
     private final AppUserService appUserService;
     private final EmailService emailService;
     private final JwtUtil jwtUtil;
@@ -56,12 +55,12 @@ public class RegistrationServiceImpl implements RegistrationService{
 
     @Override
     public boolean isValidEmail(String email) {
-        return appUserRepository.existsAppUserEntityByEmail(email);
+        return appUserService.existsAppUserEntityByEmail(email);
     }
 
     @Override
     public boolean isValidUsername(String username) {
-        return appUserRepository.existsAppUserEntityByUsername(username);
+        return appUserService.existsAppUserEntityByUsername(username);
     }
 
     @Override
@@ -116,10 +115,9 @@ public class RegistrationServiceImpl implements RegistrationService{
         }
 
         confirmationTokenService.setConfirmedAt(token);
-        String email = confirmationToken.getAppUser().getEmail();
-        appUserService.enabledAppUser(email);
-
         String username = confirmationToken.getAppUser().getUsername();
+
+        appUserService.enabledAppUser(username);
         appUserService.removeRoleFromAppUser(username,"ROLE_NOT_CONFIRMED");
         appUserService.addRoleToAppUser(username,"ROLE_USER");
 
@@ -134,7 +132,7 @@ public class RegistrationServiceImpl implements RegistrationService{
         if(tokenFromRequest != null && tokenFromRequest.startsWith("Bearer ")){
 
             String username = jwtUtil.getUsernameFromToken(tokenFromRequest);
-            AppUserEntity user = appUserRepository.findByUsername(username);
+            AppUserEntity user = appUserService.getAppUserEntity(username);
             String token = UUID.randomUUID().toString();
 
             ConfirmationToken confirmationToken = new ConfirmationToken(

@@ -6,18 +6,15 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.danis0n.avitoclone.dto.AppUser;
 import ru.danis0n.avitoclone.dto.Role;
-import ru.danis0n.avitoclone.entity.AppUserEntity;
-import ru.danis0n.avitoclone.entity.ConfirmationToken;
-import ru.danis0n.avitoclone.entity.RoleEntity;
+import ru.danis0n.avitoclone.entity.*;
 import ru.danis0n.avitoclone.repository.AppUserRepository;
 import ru.danis0n.avitoclone.repository.RoleRepository;
-import ru.danis0n.avitoclone.service.advert.AdvertService;
 import ru.danis0n.avitoclone.service.confirm.ConfirmationTokenService;
+import ru.danis0n.avitoclone.util.ObjectMapperUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,8 +30,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     private final AppUserRepository appUserRepository;
     private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final AdvertService advertService;
+    private final ObjectMapperUtil mapperUtil;
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
@@ -59,7 +55,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     @Override
     public String saveAppUser(AppUser user) {
-        AppUserEntity entity = mapToAppUserEntity(user);
+        AppUserEntity entity = mapperUtil.mapToAppUserEntity(user);
         appUserRepository.save(entity);
         addRoleToAppUser(entity.getUsername(),"ROLE_NOT_CONFIRMED");
 
@@ -85,6 +81,33 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
+    public AppUser getAppUser(String username) {
+        AppUserEntity entity = appUserRepository.findByUsername(username);
+        return mapperUtil.mapToAppUser(entity);
+    }
+
+    @Override
+    public AppUserEntity getAppUserEntity(String username) {
+        return appUserRepository.findByUsername(username);
+    }
+
+    @Override
+    public List<AppUser> getAppUsers() {
+        List<AppUserEntity> entities = appUserRepository.findAll();
+        List<AppUser> users = new ArrayList<>();
+        entities.forEach(e -> {
+            users.add(mapperUtil.mapToAppUserWithParams(e));
+        });
+
+        return users;
+    }
+
+    @Override
+    public AppUser getAppUserById(Long id) {
+        return mapperUtil.mapToAppUserWithParams(appUserRepository.findById(id).get());
+    }
+
+    @Override
     public void addRoleToAppUser(String username, String roleName) {
         AppUserEntity user = appUserRepository.findByUsername(username);
         RoleEntity role = roleRepository.findByName(roleName);
@@ -99,71 +122,18 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public AppUser getAppUser(String username) {
-        AppUserEntity entity = appUserRepository.findByUsername(username);
-        return mapToAppUser(entity);
+    public void enabledAppUser(String username) {
+        appUserRepository.enableAppUser(username);
     }
 
     @Override
-    public List<AppUser> getAppUsers() {
-        List<AppUserEntity> entities = appUserRepository.findAll();
-        List<AppUser> users = new ArrayList<>();
-        entities.forEach(e -> {
-            users.add(mapToAppUser(e));
-        });
-
-        return users;
+    public boolean existsAppUserEntityByEmail(String email) {
+        return appUserRepository.existsAppUserEntityByEmail(email);
     }
 
     @Override
-    public void enabledAppUser(String email) {
-        appUserRepository.enableAppUser(email);
-    }
-
-    private AppUser mapToAppUser(AppUserEntity entity){
-
-        AppUser user = new AppUser();
-
-        user.setId(entity.getId());
-        user.setName(entity.getName());
-        user.setUsername(entity.getUsername());
-        user.setEmail(entity.getEmail());
-        user.setPassword(entity.getPassword());
-        user.setPhoneNumber(entity.getPhoneNumber());
-        user.setEnabled(entity.isEnabled());
-        user.setLocked(entity.isLocked());
-        user.setDateOfCreated(entity.getDateOfCreated());
-
-        entity.getRoles().forEach(e ->{
-            user.addRoleToAppUser(mapToRole(e));
-        });
-
-        entity.getAdverts().forEach(e -> {
-            user.addAdvertToAppUser(advertService.mapToAdvert(e));
-        });
-
-        return user;
-    }
-
-    private AppUserEntity mapToAppUserEntity(AppUser user){
-        AppUserEntity entity = new AppUserEntity();
-
-        entity.setName(user.getName());
-        entity.setUsername(user.getUsername());
-        entity.setEmail(user.getEmail());
-        entity.setPhoneNumber(user.getPhoneNumber());
-        entity.setPassword(passwordEncoder.encode(user.getPassword()));
-        entity.setEnabled(false);
-        entity.setLocked(false);
-
-        return entity;
-    }
-
-    private Role mapToRole(RoleEntity entity){
-        Role role = new Role();
-        role.setId(entity.getId());
-        role.setName(entity.getName());
-        return role;
+    public boolean existsAppUserEntityByUsername(String username) {
+        return appUserRepository.existsAppUserEntityByUsername(username);
     }
 
 }

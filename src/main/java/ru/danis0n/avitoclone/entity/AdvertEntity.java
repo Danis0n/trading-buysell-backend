@@ -11,7 +11,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "adverts")
-@Data
 @Getter
 @Setter
 public class AdvertEntity {
@@ -70,5 +69,20 @@ public class AdvertEntity {
     }
 
     public AdvertEntity(){
+    }
+
+    @Override
+    public String toString() {
+        return "AdvertEntity{" +
+                "id=" + id +
+                ", title='" + title + "\n'" +
+                ", location='" + location + "\n'" +
+                ", price='" + price + "\n'" +
+                ", description='" + description + "\n'" +
+                ", dateOfCreation=" + dateOfCreation +
+                ", type=" + type +
+                ", user=" + user +
+                ", images=" + images +
+                '}';
     }
 }

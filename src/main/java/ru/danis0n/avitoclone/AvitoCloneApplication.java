@@ -28,7 +28,7 @@ public class AvitoCloneApplication {
         SpringApplication.run(AvitoCloneApplication.class, args);
     }
 
-    @Bean
+//    @Bean
     CommandLineRunner fill(AdvertService advertService){
         return args -> {
             advertService.createType(new AdvertType(null,"AUTO"));

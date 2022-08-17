@@ -33,7 +33,7 @@ public class RegistrationController {
         return registrationService.confirmToken(token);
     }
 
-    @GetMapping("/new-token")
+    @GetMapping("/new/token")
     public String update(HttpServletRequest request){
         return registrationService.updateToken(request);
     }

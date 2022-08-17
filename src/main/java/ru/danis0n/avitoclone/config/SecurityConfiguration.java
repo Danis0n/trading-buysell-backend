@@ -38,19 +38,28 @@ public class SecurityConfiguration {
         http.sessionManagement().sessionCreationPolicy(STATELESS);
 
         http.authorizeRequests().
-                antMatchers("/api/new-token").hasAnyAuthority("ROLE_NOT_CONFIRMED");
-
-        http.authorizeRequests().
                 antMatchers("/api/login","/api/token/refresh/**","/api/register/**").permitAll();
 
         http.authorizeRequests().
-                antMatchers(GET,"/api/user/**").hasAnyAuthority("ROLE_USER");
+                antMatchers("/api/new/token").hasAnyAuthority("ROLE_NOT_CONFIRMED");
 
         http.authorizeRequests().
-                antMatchers(GET, "/api/users").hasAnyAuthority("ROLE_ADMIN","ROLE_MANAGER");
+                antMatchers("/api/advert/create").hasAnyAuthority("ROLE_ADMIN","ROLE_USER","ROLE_SUPER_ADMIN","ROLE_MANAGER");
 
         http.authorizeRequests().
-                antMatchers(POST,"/api/role/add-role-to-user").hasAnyAuthority("ROLE_ADMIN","ROLE_SUPER_ADMIN");
+                antMatchers(GET,"/api/advert/**").permitAll();
+
+        http.authorizeRequests().
+                antMatchers(GET,"/api/images/**").permitAll();
+
+        http.authorizeRequests().
+                antMatchers(GET,"/api/user/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_MANAGER","ROLE_SUPER_ADMIN");
+
+        http.authorizeRequests().
+                antMatchers(GET, "/api/users").hasAnyAuthority("ROLE_ADMIN","ROLE_MANAGER","ROLE_SUPER_ADMIN");
+
+        http.authorizeRequests().
+                antMatchers(POST,"/api/role/**").hasAnyAuthority("ROLE_ADMIN","ROLE_SUPER_ADMIN");
         http.authorizeRequests().
                 anyRequest().authenticated();
 

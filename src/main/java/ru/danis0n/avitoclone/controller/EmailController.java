@@ -16,12 +16,12 @@ public class EmailController {
 
     private final EmailService emailService;
 
-    @PostMapping("/sendEmail")
+    @PostMapping("/send/email")
     public String sendEmail(@RequestBody Email email){
         return emailService.sendSimpleMail(email);
     }
 
-    @PostMapping("/sendEmailWithAttachment")
+    @PostMapping("/send/email/attachment")
     public String sendEmailWithAttachment(@RequestBody Email email){
         return emailService.sendMailWithAttachment(email);
     }
