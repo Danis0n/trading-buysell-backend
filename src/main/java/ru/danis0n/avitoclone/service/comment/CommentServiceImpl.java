@@ -41,20 +41,16 @@ public class CommentServiceImpl implements CommentService{
     }
 
     public void countRating(CommentEntity comment){
-        String username = comment.getUser().getUsername();
-
-        float rating = 0;
-        float count = commentRepository.getByUser(appUserService.getAppUserEntity(username)).size();
-
-        for(Comment com : getCommentsByUser(username)){
-            rating += com.getRating();
-        }
-        rating += comment.getRating();
-        count++;
-
-        rating /= count;
-
         AppUserEntity user = comment.getUser();
+        float prevRating = user.getUserInfo().getRating();
+
+        if(prevRating == 0.0){
+            user.getUserInfo().setRating(comment.getRating());
+            return;
+        }
+
+        float count = commentRepository.getByUser(user).size() + 1;
+        float rating = (prevRating * count + comment.getRating()) / (count + 1);
         user.getUserInfo().setRating(rating);
         comment.setUser(user);
     }
