@@ -11,17 +11,17 @@ import java.util.List;
 public interface AppUserService {
     String saveAppUser(AppUser user);
     Role saveRole(Role role);
-    void addRoleToAppUser(String username, String roleName);
-    void removeRoleFromAppUser(String username,String roleName);
     AppUser getAppUser(String username);
+    AppUser getAppUserById(Long id);
     AppUserEntity getAppUserEntity(String username);
     List<AppUser> getAppUsers();
     void enableAppUser(String email);
+    void addRoleToAppUser(String username, String roleName);
+    void removeRoleFromAppUser(String username,String roleName);
     boolean isExistsAppUserEntityByEmail(String email);
     boolean isExistsAppUserEntityByUsername(String username);
-    AppUser getAppUserById(Long id);
     void lockAppUser(String username);
     void unLockAppUser(String username);
-    String banAppUserById(Long id, HttpServletRequest request);
-    String unBanAppUserById(Long id);
+    String banAppUserById(String id, HttpServletRequest request);
+    String unBanAppUserById(String id);
 }

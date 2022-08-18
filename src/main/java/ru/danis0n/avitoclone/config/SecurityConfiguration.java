@@ -28,6 +28,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
+    // TODO : manage the requests
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -54,6 +56,12 @@ public class SecurityConfiguration {
 
         http.authorizeRequests().
                 antMatchers(GET,"/api/user/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_MANAGER","ROLE_SUPER_ADMIN");
+
+        http.authorizeRequests().
+                antMatchers(POST,"/api/user/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_MANAGER","ROLE_SUPER_ADMIN");
+
+        http.authorizeRequests().
+                antMatchers(POST,"/api/comment/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_MANAGER","ROLE_SUPER_ADMIN");
 
         http.authorizeRequests().
                 antMatchers(GET, "/api/users").hasAnyAuthority("ROLE_ADMIN","ROLE_MANAGER","ROLE_SUPER_ADMIN");

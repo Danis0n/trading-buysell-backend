@@ -33,12 +33,12 @@ public class AppUserController {
     }
 
     @PostMapping("/users/ban/{id}")
-    public ResponseEntity<String> banUser(@PathVariable Long id, HttpServletRequest request){
+    public ResponseEntity<String> banUser(@PathVariable String id, HttpServletRequest request){
         return ResponseEntity.ok().body(userService.banAppUserById(id,request));
     }
 
     @PostMapping("/users/unban/{id}")
-    public ResponseEntity<String> unBanUser(@PathVariable Long id){
+    public ResponseEntity<String> unBanUser(@PathVariable String id){
         return ResponseEntity.ok().body(userService.unBanAppUserById(id));
     }
 

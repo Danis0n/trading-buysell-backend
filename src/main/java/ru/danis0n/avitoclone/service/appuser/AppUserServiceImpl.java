@@ -25,8 +25,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-
 @Slf4j
 @Service
 @Transactional
@@ -88,8 +86,8 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public String banAppUserById(Long id, HttpServletRequest request) {
-        AppUserEntity user = appUserRepository.findById(id).orElse(null);
+    public String banAppUserById(String id, HttpServletRequest request) {
+        AppUserEntity user = appUserRepository.findByUsername(id);
         if(user == null){
             return "null";
         }
@@ -105,8 +103,8 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public String unBanAppUserById(Long id) {
-        AppUserEntity user = appUserRepository.findById(id).orElse(null);
+    public String unBanAppUserById(String id) {
+        AppUserEntity user = appUserRepository.findByUsername(id);
         if(user == null){
             return "null";
         }
