@@ -14,7 +14,6 @@ import ru.danis0n.avitoclone.service.image.ImageService;
 public class ObjectMapperUtil {
 
     private final ImageService imageService;
-//    private final AppUserService appUserService;
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -132,6 +131,4 @@ public class ObjectMapperUtil {
         comment.setRating(commentRequest.getRating());
         return comment;
     }
-
-
 }

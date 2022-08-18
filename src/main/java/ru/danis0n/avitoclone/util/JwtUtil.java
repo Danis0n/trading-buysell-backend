@@ -11,8 +11,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import ru.danis0n.avitoclone.dto.AppUser;
 import ru.danis0n.avitoclone.dto.Role;
-import ru.danis0n.avitoclone.entity.AppUserEntity;
-import ru.danis0n.avitoclone.entity.RoleEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -89,7 +87,6 @@ public class JwtUtil implements Serializable {
         DecodedJWT decodedJWT = getDecodedJwt("secret",token);
         return decodedJWT.getClaim("roles").asArray(String.class);
     }
-
 
     public DecodedJWT getDecodedJwt(String secret,String token){
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());

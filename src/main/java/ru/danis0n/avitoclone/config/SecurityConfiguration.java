@@ -14,7 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.danis0n.avitoclone.config.filter.JwtAuthenticationFilter;
 import ru.danis0n.avitoclone.config.filter.JwtAuthorizationFilter;
-import ru.danis0n.avitoclone.service.appuser.AppUserServiceImpl;
 import ru.danis0n.avitoclone.util.JwtUtil;
 
 

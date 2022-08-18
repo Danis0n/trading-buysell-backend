@@ -9,8 +9,10 @@ import ru.danis0n.avitoclone.entity.AppUserEntity;
 import ru.danis0n.avitoclone.entity.CommentEntity;
 import ru.danis0n.avitoclone.repository.CommentRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
+import ru.danis0n.avitoclone.util.JwtUtil;
 import ru.danis0n.avitoclone.util.ObjectMapperUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,24 +22,39 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService{
 
     private final ObjectMapperUtil objectMapperUtil;
+    private final JwtUtil jwtUtil;
     private final AppUserService appUserService;
     private final CommentRepository commentRepository;
 
     @Override
-    public String saveComment(CommentRequest comment) {
+    public String saveComment(CommentRequest comment, HttpServletRequest request) {
         CommentEntity commentEntity = objectMapperUtil.mapToCommentEntity(comment);
+
+        String username = jwtUtil.getUsernameFromRequest(request);
+        if(!username.equals(comment.getOwnerUsername())){
+            return "You don't have enough permissions!";
+        }
         commentRepository.save(commentEntity);
         return "Successful!";
     }
 
     @Override
-    public String deleteComment(Long id) {
+    public String deleteComment(Long id, HttpServletRequest request) {
         CommentEntity commentEntity = commentRepository.findById(id).orElse(null);
         if(commentEntity == null){
             return "Null!";
         }
-        commentRepository.delete(commentEntity);
-        return "Successful!";
+
+        String username = jwtUtil.getUsernameFromRequest(request);
+        AppUserEntity user = appUserService.getAppUserEntity(username);
+
+        if (commentEntity.getOwnerUser().equals(user) ||
+                commentEntity.getUser().equals(user)){
+
+            commentRepository.delete(commentEntity);
+            return "Successful!";
+        }
+        return "You don't have enough permissions";
     }
 
     @Override
