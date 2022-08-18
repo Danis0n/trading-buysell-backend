@@ -12,4 +12,5 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<CommentEntity,Long> {
     List<CommentEntity> getByUser(AppUserEntity user);
     List<CommentEntity> getByOwnerUser(AppUserEntity ownerUser);
+    int countByUser(AppUserEntity user);
 }

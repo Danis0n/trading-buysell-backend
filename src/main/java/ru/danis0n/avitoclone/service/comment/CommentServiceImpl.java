@@ -28,14 +28,35 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public String saveComment(CommentRequest comment, HttpServletRequest request) {
-        CommentEntity commentEntity = objectMapperUtil.mapToCommentEntity(comment);
-
         String username = jwtUtil.getUsernameFromRequest(request);
         if(!username.equals(comment.getOwnerUsername())){
             return "You don't have enough permissions!";
         }
+
+        CommentEntity commentEntity = objectMapperUtil.mapToCommentEntity(comment);
+        countRating(commentEntity);
+
         commentRepository.save(commentEntity);
         return "Successful!";
+    }
+
+    public void countRating(CommentEntity comment){
+        String username = comment.getUser().getUsername();
+
+        float rating = 0;
+        float count = commentRepository.getByUser(appUserService.getAppUserEntity(username)).size();
+
+        for(Comment com : getCommentsByUser(username)){
+            rating += com.getRating();
+        }
+        rating += comment.getRating();
+        count++;
+
+        rating /= count;
+
+        AppUserEntity user = comment.getUser();
+        user.getUserInfo().setRating(rating);
+        comment.setUser(user);
     }
 
     @Override
