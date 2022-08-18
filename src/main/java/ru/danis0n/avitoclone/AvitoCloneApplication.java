@@ -37,15 +37,15 @@ public class AvitoCloneApplication {
 //            advertService.createType(new AdvertType(null,"JOB"));
 //            advertService.createType(new AdvertType(null,"ANIMALS"));
 //
-//            appUserService.saveRole(new Role(null,"ROLE_NOT_CONFIRMED"));
+            appUserService.saveRole(new Role(null,"ROLE_BANNED"));
 //            appUserService.saveRole(new Role(null,"ROLE_USER"));
 //            appUserService.saveRole(new Role(null,"ROLE_ADMIN"));
 //            appUserService.saveRole(new Role(null,"ROLE_SUPER_ADMIN"));
 //            appUserService.saveRole(new Role(null,"ROLE_MANAGER"));
 
-            appUserService.addRoleToAppUser("Alex","ROLE_ADMIN");
-            appUserService.addRoleToAppUser("Alex","ROLE_SUPER_ADMIN");
-            appUserService.addRoleToAppUser("Alex","ROLE_MANAGER");
+//            appUserService.addRoleToAppUser("Alex","ROLE_ADMIN");
+//            appUserService.addRoleToAppUser("Alex","ROLE_SUPER_ADMIN");
+//            appUserService.addRoleToAppUser("Alex","ROLE_MANAGER");
 
 
         };

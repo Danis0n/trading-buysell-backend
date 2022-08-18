@@ -70,31 +70,38 @@ public class AdvertServiceImpl implements AdvertService{
                          String description, String price,
                          MultipartFile[] files, String type) {
 
-        String tokenFromRequest = request.getHeader(AUTHORIZATION);
-        if(tokenFromRequest != null && tokenFromRequest.startsWith("Bearer ")){
-            try{
-                String token = tokenFromRequest.substring("Bearer ".length());
-                String username = jwtUtil.getUsernameFromToken(token);
-                AdvertEntity advert = advertRepository.findById(id).orElse(null);
+        String username = jwtUtil.getUsernameFromRequest(request);
+        AdvertEntity advert = advertRepository.findById(id).orElse(null);
 
-                if(advert == null){
-                    return "null";
-                }
-
-                if (!advert.getUser().equals(appUserService.getAppUserEntity(username))){
-                    return null;
-                }
-
-                buildAdvert(advert,title,location,description,price,files,type);
-                advertRepository.save(advert);
-                return "Successful";
-
-            }catch (Exception e){
-                return "Exception while updating";
-            }
+        if(advert == null){
+            return "null";
         }
 
-        return "Error!";
+        if (!advert.getUser().equals(appUserService.getAppUserEntity(username))){
+            return "You don't have permission for it";
+        }
+
+        buildAdvert(advert,title,location,description,price,files,type);
+        advertRepository.save(advert);
+        return "Successful";
+    }
+
+    @Override
+    public String deleteById(HttpServletRequest request,Long id) {
+
+        String username = jwtUtil.getUsernameFromRequest(request);
+        AdvertEntity advert = advertRepository.findById(id).orElse(null);
+
+        if(advert == null){
+            return "null";
+        }
+
+        if (!advert.getUser().equals(appUserService.getAppUserEntity(username))){
+            return "You don't have permission for it";
+        }
+
+        advertRepository.delete(advert);
+        return "Successful";
     }
 
     private void buildAdvert(AdvertEntity advert,
@@ -181,5 +188,4 @@ public class AdvertServiceImpl implements AdvertService{
     @Override
     public void removeTypeFromAdvert(String type, Long id) {
     }
-
 }

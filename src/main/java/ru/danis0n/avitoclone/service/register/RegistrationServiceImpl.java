@@ -10,7 +10,6 @@ import ru.danis0n.avitoclone.dto.Email;
 import ru.danis0n.avitoclone.dto.RegistrationRequest;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
 import ru.danis0n.avitoclone.entity.ConfirmationToken;
-import ru.danis0n.avitoclone.repository.AppUserRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.confirm.ConfirmationTokenService;
 import ru.danis0n.avitoclone.service.register.email.EmailService;
@@ -56,12 +55,12 @@ public class RegistrationServiceImpl implements RegistrationService{
 
     @Override
     public boolean isValidEmail(String email) {
-        return appUserService.existsAppUserEntityByEmail(email);
+        return appUserService.isExistsAppUserEntityByEmail(email);
     }
 
     @Override
     public boolean isValidUsername(String username) {
-        return appUserService.existsAppUserEntityByUsername(username);
+        return appUserService.isExistsAppUserEntityByUsername(username);
     }
 
     @Override
@@ -122,7 +121,7 @@ public class RegistrationServiceImpl implements RegistrationService{
         confirmationTokenService.setConfirmedAt(token);
         String username = confirmationToken.getAppUser().getUsername();
 
-        appUserService.enabledAppUser(username);
+        appUserService.enableAppUser(username);
         appUserService.removeRoleFromAppUser(username,"ROLE_NOT_CONFIRMED");
         appUserService.addRoleToAppUser(username,"ROLE_USER");
 

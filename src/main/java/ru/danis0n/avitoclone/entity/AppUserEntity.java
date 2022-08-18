@@ -43,7 +43,7 @@ public class AppUserEntity {
     private Collection<RoleEntity> roles = new ArrayList<>();
 
     @OneToMany(
-            cascade = CascadeType.ALL,
+            cascade = CascadeType.REFRESH,
             fetch = FetchType.LAZY,
             mappedBy = "user"
     )

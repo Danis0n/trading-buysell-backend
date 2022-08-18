@@ -43,7 +43,7 @@ public class AdvertEntity {
     private AdvertTypeEntity type;
 
     @ManyToOne(
-            cascade = CascadeType.ALL ,
+            cascade = CascadeType.REFRESH ,
             fetch = FetchType.EAGER
     )
     private AppUserEntity user;

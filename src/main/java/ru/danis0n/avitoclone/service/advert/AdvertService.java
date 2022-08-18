@@ -19,4 +19,5 @@ public interface AdvertService {
     void createType(AdvertType auto);
     void addTypeToAdvert(String type, Long id);
     void removeTypeFromAdvert(String type, Long id);
+    String deleteById(HttpServletRequest request,Long id);
 }

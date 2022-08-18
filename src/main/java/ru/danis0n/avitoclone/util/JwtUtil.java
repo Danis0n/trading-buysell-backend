@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
 @Component
@@ -73,6 +74,12 @@ public class JwtUtil implements Serializable {
                 sign(algorithm);
     }
 
+    public String getUsernameFromRequest(HttpServletRequest request){
+        String tokenFromRequest = request.getHeader(AUTHORIZATION);
+        String token = tokenFromRequest.substring("Bearer ".length());
+        return getUsernameFromToken(token);
+    }
+
     public String getUsernameFromToken(String token){
         DecodedJWT decodedJWT = getDecodedJwt("secret",token);
         return decodedJWT.getSubject();
@@ -82,6 +89,7 @@ public class JwtUtil implements Serializable {
         DecodedJWT decodedJWT = getDecodedJwt("secret",token);
         return decodedJWT.getClaim("roles").asArray(String.class);
     }
+
 
     public DecodedJWT getDecodedJwt(String secret,String token){
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());

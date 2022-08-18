@@ -61,4 +61,9 @@ public class AdvertController {
         return advertService.getById(id);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public String delete(@PathVariable Long id, HttpServletRequest request){
+        return advertService.deleteById(request,id);
+    }
+
 }

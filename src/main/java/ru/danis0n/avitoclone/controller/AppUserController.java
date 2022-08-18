@@ -10,6 +10,7 @@ import ru.danis0n.avitoclone.dto.AppUser;
 import ru.danis0n.avitoclone.dto.Role;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.List;
 
@@ -29,6 +30,16 @@ public class AppUserController {
     @GetMapping("/users/{id}")
     public ResponseEntity<AppUser> getUser(@PathVariable Long id){
         return ResponseEntity.ok().body(userService.getAppUserById(id));
+    }
+
+    @PostMapping("/users/ban/{id}")
+    public ResponseEntity<String> banUser(@PathVariable Long id, HttpServletRequest request){
+        return ResponseEntity.ok().body(userService.banAppUserById(id,request));
+    }
+
+    @PostMapping("/users/unban/{id}")
+    public ResponseEntity<String> unBanUser(@PathVariable Long id){
+        return ResponseEntity.ok().body(userService.unBanAppUserById(id));
     }
 
     @PostMapping("/role/save")

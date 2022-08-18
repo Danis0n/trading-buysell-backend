@@ -15,13 +15,17 @@ import ru.danis0n.avitoclone.repository.AppUserInfoRepository;
 import ru.danis0n.avitoclone.repository.AppUserRepository;
 import ru.danis0n.avitoclone.repository.RoleRepository;
 import ru.danis0n.avitoclone.service.confirm.ConfirmationTokenService;
+import ru.danis0n.avitoclone.util.JwtUtil;
 import ru.danis0n.avitoclone.util.ObjectMapperUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
 @Service
@@ -33,6 +37,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     private final AppUserInfoRepository appUserInfoRepository;
     private final RoleRepository roleRepository;
     private final ObjectMapperUtil mapperUtil;
+    private final JwtUtil jwtUtil;
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
@@ -83,6 +88,33 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
+    public String banAppUserById(Long id, HttpServletRequest request) {
+        AppUserEntity user = appUserRepository.findById(id).orElse(null);
+        if(user == null){
+            return "null";
+        }
+
+        String username = jwtUtil.getUsernameFromRequest(request);
+
+        if(user.equals(appUserRepository.findByUsername(username))){
+            return "You can't ban yourself";
+        }
+
+        manageBanned(user,"BAN");
+        return "user '" + user.getUsername() + "' banned!";
+    }
+
+    @Override
+    public String unBanAppUserById(Long id) {
+        AppUserEntity user = appUserRepository.findById(id).orElse(null);
+        if(user == null){
+            return "null";
+        }
+        manageBanned(user,"UNBAN");
+        return "user '" + user.getUsername() + "' un-banned!";
+    }
+
+    @Override
     public AppUser getAppUser(String username) {
         AppUserEntity entity = appUserRepository.findByUsername(username);
         return mapperUtil.mapToAppUser(entity);
@@ -109,6 +141,24 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         return mapperUtil.mapToAppUserWithParams(appUserRepository.findById(id).get());
     }
 
+    private void manageBanned(AppUserEntity user, String bannedOrNot){
+        user.getRoles().clear();
+        switch (bannedOrNot){
+            case "BAN":{
+                lockAppUser(user.getUsername());
+                addRoleToAppUser(user.getUsername(),"ROLE_BANNED");
+                break;
+            }
+            case "UNBAN":{
+                unLockAppUser(user.getUsername());
+                addRoleToAppUser(user.getUsername(),"ROLE_USER");
+                break;
+            }
+            default:{
+            }
+        }
+    }
+
     @Override
     public void addRoleToAppUser(String username, String roleName) {
         AppUserEntity user = appUserRepository.findByUsername(username);
@@ -124,18 +174,27 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public void enabledAppUser(String username) {
+    public void enableAppUser(String username) {
         appUserRepository.enableAppUser(username);
     }
 
     @Override
-    public boolean existsAppUserEntityByEmail(String email) {
+    public void lockAppUser(String username){
+        appUserRepository.lockAppUser(username);
+    }
+
+    @Override
+    public void unLockAppUser(String username){
+        appUserRepository.unLockAppUser(username);
+    }
+
+    @Override
+    public boolean isExistsAppUserEntityByEmail(String email) {
         return appUserInfoRepository.existsAppUserInfoEntityByEmail(email);
     }
 
     @Override
-    public boolean existsAppUserEntityByUsername(String username) {
+    public boolean isExistsAppUserEntityByUsername(String username) {
         return appUserRepository.existsAppUserEntityByUsername(username);
     }
-
 }

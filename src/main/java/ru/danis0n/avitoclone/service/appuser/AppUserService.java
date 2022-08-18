@@ -5,6 +5,7 @@ import ru.danis0n.avitoclone.dto.AppUser;
 import ru.danis0n.avitoclone.dto.Role;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface AppUserService {
@@ -15,8 +16,12 @@ public interface AppUserService {
     AppUser getAppUser(String username);
     AppUserEntity getAppUserEntity(String username);
     List<AppUser> getAppUsers();
-    void enabledAppUser(String email);
-    boolean existsAppUserEntityByEmail(String email);
-    boolean existsAppUserEntityByUsername(String username);
+    void enableAppUser(String email);
+    boolean isExistsAppUserEntityByEmail(String email);
+    boolean isExistsAppUserEntityByUsername(String username);
     AppUser getAppUserById(Long id);
+    void lockAppUser(String username);
+    void unLockAppUser(String username);
+    String banAppUserById(Long id, HttpServletRequest request);
+    String unBanAppUserById(Long id);
 }
