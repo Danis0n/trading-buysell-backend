@@ -49,9 +49,9 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         }
 
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        user.getRoles().forEach(role -> {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-        });
+        user.getRoles().forEach(role ->
+                authorities.add(new SimpleGrantedAuthority(role.getName()))
+        );
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),user.getPassword(),authorities
@@ -60,7 +60,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     @Override
     public String saveAppUser(AppUser user) {
-        AppUserEntity entity = mapperUtil.mapToAppUserEntity(user);
+        AppUserEntity entity = mapperUtil.mapToNewAppUserEntity(user);
         appUserRepository.save(entity);
         addRoleToAppUser(entity.getUsername(),"ROLE_NOT_CONFIRMED");
 

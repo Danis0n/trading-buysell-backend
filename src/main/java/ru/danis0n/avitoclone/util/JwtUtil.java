@@ -47,7 +47,7 @@ public class JwtUtil implements Serializable {
     private String generateAccessToken(User user, Algorithm algorithm, HttpServletRequest request){
         return  JWT.create().
                 withSubject(user.getUsername()).
-                withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000)).
+                withExpiresAt(new Date(System.currentTimeMillis() + 20 * 60 * 1000)).
                 withIssuer(request.getRequestURI()).
                 withClaim("roles",user.getAuthorities().
                         stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())).
@@ -57,7 +57,7 @@ public class JwtUtil implements Serializable {
     private String generateAccessToken(AppUser user, Algorithm algorithm, HttpServletRequest request){
         return  JWT.create().
                 withSubject(user.getUsername()).
-                withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000)).
+                withExpiresAt(new Date(System.currentTimeMillis() + 20 * 60 * 1000)).
                 withIssuer(request.getRequestURI()).
                 withClaim("roles",user.getRoles().
                         stream().map(Role::getName).collect(Collectors.toList())).

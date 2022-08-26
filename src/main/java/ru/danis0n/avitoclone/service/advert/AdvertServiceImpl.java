@@ -144,7 +144,7 @@ public class AdvertServiceImpl implements AdvertService{
         List<Advert> adverts = new ArrayList<>();
 
         for (AdvertEntity advert : advertsByType){
-            adverts.add(mapperUtil.mapToAdvertForList(advert));
+            adverts.add(mapperUtil.mapToAdvert(advert));
         }
         return adverts;
     }
@@ -153,7 +153,7 @@ public class AdvertServiceImpl implements AdvertService{
     public List<Advert> getAll() {
         List<Advert> adverts = new ArrayList<>();
         for (AdvertEntity advert : advertRepository.findAll()){
-            adverts.add(mapperUtil.mapToAdvertForList(advert));
+            adverts.add(mapperUtil.mapToAdvert(advert));
         }
         return adverts;
     }
@@ -165,7 +165,7 @@ public class AdvertServiceImpl implements AdvertService{
         List<Advert> adverts = new ArrayList<>();
 
         for (AdvertEntity advert : advertsByUser){
-            adverts.add(mapperUtil.mapToAdvertForList(advert));
+            adverts.add(mapperUtil.mapToAdvert(advert));
         }
         return adverts;
     }

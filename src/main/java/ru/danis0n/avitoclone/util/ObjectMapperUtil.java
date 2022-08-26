@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import ru.danis0n.avitoclone.dto.*;
 import ru.danis0n.avitoclone.entity.*;
 import ru.danis0n.avitoclone.repository.AppUserRepository;
-import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.image.ImageService;
 
 @Component
@@ -32,7 +31,7 @@ public class ObjectMapperUtil {
         });
 
         userEntity.getAdverts().forEach(e -> {
-            user.addAdvertToAppUser(mapToAdvertForList(e));
+            user.addAdvertToAppUser(mapToAdvert(e));
             System.out.println(e.getId());
         });
         return user;
@@ -44,17 +43,23 @@ public class ObjectMapperUtil {
 
         user.setId(userEntity.getId());
         user.setUsername(userEntity.getUsername());
+        user.setLocked(userEntity.isLocked());
+        user.setEnabled(userEntity.isEnabled());
+        user.setPassword("empty");
 
+        info.setUserId(userEntity.getId());
+        info.setId(userEntity.getUserInfo().getId());
         info.setName(userEntity.getUserInfo().getName());
         info.setEmail(userEntity.getUserInfo().getEmail());
         info.setPhoneNumber(userEntity.getUserInfo().getPhoneNumber());
         info.setRating(userEntity.getUserInfo().getRating());
+        info.setDateOfCreated(userEntity.getUserInfo().getDateOfCreated());
 
         user.setInfo(info);
         return user;
     }
 
-    public AppUserEntity mapToAppUserEntity(AppUser user){
+    public AppUserEntity mapToNewAppUserEntity(AppUser user){
         AppUserEntity userEntity = new AppUserEntity();
 
         userEntity.setUsername(user.getUsername());
@@ -66,33 +71,16 @@ public class ObjectMapperUtil {
         info.setName(user.getInfo().getName());
         info.setEmail(user.getInfo().getEmail());
         info.setPhoneNumber(user.getInfo().getPhoneNumber());
+        info.setDateOfCreated(user.getInfo().getDateOfCreated());
 
         userEntity.setUserInfo(info);
         return userEntity;
     }
 
-    public Advert mapToAdvertForList(AdvertEntity advertEntity) {
-        Advert advert = new Advert();
-
-        // no user
-        advert.setId(advertEntity.getId());
-        advert.setType(new AdvertType(advertEntity.getType().getId(),advertEntity.getType().getType()));
-        advert.setLocation(advertEntity.getLocation());
-        advert.setTitle(advertEntity.getTitle());
-        advert.setPrice(advertEntity.getPrice());
-        advert.setDescription(advertEntity.getDescription());
-        advert.setDateOfCreation(advertEntity.getDateOfCreation());
-
-        for(ImageEntity image : advertEntity.getImages()){
-            advert.addImageToAdvert(imageService.mapToImage(image));
-        }
-        return advert;
-    }
-
     public Advert mapToAdvert(AdvertEntity advertEntity) {
         Advert advert = new Advert();
 
-        advert.setUser(mapToAppUser(advertEntity.getUser()));
+        advert.setUserId(advertEntity.getUser().getId());
         advert.setId(advertEntity.getId());
         advert.setType(new AdvertType(advertEntity.getType().getId(),advertEntity.getType().getType()));
         advert.setLocation(advertEntity.getLocation());
@@ -110,8 +98,8 @@ public class ObjectMapperUtil {
     public Comment mapToComment(CommentEntity commentEntity){
         Comment comment = new Comment();
 
-        comment.setOwnerUsername(commentEntity.getOwnerUser().getUsername());
-        comment.setUsername(commentEntity.getUser().getUsername());
+        comment.setCreatedBy(commentEntity.getOwnerUser().getUsername());
+        comment.setTo(commentEntity.getUser().getUsername());
         comment.setId(commentEntity.getId());
         comment.setAdvertName(commentEntity.getAdvertName());
         comment.setRating(commentEntity.getRating());
@@ -123,8 +111,8 @@ public class ObjectMapperUtil {
     public CommentEntity mapToCommentEntity(CommentRequest commentRequest){
         CommentEntity comment = new CommentEntity();
 
-        comment.setUser(appUserRepository.findByUsername(commentRequest.getUsername()));
-        comment.setOwnerUser(appUserRepository.findByUsername(commentRequest.getOwnerUsername()));
+        comment.setUser(appUserRepository.findByUsername(commentRequest.getTo()));
+        comment.setOwnerUser(appUserRepository.findByUsername(commentRequest.getCreatedBy()));
         comment.setTitle(commentRequest.getTitle());
         comment.setDescription(commentRequest.getDescription());
         comment.setAdvertName(commentRequest.getAdvertName());

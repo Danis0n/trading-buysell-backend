@@ -29,7 +29,7 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public String saveComment(CommentRequest comment, HttpServletRequest request) {
         String username = jwtUtil.getUsernameFromRequest(request);
-        if(!username.equals(comment.getOwnerUsername())){
+        if(!username.equals(comment.getCreatedBy())){
             return "You don't have enough permissions!";
         }
 

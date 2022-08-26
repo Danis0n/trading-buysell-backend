@@ -13,9 +13,9 @@ public class Comment {
 
     private Long id;
 
-    private String username;
+    private String to;
 
-    private String ownerUsername;
+    private String createdBy;
 
     private String advertName;
 

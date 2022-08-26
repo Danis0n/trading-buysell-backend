@@ -13,7 +13,7 @@ public class AppUserInfo {
 
     private Long id;
 
-    private AppUser user;
+    private Long userId;
 
     private String name;
 

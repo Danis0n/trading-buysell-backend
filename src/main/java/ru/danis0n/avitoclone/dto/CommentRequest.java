@@ -11,9 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CommentRequest {
 
-    private String username;
+    private String to;
 
-    private String ownerUsername;
+    private String createdBy;
 
     private String advertName;
 
