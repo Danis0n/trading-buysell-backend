@@ -31,7 +31,6 @@ public class ImageEntity {
     private Long size;
 
     @Lob
-    // TODO : LEARN MORE ABOUT 'TYPE'
     @Type(type = "org.hibernate.type.ImageType")
     private byte[] data;
 

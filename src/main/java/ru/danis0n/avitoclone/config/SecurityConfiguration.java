@@ -34,7 +34,7 @@ public class SecurityConfiguration {
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), new JwtUtil());
         jwtAuthenticationFilter.setFilterProcessesUrl("/api/login");
 
-        requestsConfig(http);
+        requestsConfigInit(http);
 
         http.addFilter(jwtAuthenticationFilter);
         http.addFilterBefore(new JwtAuthorizationFilter(new JwtUtil()), UsernamePasswordAuthenticationFilter.class);
@@ -51,37 +51,44 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    public void requestsConfig(HttpSecurity http) throws Exception {
+    public void requestsConfigInit(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
+
+        String superAdmin = "ROLE_SUPER_ADMIN";
+        String admin = "ROLE_ADMIN";
+        String manager = "ROLE_MANAGER";
+        String user = "ROLE_USER";
+        String roleNotConfirmed = "ROLE_NOT_CONFIRMED";
+
 
         http.authorizeRequests().
                 antMatchers("/api/login","/api/token/refresh/**","/api/register/**").permitAll();
 
         http.authorizeRequests().
-                antMatchers("/api/new/token").hasAnyAuthority("ROLE_NOT_CONFIRMED");
+                antMatchers("/api/new/token").hasAnyAuthority(roleNotConfirmed);
 
         http.authorizeRequests().
                 antMatchers(GET,"/api/advert/**").permitAll();
         http.authorizeRequests().
-                antMatchers(POST,"/api/advert/create").hasAnyAuthority("ROLE_ADMIN","ROLE_USER","ROLE_SUPER_ADMIN","ROLE_MANAGER");
+                antMatchers(POST,"/api/advert/create").hasAnyAuthority(superAdmin,admin,manager,user);
 
         http.authorizeRequests().
                 antMatchers(GET,"/api/images/**").permitAll();
 
         http.authorizeRequests().
-                antMatchers(POST,"/api/comment/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_MANAGER","ROLE_SUPER_ADMIN");
+                antMatchers(POST,"/api/comment/**").hasAnyAuthority(superAdmin,admin,manager,user);
         http.authorizeRequests().
-                antMatchers(DELETE,"/api/comment/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_MANAGER","ROLE_SUPER_ADMIN");
+                antMatchers(DELETE,"/api/comment/**").hasAnyAuthority(superAdmin,admin,manager,user);
         http.authorizeRequests().
-                antMatchers(GET,"/api/comment/**").permitAll();
+                antMatchers(GET,"/api/comment/**").hasAnyAuthority(superAdmin,admin,manager,user,roleNotConfirmed);
 
         http.authorizeRequests().
-                antMatchers(GET, "/api/users/**").hasAnyAuthority("ROLE_ADMIN","ROLE_MANAGER","ROLE_SUPER_ADMIN","ROLE_USER");
+                antMatchers(GET, "/api/users/**").hasAnyAuthority(superAdmin,admin,manager,user);
         http.authorizeRequests().
-                antMatchers(POST,"/api/users/**").hasAnyAuthority("ROLE_ADMIN","ROLE_SUPER_ADMIN");
+                antMatchers(POST,"/api/users/**").hasAnyAuthority(superAdmin,admin);
         http.authorizeRequests().
-                antMatchers(POST,"/api/role/**").hasAnyAuthority("ROLE_ADMIN","ROLE_SUPER_ADMIN");
+                antMatchers(POST,"/api/role/**").hasAnyAuthority(superAdmin,admin);
 
         http.authorizeRequests().
                 anyRequest().authenticated();
