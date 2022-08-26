@@ -6,17 +6,17 @@ Application supports simple `JWT` Authentication&Authorization and mail verifica
 
 `GET, DELETE, POST` requests are supported for `all` of users. There are also several types of user's `roles`.
 
-## Roles
+## Roles (work in progress)
 
 `Super Admin` - The super role, that allows to manage all of the rest users (include `admin` role).
 
-`Admin` - The role with same rights as `Super Admin`.
+`Admin` - The role with same rights as `Super Admin`. 
 
 `Manager` - The role, that allows to moderate other users.
 
 `User` - The most spreaded role. Issues after registration.
 
-## Registration
+## Registration (work in progress)
 
 To register a new `user`, you should pass `JSON file` or `form-data` through with POST request `/api/register` with next parametrs: 
 
