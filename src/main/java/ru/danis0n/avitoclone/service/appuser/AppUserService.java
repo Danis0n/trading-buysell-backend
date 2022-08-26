@@ -1,7 +1,8 @@
 package ru.danis0n.avitoclone.service.appuser;
 
 
-import ru.danis0n.avitoclone.dto.AppUser;
+import ru.danis0n.avitoclone.dto.RegistrationRequest;
+import ru.danis0n.avitoclone.dto.appuser.AppUser;
 import ru.danis0n.avitoclone.dto.Role;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
 
@@ -9,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface AppUserService {
-    String saveAppUser(AppUser user);
+    String saveAppUser(RegistrationRequest request);
     Role saveRole(Role role);
     AppUser getAppUser(String username);
     AppUser getAppUserById(Long id);

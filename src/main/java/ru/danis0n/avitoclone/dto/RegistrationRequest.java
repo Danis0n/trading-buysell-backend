@@ -1,12 +1,10 @@
 package ru.danis0n.avitoclone.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @ToString
+@Builder
 @AllArgsConstructor
 @EqualsAndHashCode
 public class RegistrationRequest {

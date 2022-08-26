@@ -1,15 +1,13 @@
 package ru.danis0n.avitoclone.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -30,7 +28,7 @@ public class AppUserInfoEntity {
     private String email;
 
     @Column(name = "phone_number")
-    private String phoneNumber;
+    private String phone;
 
     @Column(name = "rating")
     private Float rating;

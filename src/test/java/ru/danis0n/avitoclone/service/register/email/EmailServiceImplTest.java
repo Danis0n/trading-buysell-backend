@@ -14,14 +14,7 @@ class EmailServiceImplTest {
     }
 
     @Test
-    public String sendEmail(){
-
-        Email email = new Email();
-        email.setRecipient("sopriko.daniil@gmail.com");
-        email.setSubject("Hello");
-        email.setMsgBody("Hello there");
-
-        return emailService.sendSimpleMail(email);
+    public void sendEmail(){
     }
 
 }

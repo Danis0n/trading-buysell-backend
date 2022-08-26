@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.danis0n.avitoclone.dto.AppUser;
-import ru.danis0n.avitoclone.dto.AppUserInfo;
+import ru.danis0n.avitoclone.dto.appuser.AppUser;
+import ru.danis0n.avitoclone.dto.appuser.AppUserInfo;
 import ru.danis0n.avitoclone.dto.Email;
 import ru.danis0n.avitoclone.dto.RegistrationRequest;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
@@ -76,22 +76,22 @@ public class RegistrationServiceImpl implements RegistrationService{
             return(usernameIsNotValid);
         }
 
-        AppUser user = new AppUser();
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
+//        AppUser user = new AppUser();
+//        user.setUsername(request.getUsername());
+//        user.setPassword(request.getPassword());
+//
+//        AppUserInfo info = new AppUserInfo();
+//        info.setName(request.getName());
+//        info.setPhoneNumber(request.getPhone());
+//        info.setEmail(request.getEmail());
+//        user.setInfo(info);
 
-        AppUserInfo info = new AppUserInfo();
-        info.setName(request.getName());
-        info.setPhoneNumber(request.getPhone());
-        info.setEmail(request.getEmail());
-        user.setInfo(info);
-
-        String token = appUserService.saveAppUser(user);
+        String token = appUserService.saveAppUser(request);
 
         String link = confirmLink + token;
 
         emailService.sendSimpleMail(new Email(
-                info.getEmail(),
+                request.getEmail(),
                 link,
                 "Hey!",
                 null

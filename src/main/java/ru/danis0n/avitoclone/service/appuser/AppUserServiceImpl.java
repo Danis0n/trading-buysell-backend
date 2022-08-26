@@ -8,7 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.danis0n.avitoclone.dto.AppUser;
+import ru.danis0n.avitoclone.dto.RegistrationRequest;
+import ru.danis0n.avitoclone.dto.appuser.AppUser;
 import ru.danis0n.avitoclone.dto.Role;
 import ru.danis0n.avitoclone.entity.*;
 import ru.danis0n.avitoclone.repository.AppUserInfoRepository;
@@ -59,8 +60,8 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public String saveAppUser(AppUser user) {
-        AppUserEntity entity = mapperUtil.mapToNewAppUserEntity(user);
+    public String saveAppUser(RegistrationRequest userRequest) {
+        AppUserEntity entity = mapperUtil.mapToNewAppUserEntityFromRequest(userRequest);
         appUserRepository.save(entity);
         addRoleToAppUser(entity.getUsername(),"ROLE_NOT_CONFIRMED");
 

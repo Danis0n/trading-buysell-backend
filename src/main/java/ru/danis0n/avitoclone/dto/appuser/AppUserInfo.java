@@ -1,19 +1,19 @@
-package ru.danis0n.avitoclone.dto;
+package ru.danis0n.avitoclone.dto.appuser;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 public class AppUserInfo {
 
     private String name;
     private String email;
-    private String phoneNumber;
+    private String phone;
     private Float rating;
     private LocalDateTime dateOfCreation;
 }

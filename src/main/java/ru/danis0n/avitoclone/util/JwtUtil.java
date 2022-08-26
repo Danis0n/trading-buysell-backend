@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
-import ru.danis0n.avitoclone.dto.AppUser;
+import ru.danis0n.avitoclone.dto.appuser.AppUser;
 import ru.danis0n.avitoclone.dto.Role;
 
 import javax.servlet.http.HttpServletRequest;

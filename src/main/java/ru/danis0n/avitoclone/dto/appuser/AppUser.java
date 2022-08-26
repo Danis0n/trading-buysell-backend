@@ -1,25 +1,22 @@
-package ru.danis0n.avitoclone.dto;
+package ru.danis0n.avitoclone.dto.appuser;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import ru.danis0n.avitoclone.dto.Advert;
+import ru.danis0n.avitoclone.dto.Role;
 
-import javax.persistence.Column;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppUser {
 
     private Long id;
     private String username;
-    private String password;
     private AppUserInfo info;
     private boolean enabled;
     private boolean locked;

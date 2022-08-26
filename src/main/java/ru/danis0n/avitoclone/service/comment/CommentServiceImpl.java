@@ -41,7 +41,7 @@ public class CommentServiceImpl implements CommentService{
     }
 
     public void countRating(CommentEntity comment){
-        AppUserEntity user = comment.getUser();
+        AppUserEntity user = comment.getTo();
         float prevRating = user.getUserInfo().getRating();
 
         if(prevRating == 0.0){
@@ -49,10 +49,10 @@ public class CommentServiceImpl implements CommentService{
             return;
         }
 
-        float count = commentRepository.getByUser(user).size() + 1;
+        float count = commentRepository.getByTo(user).size() + 1;
         float rating = (prevRating * count + comment.getRating()) / (count + 1);
         user.getUserInfo().setRating(rating);
-        comment.setUser(user);
+        comment.setTo(user);
     }
 
     @Override
@@ -65,8 +65,8 @@ public class CommentServiceImpl implements CommentService{
         String username = jwtUtil.getUsernameFromRequest(request);
         AppUserEntity user = appUserService.getAppUserEntity(username);
 
-        if (commentEntity.getOwnerUser().equals(user) ||
-                commentEntity.getUser().equals(user)){
+        if (commentEntity.getCreatedBy().equals(user) ||
+                commentEntity.getTo().equals(user)){
 
             commentRepository.delete(commentEntity);
             return "Successful!";
@@ -86,7 +86,7 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public List<Comment> getCommentsByUser(String username) {
         AppUserEntity user = appUserService.getAppUserEntity(username);
-        List<CommentEntity> commentEntities = commentRepository.getByUser(user);
+        List<CommentEntity> commentEntities = commentRepository.getByTo(user);
         List<Comment> comments = new ArrayList<>();
         for(CommentEntity entity : commentEntities){
             comments.add(objectMapperUtil.mapToComment(entity));
@@ -98,7 +98,7 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public List<Comment> getCommentsByOwnerUser(String username) {
         AppUserEntity user = appUserService.getAppUserEntity(username);
-        List<CommentEntity> commentEntities = commentRepository.getByOwnerUser(user);
+        List<CommentEntity> commentEntities = commentRepository.getByCreatedBy(user);
         List<Comment> comments = new ArrayList<>();
         for(CommentEntity entity : commentEntities){
             comments.add(objectMapperUtil.mapToComment(entity));

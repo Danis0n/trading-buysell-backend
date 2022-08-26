@@ -12,6 +12,7 @@ import java.util.List;
 @Table(name = "app_users")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppUserEntity {

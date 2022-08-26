@@ -1,15 +1,13 @@
 package ru.danis0n.avitoclone.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "comments")
@@ -23,13 +21,13 @@ public class CommentEntity {
             cascade = CascadeType.REFRESH,
             fetch = FetchType.EAGER
     )
-    private AppUserEntity user;
+    private AppUserEntity to;
 
     @ManyToOne(
             cascade = CascadeType.REFRESH,
             fetch = FetchType.EAGER
     )
-    private AppUserEntity ownerUser;
+    private AppUserEntity createdBy;
 
     @Column(name = "advert_name")
     private String advertName;
