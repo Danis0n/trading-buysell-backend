@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdvertType {
-    private Long id;
-    private String type;
+
+    private String name;
 }

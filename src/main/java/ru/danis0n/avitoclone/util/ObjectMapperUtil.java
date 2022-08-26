@@ -18,7 +18,6 @@ public class ObjectMapperUtil {
 
     public Role mapToRole(RoleEntity roleEntity){
         Role role = new Role();
-        role.setId(roleEntity.getId());
         role.setName(roleEntity.getName());
         return role;
     }
@@ -47,13 +46,11 @@ public class ObjectMapperUtil {
         user.setEnabled(userEntity.isEnabled());
         user.setPassword("empty");
 
-        info.setUserId(userEntity.getId());
-        info.setId(userEntity.getUserInfo().getId());
         info.setName(userEntity.getUserInfo().getName());
         info.setEmail(userEntity.getUserInfo().getEmail());
         info.setPhoneNumber(userEntity.getUserInfo().getPhoneNumber());
         info.setRating(userEntity.getUserInfo().getRating());
-        info.setDateOfCreated(userEntity.getUserInfo().getDateOfCreated());
+        info.setDateOfCreation(userEntity.getUserInfo().getDateOfCreation());
 
         user.setInfo(info);
         return user;
@@ -71,7 +68,7 @@ public class ObjectMapperUtil {
         info.setName(user.getInfo().getName());
         info.setEmail(user.getInfo().getEmail());
         info.setPhoneNumber(user.getInfo().getPhoneNumber());
-        info.setDateOfCreated(user.getInfo().getDateOfCreated());
+        info.setDateOfCreation(user.getInfo().getDateOfCreation());
 
         userEntity.setUserInfo(info);
         return userEntity;
@@ -82,7 +79,7 @@ public class ObjectMapperUtil {
 
         advert.setUserId(advertEntity.getUser().getId());
         advert.setId(advertEntity.getId());
-        advert.setType(new AdvertType(advertEntity.getType().getId(),advertEntity.getType().getType()));
+        advert.setType(new AdvertType(advertEntity.getType().getType()));
         advert.setLocation(advertEntity.getLocation());
         advert.setTitle(advertEntity.getTitle());
         advert.setPrice(advertEntity.getPrice());

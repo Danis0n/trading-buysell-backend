@@ -174,7 +174,7 @@ public class AdvertServiceImpl implements AdvertService{
     @Override
     public void createType(AdvertType advertType) {
         AdvertTypeEntity type = new AdvertTypeEntity();
-        type.setType(advertType.getType());
+        type.setType(advertType.getName());
         advertTypeRepository.save(type);
     }
 

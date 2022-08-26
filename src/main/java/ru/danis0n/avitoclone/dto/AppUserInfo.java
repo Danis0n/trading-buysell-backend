@@ -11,17 +11,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AppUserInfo {
 
-    private Long id;
-
-    private Long userId;
-
     private String name;
-
     private String email;
-
     private String phoneNumber;
-
     private Float rating;
-
-    private LocalDateTime dateOfCreated;
+    private LocalDateTime dateOfCreation;
 }

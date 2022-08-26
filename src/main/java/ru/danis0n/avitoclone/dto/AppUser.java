@@ -18,15 +18,10 @@ import java.util.List;
 public class AppUser {
 
     private Long id;
-
     private String username;
-
     private String password;
-
     private AppUserInfo info;
-
     private boolean enabled;
-
     private boolean locked;
 
     private Collection<Role> roles = new ArrayList<>();

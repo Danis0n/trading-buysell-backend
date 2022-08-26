@@ -36,12 +36,13 @@ public class AppUserInfoEntity {
     private Float rating;
 
     @Column(name = "date_of_created")
-    private LocalDateTime dateOfCreated;
+    private LocalDateTime dateOfCreation;
 
     @PrePersist
     private void init(){
-        dateOfCreated = LocalDateTime.now();
+        dateOfCreation = LocalDateTime.now();
         rating = 0f;
     }
 
 }
+

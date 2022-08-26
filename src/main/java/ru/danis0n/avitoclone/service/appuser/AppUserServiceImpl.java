@@ -81,7 +81,6 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         RoleEntity entity = new RoleEntity();
         entity.setName(role.getName());
         roleRepository.save(entity);
-        role.setId(roleRepository.findByName(role.getName()).getId());
         return role;
     }
 
