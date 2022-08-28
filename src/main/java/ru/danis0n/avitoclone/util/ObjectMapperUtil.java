@@ -39,21 +39,21 @@ public class ObjectMapperUtil {
     }
 
     public AppUser mapToAppUser(AppUserEntity userEntity){
-        AppUserInfo info = AppUserInfo.builder().
-                name(userEntity.getUserInfo().getName()).
-                email(userEntity.getUserInfo().getEmail()).
-                phone(userEntity.getUserInfo().getPhone()).
-                rating(userEntity.getUserInfo().getRating()).
-                dateOfCreation(userEntity.getUserInfo().getDateOfCreation()).
-                build();
+        AppUserInfo info = new AppUserInfo();
+        info.setName(userEntity.getUserInfo().getName());
+        info.setEmail(userEntity.getUserInfo().getEmail());
+        info.setPhone(userEntity.getUserInfo().getPhone());
+        info.setRating(userEntity.getUserInfo().getRating());
+        info.setDateOfCreation((userEntity.getUserInfo().getDateOfCreation()));
 
-        return AppUser.builder().
-                id(userEntity.getId()).
-                username(userEntity.getUsername()).
-                locked(userEntity.isLocked()).
-                enabled(userEntity.isEnabled()).
-                info(info).
-                build();
+        AppUser user = new AppUser();
+        user.setId(userEntity.getId());
+        user.setUsername(userEntity.getUsername());
+        user.setLocked(userEntity.isLocked());
+        user.setEnabled(userEntity.isEnabled());
+        user.setInfo(info);
+        return user;
+
     }
 
     public AppUserEntity mapToNewAppUserEntityFromRequest(RegistrationRequest userRequest){
@@ -73,16 +73,16 @@ public class ObjectMapperUtil {
     }
 
     public Advert mapToAdvert(AdvertEntity advertEntity) {
-        Advert advert = Advert.builder().
-                userId(advertEntity.getUser().getId()).
-                id(advertEntity.getId()).
-                type(new AdvertType(advertEntity.getType().getType())).
-                location(advertEntity.getLocation()).
-                title(advertEntity.getTitle()).
-                price(advertEntity.getPrice()).
-                description(advertEntity.getDescription()).
-                dateOfCreation(advertEntity.getDateOfCreation()).
-                build();
+        Advert advert = new Advert();
+
+        advert.setId(advertEntity.getId());
+        advert.setUserId(advertEntity.getUser().getId());
+        advert.setType(new AdvertType(advertEntity.getType().getType()));
+        advert.setLocation(advertEntity.getLocation());
+        advert.setTitle(advertEntity.getTitle());
+        advert.setPrice(advertEntity.getPrice());
+        advert.setDescription(advertEntity.getDescription());
+        advert.setDateOfCreation(advertEntity.getDateOfCreation());
 
         for(ImageEntity image : advertEntity.getImages()){
             advert.addImageToAdvert(imageService.mapToImage(image));

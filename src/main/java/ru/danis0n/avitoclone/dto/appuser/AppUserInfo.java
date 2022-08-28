@@ -1,14 +1,14 @@
 package ru.danis0n.avitoclone.dto.appuser;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AppUserInfo {
 
     private String name;

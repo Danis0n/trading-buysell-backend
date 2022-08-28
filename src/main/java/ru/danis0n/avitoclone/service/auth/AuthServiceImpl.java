@@ -8,6 +8,7 @@ import ru.danis0n.avitoclone.dto.appuser.AppUser;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.util.JwtUtil;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -30,7 +31,11 @@ public class AuthServiceImpl implements AuthService{
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
 
-        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+//        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+
+            log.info(request.getPathInfo());
+            log.info(request.getQueryString());
+            log.info(request.getHeaderNames().toString());
 
             try {
                 String username = jwtUtil.getUsernameFromToken(authorizationHeader);
@@ -41,10 +46,13 @@ public class AuthServiceImpl implements AuthService{
                 Map<String,String> tokens = jwtUtil.generateTokenMap(user,request);
 
                 response.setContentType(APPLICATION_JSON_VALUE);
+                response.addCookie(new Cookie("refreshToken", tokens.get("refreshToken")));
+                response.setHeader("username",username);
+//                response.setHeader("username",username);
                 new ObjectMapper().writeValue(response.getOutputStream(),tokens);
 
             } catch (Exception e){
-                log.error("Error logging in {}", e.getMessage());
+                log.error("Error {}", e.getMessage());
                 response.setHeader("error",e.getMessage());
                 response.setStatus(FORBIDDEN.value());
 
@@ -53,8 +61,8 @@ public class AuthServiceImpl implements AuthService{
                 response.setContentType(APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(),error);
             }
-        } else{
-            throw new RuntimeException("Refresh token is missing");
-        }
+//        } else{
+//            throw new RuntimeException("Refresh token is missing");
+//        }
     }
 }

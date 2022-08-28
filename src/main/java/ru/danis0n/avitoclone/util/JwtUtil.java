@@ -31,16 +31,16 @@ public class JwtUtil implements Serializable {
 
     public Map<String, String> generateTokenMap(User user, Algorithm algorithm, HttpServletRequest request) {
         Map<String,String> tokens = new HashMap<>();
-        tokens.put("access_token",generateAccessToken(user,algorithm,request));
-        tokens.put("refresh_token",generateRefreshToken(user.getUsername(),algorithm,request));
+        tokens.put("accessToken",generateAccessToken(user,algorithm,request));
+        tokens.put("refreshToken",generateRefreshToken(user.getUsername(),algorithm,request));
         return tokens;
     }
 
     public Map<String, String> generateTokenMap(AppUser user, HttpServletRequest request) {
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
         Map<String,String> tokens = new HashMap<>();
-        tokens.put("access_token",generateAccessToken(user,algorithm,request));
-        tokens.put("refresh_token",generateRefreshToken(user.getUsername(),algorithm,request));
+        tokens.put("accessToken",generateAccessToken(user,algorithm,request));
+        tokens.put("refreshToken",generateRefreshToken(user.getUsername(),algorithm,request));
         return tokens;
     }
 

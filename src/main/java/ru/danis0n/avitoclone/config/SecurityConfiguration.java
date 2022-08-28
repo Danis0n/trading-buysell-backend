@@ -12,21 +12,28 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import ru.danis0n.avitoclone.config.filter.JwtAuthenticationFilter;
 import ru.danis0n.avitoclone.config.filter.JwtAuthorizationFilter;
 import ru.danis0n.avitoclone.util.JwtUtil;
 
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Slf4j
 @Configuration
+@CrossOrigin(value = "http://localhost:3000")
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-
-    // TODO : manage the requests
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -54,6 +61,8 @@ public class SecurityConfiguration {
     public void requestsConfigInit(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
+
+        http.cors();
 
         String superAdmin = "ROLE_SUPER_ADMIN";
         String admin = "ROLE_ADMIN";
@@ -90,14 +99,39 @@ public class SecurityConfiguration {
         http.authorizeRequests().
                 antMatchers(POST,"/api/role/**").hasAnyAuthority(superAdmin,admin);
 
-        http.authorizeRequests().
-                anyRequest().authenticated();
+//        http.authorizeRequests().
+//                anyRequest().authenticated();
 
-        http.authorizeRequests().
-                and().
-                formLogin().loginProcessingUrl("/api/").
-                and().
-                logout().logoutSuccessUrl("/api/");
+//        http.authorizeRequests().antMatchers()
+//        http.authorizeRequests().
+//                and().
+//                formLogin().loginProcessingUrl("/api/").
+//                and().
+//                logout().logoutSuccessUrl("/api/");
+    }
+
+    // TODO : MANAGE IT
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+//        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        config.setAllowedHeaders(Collections.singletonList("*"));
+        config.setMaxAge(1800L);
+        config.setAllowCredentials(true);
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 
 }
