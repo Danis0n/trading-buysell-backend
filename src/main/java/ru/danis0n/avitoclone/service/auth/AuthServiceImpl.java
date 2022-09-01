@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -33,36 +34,44 @@ public class AuthServiceImpl implements AuthService{
 
 //        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 
-            log.info(request.getPathInfo());
-            log.info(request.getQueryString());
-            log.info(request.getHeaderNames().toString());
+        log.info(request.getReader().lines().collect(Collectors.joining()));
 
-            try {
-                String username = jwtUtil.getUsernameFromToken(authorizationHeader);
+        try {
+            String username = jwtUtil.getUsernameFromToken(authorizationHeader);
 
-                log.info("Refresh with Username {}", username);
-                AppUser user = userService.getAppUser(username);
+            log.info("Refresh with Username {}", username);
+            AppUser user = userService.getAppUser(username);
 
-                Map<String,String> tokens = jwtUtil.generateTokenMap(user,request);
+            Map<String,String> tokens = jwtUtil.generateTokenMap(user,request);
 
-                response.setContentType(APPLICATION_JSON_VALUE);
-                response.addCookie(new Cookie("refreshToken", tokens.get("refreshToken")));
-                response.setHeader("username",username);
+            response.setContentType(APPLICATION_JSON_VALUE);
+            response.addCookie(new Cookie("refreshToken", tokens.get("refreshToken")));
+            response.setHeader("username",username);
 //                response.setHeader("username",username);
-                new ObjectMapper().writeValue(response.getOutputStream(),tokens);
+            new ObjectMapper().writeValue(response.getOutputStream(),tokens);
 
-            } catch (Exception e){
-                log.error("Error {}", e.getMessage());
-                response.setHeader("error",e.getMessage());
-                response.setStatus(FORBIDDEN.value());
+        } catch (Exception e){
+            log.error("Error {}", e.getMessage());
+            response.setHeader("error",e.getMessage());
+            response.setStatus(FORBIDDEN.value());
 
-                Map<String,String> error = new HashMap<>();
-                error.put("error_message",e.getMessage());
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(),error);
-            }
+            Map<String,String> error = new HashMap<>();
+            error.put("error_message",e.getMessage());
+            response.setContentType(APPLICATION_JSON_VALUE);
+            new ObjectMapper().writeValue(response.getOutputStream(),error);
+        }
 //        } else{
 //            throw new RuntimeException("Refresh token is missing");
 //        }
+    }
+
+    @Override
+    public void login(HttpServletRequest request, HttpServletResponse response) {
+        log.info("IT HERE");
+    }
+
+    @Override
+    public void auth(HttpServletRequest request, HttpServletResponse response) {
+
     }
 }

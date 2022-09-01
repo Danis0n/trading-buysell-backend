@@ -12,9 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import ru.danis0n.avitoclone.config.filter.JwtAuthenticationFilter;
@@ -30,7 +28,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @Slf4j
 @Configuration
-@CrossOrigin(value = "http://localhost:3000")
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
@@ -98,29 +95,9 @@ public class SecurityConfiguration {
                 antMatchers(POST,"/api/users/**").hasAnyAuthority(superAdmin,admin);
         http.authorizeRequests().
                 antMatchers(POST,"/api/role/**").hasAnyAuthority(superAdmin,admin);
-
-//        http.authorizeRequests().
-//                anyRequest().authenticated();
-
-//        http.authorizeRequests().antMatchers()
-//        http.authorizeRequests().
-//                and().
-//                formLogin().loginProcessingUrl("/api/").
-//                and().
-//                logout().logoutSuccessUrl("/api/");
     }
 
     // TODO : MANAGE IT
-//    @Bean
-//    CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-//        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
-
     @Bean
     public CorsFilter corsFilter() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

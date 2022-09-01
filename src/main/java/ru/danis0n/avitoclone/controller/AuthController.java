@@ -1,10 +1,9 @@
 package ru.danis0n.avitoclone.controller;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.danis0n.avitoclone.service.auth.AuthService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,4 +23,16 @@ public class AuthController {
         authService.refreshToken(request,response);
     }
 
+    @PostMapping("/login")
+    public void login(HttpServletRequest request, HttpServletResponse response) {
+        authService.login(request,response);
+    }
+
+    // TODO : сделать метод, который проверяет, залогинен ли юзверь. (путём проверки рефреш токена в базе)
+    @PostMapping("/auth")
+    public void auth(HttpServletRequest request, HttpServletResponse response) {
+        authService.auth(request,response);
+    }
+
 }
+

@@ -65,12 +65,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         Map<String,String> tokens = jwtUtil.generateTokenMap(user,algorithm,request);
         log.info("Tokens has been created for User {}", user.getUsername());
-
         response.setContentType(APPLICATION_JSON_VALUE);
 
         // TODO: UPGRADE THIS TO NEW CLASS OR SMTH...
         response.addCookie(new Cookie("refreshToken",tokens.get("refreshToken")));
         new ObjectMapper().writeValue(response.getOutputStream(),tokens);
-
+        // TODO : CHECK THE REQUEST BODY !!!!
     }
 }
