@@ -23,12 +23,11 @@ public class AuthController {
         authService.refreshToken(request,response);
     }
 
-    @PostMapping("/login")
-    public void login(HttpServletRequest request, HttpServletResponse response) {
-        authService.login(request,response);
+    @PostMapping("/logout")
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        authService.logout(request,response);
     }
 
-    // TODO : сделать метод, который проверяет, залогинен ли юзверь. (путём проверки рефреш токена в базе)
     @PostMapping("/auth")
     public void auth(HttpServletRequest request, HttpServletResponse response) {
         authService.auth(request,response);

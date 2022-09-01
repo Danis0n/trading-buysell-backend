@@ -30,7 +30,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
 
     @SneakyThrows
     @Override
@@ -59,17 +58,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-                                            Authentication authentication) throws IOException {
-        User user = (User) authentication.getPrincipal();
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                                            Authentication authentication){
 
-        Map<String,String> tokens = jwtUtil.generateTokenMap(user,algorithm,request);
-        log.info("Tokens has been created for User {}", user.getUsername());
-        response.setContentType(APPLICATION_JSON_VALUE);
-
-        // TODO: UPGRADE THIS TO NEW CLASS OR SMTH...
-        response.addCookie(new Cookie("refreshToken",tokens.get("refreshToken")));
-        new ObjectMapper().writeValue(response.getOutputStream(),tokens);
-        // TODO : CHECK THE REQUEST BODY !!!!
     }
 }

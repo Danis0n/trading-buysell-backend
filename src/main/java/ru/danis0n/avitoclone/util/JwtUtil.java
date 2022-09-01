@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.procedure.spi.ParameterRegistrationImplementor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -29,7 +30,12 @@ public class JwtUtil implements Serializable {
         return verifier.verify(token);
     }
 
-    public Map<String, String> generateTokenMap(User user, Algorithm algorithm, HttpServletRequest request) {
+    private Algorithm getAlgorithm(String secret){
+        return Algorithm.HMAC256(secret.getBytes());
+    }
+
+    public Map<String, String> generateTokenMap(User user, HttpServletRequest request) {
+        Algorithm algorithm = getAlgorithm("secret");
         Map<String,String> tokens = new HashMap<>();
         tokens.put("accessToken",generateAccessToken(user,algorithm,request));
         tokens.put("refreshToken",generateRefreshToken(user.getUsername(),algorithm,request));
@@ -37,7 +43,7 @@ public class JwtUtil implements Serializable {
     }
 
     public Map<String, String> generateTokenMap(AppUser user, HttpServletRequest request) {
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        Algorithm algorithm = getAlgorithm("secret");
         Map<String,String> tokens = new HashMap<>();
         tokens.put("accessToken",generateAccessToken(user,algorithm,request));
         tokens.put("refreshToken",generateRefreshToken(user.getUsername(),algorithm,request));

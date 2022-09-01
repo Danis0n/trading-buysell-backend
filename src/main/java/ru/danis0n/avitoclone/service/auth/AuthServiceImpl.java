@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.danis0n.avitoclone.dto.appuser.AppUser;
+import ru.danis0n.avitoclone.entity.AppUserEntity;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
+import ru.danis0n.avitoclone.service.refresh.RefreshTokenService;
 import ru.danis0n.avitoclone.util.JwtUtil;
 
 import javax.servlet.http.Cookie;
@@ -27,14 +29,12 @@ public class AuthServiceImpl implements AuthService{
 
     private final JwtUtil jwtUtil;
     private final AppUserService userService;
+    private final RefreshTokenService refreshTokenService;
+    private final AppUserService appUserService;
 
     @Override
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-
-//        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-
-        log.info(request.getReader().lines().collect(Collectors.joining()));
 
         try {
             String username = jwtUtil.getUsernameFromToken(authorizationHeader);
@@ -47,7 +47,6 @@ public class AuthServiceImpl implements AuthService{
             response.setContentType(APPLICATION_JSON_VALUE);
             response.addCookie(new Cookie("refreshToken", tokens.get("refreshToken")));
             response.setHeader("username",username);
-//                response.setHeader("username",username);
             new ObjectMapper().writeValue(response.getOutputStream(),tokens);
 
         } catch (Exception e){
@@ -60,18 +59,35 @@ public class AuthServiceImpl implements AuthService{
             response.setContentType(APPLICATION_JSON_VALUE);
             new ObjectMapper().writeValue(response.getOutputStream(),error);
         }
-//        } else{
-//            throw new RuntimeException("Refresh token is missing");
-//        }
     }
 
-    @Override
-    public void login(HttpServletRequest request, HttpServletResponse response) {
-        log.info("IT HERE");
-    }
-
+    // TODO : DO IT!
     @Override
     public void auth(HttpServletRequest request, HttpServletResponse response) {
 
+    }
+
+    @Override
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        try {
+            String username = jwtUtil.getUsernameFromRequest(request);
+            AppUserEntity appUser = appUserService.getAppUserEntity(username);
+            refreshTokenService.deleteToken(appUser);
+
+            response.setContentType(APPLICATION_JSON_VALUE);
+            response.setHeader("username",username);
+            new ObjectMapper().writeValue(response.getOutputStream(),"logout");
+
+        }catch (Exception e) {
+            log.error("Error {}", e.getMessage());
+            response.setHeader("error", e.getMessage());
+            response.setStatus(FORBIDDEN.value());
+
+            Map<String, String> error = new HashMap<>();
+            error.put("error_message", e.getMessage());
+            response.setContentType(APPLICATION_JSON_VALUE);
+            new ObjectMapper().writeValue(response.getOutputStream(), error);
+        }
     }
 }
