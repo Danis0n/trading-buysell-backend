@@ -115,7 +115,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     @Override
     public AppUser getAppUser(String username) {
         AppUserEntity entity = appUserRepository.findByUsername(username);
-        return mapperUtil.mapToAppUser(entity);
+        return mapperUtil.mapToAppUserWithParams(entity);
     }
 
     @Override

@@ -20,7 +20,7 @@ public class Advert {
     private String description;
     private Long userId;
     private AdvertType type;
-    private LocalDateTime dateOfCreation;
+    private String dateOfCreation;
     List<Image> images = new ArrayList<>();
 
     public void addImageToAdvert(Image image){

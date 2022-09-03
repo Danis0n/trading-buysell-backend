@@ -4,9 +4,7 @@ package ru.danis0n.avitoclone.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "app_users")
@@ -38,14 +36,14 @@ public class AppUserEntity {
     private boolean locked;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<RoleEntity> roles = new ArrayList<>();
+    private Set<RoleEntity> roles = new HashSet<>();
 
     @OneToMany(
             cascade = CascadeType.REFRESH,
             fetch = FetchType.LAZY,
             mappedBy = "user"
     )
-    private List<AdvertEntity> adverts = new ArrayList<>();
+    private Set<AdvertEntity> adverts = new HashSet<>();
 
     public void addRoleToAppUser(RoleEntity role){
         roles.add(role);

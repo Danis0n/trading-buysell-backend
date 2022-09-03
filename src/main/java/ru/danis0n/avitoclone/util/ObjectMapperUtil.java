@@ -38,13 +38,13 @@ public class ObjectMapperUtil {
         return user;
     }
 
-    public AppUser mapToAppUser(AppUserEntity userEntity){
+    private AppUser mapToAppUser(AppUserEntity userEntity){
         AppUserInfo info = new AppUserInfo();
         info.setName(userEntity.getUserInfo().getName());
         info.setEmail(userEntity.getUserInfo().getEmail());
         info.setPhone(userEntity.getUserInfo().getPhone());
         info.setRating(userEntity.getUserInfo().getRating());
-        info.setDateOfCreation((userEntity.getUserInfo().getDateOfCreation()));
+        info.setDateOfCreation((userEntity.getUserInfo().getDateOfCreation().toString()));
 
         AppUser user = new AppUser();
         user.setId(userEntity.getId());
@@ -82,7 +82,7 @@ public class ObjectMapperUtil {
         advert.setTitle(advertEntity.getTitle());
         advert.setPrice(advertEntity.getPrice());
         advert.setDescription(advertEntity.getDescription());
-        advert.setDateOfCreation(advertEntity.getDateOfCreation());
+        advert.setDateOfCreation(advertEntity.getDateOfCreation().toString());
 
         for(ImageEntity image : advertEntity.getImages()){
             advert.addImageToAdvert(imageService.mapToImage(image));

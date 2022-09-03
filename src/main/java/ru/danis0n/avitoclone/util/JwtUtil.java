@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import ru.danis0n.avitoclone.dto.appuser.AppUser;
 import ru.danis0n.avitoclone.dto.Role;
+import ru.danis0n.avitoclone.entity.AppUserEntity;
+import ru.danis0n.avitoclone.entity.RoleEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -34,7 +36,7 @@ public class JwtUtil implements Serializable {
         return Algorithm.HMAC256(secret.getBytes());
     }
 
-    public Map<String, String> generateTokenMap(User user, HttpServletRequest request) {
+    public Map<String, String> generateTokenMap(AppUserEntity user, HttpServletRequest request) {
         Algorithm algorithm = getAlgorithm("secret");
         Map<String,String> tokens = new HashMap<>();
         tokens.put("accessToken",generateAccessToken(user,algorithm,request));
@@ -42,38 +44,20 @@ public class JwtUtil implements Serializable {
         return tokens;
     }
 
-    public Map<String, String> generateTokenMap(AppUser user, HttpServletRequest request) {
-        Algorithm algorithm = getAlgorithm("secret");
-        Map<String,String> tokens = new HashMap<>();
-        tokens.put("accessToken",generateAccessToken(user,algorithm,request));
-        tokens.put("refreshToken",generateRefreshToken(user.getUsername(),algorithm,request));
-        return tokens;
-    }
-
-    private String generateAccessToken(User user, Algorithm algorithm, HttpServletRequest request){
-        return  JWT.create().
-                withSubject(user.getUsername()).
-                withExpiresAt(new Date(System.currentTimeMillis() + 20 * 60 * 1000)).
-                withIssuer(request.getRequestURI()).
-                withClaim("roles",user.getAuthorities().
-                        stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())).
-                sign(algorithm);
-    }
-
-    private String generateAccessToken(AppUser user, Algorithm algorithm, HttpServletRequest request){
+    private String generateAccessToken(AppUserEntity user, Algorithm algorithm, HttpServletRequest request){
         return  JWT.create().
                 withSubject(user.getUsername()).
                 withExpiresAt(new Date(System.currentTimeMillis() + 20 * 60 * 1000)).
                 withIssuer(request.getRequestURI()).
                 withClaim("roles",user.getRoles().
-                        stream().map(Role::getName).collect(Collectors.toList())).
+                        stream().map(RoleEntity::getName).collect(Collectors.toList())).
                 sign(algorithm);
     }
 
     private String generateRefreshToken(String username, Algorithm algorithm, HttpServletRequest request){
         return  JWT.create().
                 withSubject(username).
-                withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000)).
+                withExpiresAt(new Date(System.currentTimeMillis() + 30 * 30 * 60 * 1000)).
                 withIssuer(request.getRequestURI()).
                 sign(algorithm);
     }
@@ -99,10 +83,9 @@ public class JwtUtil implements Serializable {
         return getDecodedJwt(algorithm,token);
     }
 
-    public Collection<SimpleGrantedAuthority> getAuthorities(String[] roles, String username) {
+    public Collection<SimpleGrantedAuthority> getAuthorities(String[] roles) {
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         stream(roles).forEach( role -> {
-            log.info("{} - {}",username, role);
             authorities.add(new SimpleGrantedAuthority(role));
         });
         return authorities;

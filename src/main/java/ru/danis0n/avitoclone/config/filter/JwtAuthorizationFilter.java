@@ -37,17 +37,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 try {
 
                     String token = tokenFromRequest.substring("Bearer ".length());
-                    log.info(token);
-
-                    String[] roles = jwtUtil.getRolesFromToken(token);
                     String username = jwtUtil.getUsernameFromToken(token);
 
-                    Collection<SimpleGrantedAuthority> authorities = jwtUtil.getAuthorities(roles,username);
-                    log.info("Request '{}' from user {}", request.getServletPath(),username);
+                    Collection<SimpleGrantedAuthority> authorities = jwtUtil.getAuthorities(
+                            jwtUtil.getRolesFromToken(token));
 
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(username,null,authorities);
-                    log.info(authenticationToken.toString());
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
                     filterChain.doFilter(request,response);

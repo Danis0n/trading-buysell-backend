@@ -1,6 +1,5 @@
 package ru.danis0n.avitoclone.controller;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +27,8 @@ public class AuthController {
         authService.logout(request,response);
     }
 
-    @PostMapping("/auth")
-    public void auth(HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/auth")
+    public void auth(HttpServletRequest request, HttpServletResponse response) throws IOException {
         authService.auth(request,response);
     }
 

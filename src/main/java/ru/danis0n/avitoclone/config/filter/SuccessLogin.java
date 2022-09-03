@@ -1,18 +1,18 @@
 package ru.danis0n.avitoclone.config.filter;
 
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import ru.danis0n.avitoclone.dto.AuthResponse;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.refresh.RefreshTokenService;
 import ru.danis0n.avitoclone.util.JwtUtil;
+import ru.danis0n.avitoclone.util.ObjectMapperUtil;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +24,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 
 @Component
+@Transactional
 @Slf4j
 @RequiredArgsConstructor
 public class SuccessLogin implements ApplicationListener<AuthenticationSuccessEvent> {
@@ -31,32 +32,51 @@ public class SuccessLogin implements ApplicationListener<AuthenticationSuccessEv
     private final AppUserService appUserService;
     private final RefreshTokenService refreshTokenService;
     private final JwtUtil jwtUtil;
+    private final ObjectMapperUtil mapperUtil;
     private final HttpServletRequest request;
     private final HttpServletResponse response;
 
-    // TODO : TO REFACTOR THIS
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent evt) {
         String username = evt.getAuthentication().getName();
-
-        AppUserEntity appUser = appUserService.getAppUserEntity(username);
-
-        User user = (User) evt.getAuthentication().getPrincipal();
+        AppUserEntity user = appUserService.getAppUserEntity(username);
 
         Map<String,String> tokens = jwtUtil.generateTokenMap(user,request);
-        log.info("Tokens has been created for User {}", user.getUsername());
-        response.setContentType(APPLICATION_JSON_VALUE);
+        saveToken(
+                user,
+                tokens.get("refreshToken")
+        );
 
-        refreshTokenService.saveToken(appUser,tokens.get("refreshToken"));
+        setResponseWithParams(
+                response,
+                tokens.get("refreshToken"),
+                username
+        );
 
-//         TODO: UPGRADE THIS TO NEW CLASS OR SMTH...
-        response.addCookie(new Cookie("refreshToken",tokens.get("refreshToken")));
         try {
-            new ObjectMapper().writeValue(response.getOutputStream(),tokens);
+            new ObjectMapper().writeValue(response.getOutputStream(),
+                    new AuthResponse(
+                            tokens.get("accessToken"),
+                            tokens.get("refreshToken"),
+                            mapperUtil.mapToAppUserWithParams(user)
+                            )
+                    );
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//         TODO : CHECK THE REQUEST BODY !!!!
-
     }
+
+    private void setResponseWithParams(HttpServletResponse response, String token, String username){
+        response.setContentType(APPLICATION_JSON_VALUE);
+        response.addCookie(new Cookie("refreshToken", token));
+        response.setHeader("username", username);
+    }
+
+    private void saveToken(AppUserEntity user, String token){
+        refreshTokenService.saveToken(
+                user,
+                token
+        );
+    }
+
 }

@@ -1,18 +1,20 @@
 package ru.danis0n.avitoclone.entity;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "adverts")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AdvertEntity {
 
     @Id
@@ -43,7 +45,7 @@ public class AdvertEntity {
     private AdvertTypeEntity type;
 
     @ManyToOne(
-            cascade = CascadeType.REFRESH ,
+            cascade = CascadeType.REFRESH,
             fetch = FetchType.EAGER
     )
     private AppUserEntity user;
@@ -53,7 +55,7 @@ public class AdvertEntity {
             fetch = FetchType.LAZY,
             mappedBy = "advert"
     )
-    private List<ImageEntity> images = new ArrayList<>();
+    private Set<ImageEntity> images = new HashSet<>();
 
     public void addImageToAd(ImageEntity image){
         images.add(image);
@@ -68,21 +70,4 @@ public class AdvertEntity {
         images.clear();
     }
 
-    public AdvertEntity(){
-    }
-
-    @Override
-    public String toString() {
-        return "AdvertEntity{" +
-                "id=" + id +
-                ", title='" + title + "\n'" +
-                ", location='" + location + "\n'" +
-                ", price='" + price + "\n'" +
-                ", description='" + description + "\n'" +
-                ", dateOfCreation=" + dateOfCreation +
-                ", type=" + type +
-                ", user=" + user +
-                ", images=" + images +
-                '}';
-    }
 }

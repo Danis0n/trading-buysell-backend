@@ -1,12 +1,14 @@
 package ru.danis0n.avitoclone.service.refresh;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
 import ru.danis0n.avitoclone.entity.RefreshToken;
 import ru.danis0n.avitoclone.repository.RefreshTokenRepository;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
@@ -31,9 +33,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public boolean validateToken(AppUserEntity appUser) {
+    public boolean validateToken(AppUserEntity appUser, String token) {
         RefreshToken refreshToken = refreshTokenRepository.getByAppUser(appUser).orElse(null);
-        return refreshToken != null;
+        if(refreshToken != null){
+            return refreshToken.getToken().equals(token);
+        }
+        return false;
     }
 
 

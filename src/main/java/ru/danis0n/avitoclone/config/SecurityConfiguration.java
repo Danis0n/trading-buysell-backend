@@ -69,7 +69,7 @@ public class SecurityConfiguration {
 
 
         http.authorizeRequests().
-                antMatchers("/api/login","/api/token/refresh/**","/api/register/**").permitAll();
+                antMatchers("/api/login","/api/token/refresh/**","/api/register/**", "/api/auth").permitAll();
 
         http.authorizeRequests().
                 antMatchers("/api/new/token").hasAnyAuthority(roleNotConfirmed);
@@ -95,9 +95,11 @@ public class SecurityConfiguration {
                 antMatchers(POST,"/api/users/**").hasAnyAuthority(superAdmin,admin);
         http.authorizeRequests().
                 antMatchers(POST,"/api/role/**").hasAnyAuthority(superAdmin,admin);
+
+        http.formLogin().defaultSuccessUrl("/api/login",true);
     }
 
-    // TODO : MANAGE IT
+//     TODO : MANAGE IT
     @Bean
     public CorsFilter corsFilter() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
