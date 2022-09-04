@@ -17,6 +17,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    // TODO : ADD JSON SUPPORT FOR CREATING && UPDATE METHOD
     @PostMapping("/save")
     public ResponseEntity<String> create(@ModelAttribute CommentRequest comment, HttpServletRequest request){
         return ResponseEntity.ok().body(commentService.saveComment(comment,request));

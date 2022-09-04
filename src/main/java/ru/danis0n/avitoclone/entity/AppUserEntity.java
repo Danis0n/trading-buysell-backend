@@ -35,8 +35,10 @@ public class AppUserEntity {
     @Column(name = "locked")
     private boolean locked;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<RoleEntity> roles = new HashSet<>();
+    @ManyToMany(
+            fetch = FetchType.EAGER
+    )
+    private Collection<RoleEntity> roles = new ArrayList<>();
 
     @OneToMany(
             cascade = CascadeType.REFRESH,

@@ -16,6 +16,8 @@ public class RegistrationController {
 
     private final RegistrationService registrationService;
 
+    // TODO : ADD JSON SUPPORT FOR REGISTRATION
+
     @PostMapping("/register")
     public String register(@RequestParam("name")String name,
                            @RequestParam("username") String username,

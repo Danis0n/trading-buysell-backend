@@ -10,6 +10,9 @@ import ru.danis0n.avitoclone.entity.*;
 import ru.danis0n.avitoclone.repository.AppUserRepository;
 import ru.danis0n.avitoclone.service.image.ImageService;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 @Component
 @RequiredArgsConstructor
 public class ObjectMapperUtil {
@@ -32,28 +35,29 @@ public class ObjectMapperUtil {
         });
 
         userEntity.getAdverts().forEach(e -> {
-            user.addAdvertToAppUser(mapToAdvert(e));
-            System.out.println(e.getId());
+            user.addAdvertToAppUser(e.getId().toString());
         });
         return user;
     }
 
     private AppUser mapToAppUser(AppUserEntity userEntity){
-        AppUserInfo info = new AppUserInfo();
-        info.setName(userEntity.getUserInfo().getName());
-        info.setEmail(userEntity.getUserInfo().getEmail());
-        info.setPhone(userEntity.getUserInfo().getPhone());
-        info.setRating(userEntity.getUserInfo().getRating());
-        info.setDateOfCreation((userEntity.getUserInfo().getDateOfCreation().toString()));
+        AppUserInfo info = AppUserInfo.builder().
+                name(userEntity.getUserInfo().getName()).
+                email(userEntity.getUserInfo().getEmail()).
+                phone(userEntity.getUserInfo().getPhone()).
+                rating(userEntity.getUserInfo().getRating()).
+                dateOfCreation(userEntity.getUserInfo().getDateOfCreation().toString()).
+                build();
 
-        AppUser user = new AppUser();
-        user.setId(userEntity.getId());
-        user.setUsername(userEntity.getUsername());
-        user.setLocked(userEntity.isLocked());
-        user.setEnabled(userEntity.isEnabled());
-        user.setInfo(info);
-        return user;
-
+        return AppUser.builder().
+                id(userEntity.getId()).
+                username(userEntity.getUsername()).
+                locked(userEntity.isLocked()).
+                enabled(userEntity.isEnabled()).
+                info(info).
+                roles(new ArrayList<>()).
+                advertIds(new ArrayList<>()).
+                build();
     }
 
     public AppUserEntity mapToNewAppUserEntityFromRequest(RegistrationRequest userRequest){
@@ -69,20 +73,23 @@ public class ObjectMapperUtil {
                 enabled(false).
                 locked(false).
                 userInfo(info).
+                adverts(new HashSet<>()).
+                roles(new ArrayList<>()).
                 build();
     }
 
     public Advert mapToAdvert(AdvertEntity advertEntity) {
-        Advert advert = new Advert();
-
-        advert.setId(advertEntity.getId());
-        advert.setUserId(advertEntity.getUser().getId());
-        advert.setType(new AdvertType(advertEntity.getType().getType()));
-        advert.setLocation(advertEntity.getLocation());
-        advert.setTitle(advertEntity.getTitle());
-        advert.setPrice(advertEntity.getPrice());
-        advert.setDescription(advertEntity.getDescription());
-        advert.setDateOfCreation(advertEntity.getDateOfCreation().toString());
+        Advert advert = Advert.builder().
+                id(advertEntity.getId()).
+                userId(advertEntity.getUser().getId()).
+                type(new AdvertType(advertEntity.getType().getType())).
+                location(advertEntity.getLocation()).
+                title(advertEntity.getTitle()).
+                price(advertEntity.getPrice()).
+                description(advertEntity.getDescription()).
+                dateOfCreation(advertEntity.getDateOfCreation().toString()).
+                images(new ArrayList<>()).
+                build();
 
         for(ImageEntity image : advertEntity.getImages()){
             advert.addImageToAdvert(imageService.mapToImage(image));

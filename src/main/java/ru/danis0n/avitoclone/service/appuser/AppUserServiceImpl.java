@@ -62,8 +62,9 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     @Override
     public String saveAppUser(RegistrationRequest userRequest) {
         AppUserEntity entity = mapperUtil.mapToNewAppUserEntityFromRequest(userRequest);
+        log.info("saved new user");
         appUserRepository.save(entity);
-        addRoleToAppUser(entity.getUsername(),"ROLE_NOT_CONFIRMED");
+        addRoleToAppUser(entity,"ROLE_NOT_CONFIRMED");
 
         String token = UUID.randomUUID().toString();
 
@@ -144,12 +145,12 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         switch (bannedOrNot){
             case "BAN":{
                 lockAppUser(user.getUsername());
-                addRoleToAppUser(user.getUsername(),"ROLE_BANNED");
+                addRoleToAppUser(user,"ROLE_BANNED");
                 break;
             }
             case "UNBAN":{
                 unLockAppUser(user.getUsername());
-                addRoleToAppUser(user.getUsername(),"ROLE_USER");
+                addRoleToAppUser(user,"ROLE_USER");
                 break;
             }
             default:{
@@ -158,10 +159,12 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public void addRoleToAppUser(String username, String roleName) {
-        AppUserEntity user = appUserRepository.findByUsername(username);
+    public void addRoleToAppUser(AppUserEntity user, String roleName) {
+//        AppUserEntity user = appUserRepository.findByUsername(username);
+        log.info(user.getUsername());
         RoleEntity role = roleRepository.findByName(roleName);
-        user.getRoles().add(role);
+        log.info(role.getName());
+        user.addRoleToAppUser(role);
     }
 
     @Override

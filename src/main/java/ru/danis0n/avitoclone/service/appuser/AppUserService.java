@@ -17,7 +17,7 @@ public interface AppUserService {
     AppUserEntity getAppUserEntity(String username);
     List<AppUser> getAppUsers();
     void enableAppUser(String email);
-    void addRoleToAppUser(String username, String roleName);
+    void addRoleToAppUser(AppUserEntity user, String roleName);
     void removeRoleFromAppUser(String username,String roleName);
     boolean isExistsAppUserEntityByEmail(String email);
     boolean isExistsAppUserEntityByUsername(String username);

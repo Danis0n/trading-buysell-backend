@@ -76,16 +76,6 @@ public class RegistrationServiceImpl implements RegistrationService{
             return(usernameIsNotValid);
         }
 
-//        AppUser user = new AppUser();
-//        user.setUsername(request.getUsername());
-//        user.setPassword(request.getPassword());
-//
-//        AppUserInfo info = new AppUserInfo();
-//        info.setName(request.getName());
-//        info.setPhoneNumber(request.getPhone());
-//        info.setEmail(request.getEmail());
-//        user.setInfo(info);
-
         String token = appUserService.saveAppUser(request);
 
         String link = confirmLink + token;
@@ -123,7 +113,7 @@ public class RegistrationServiceImpl implements RegistrationService{
 
         appUserService.enableAppUser(username);
         appUserService.removeRoleFromAppUser(username,"ROLE_NOT_CONFIRMED");
-        appUserService.addRoleToAppUser(username,"ROLE_USER");
+        appUserService.addRoleToAppUser(appUserService.getAppUserEntity(username),"ROLE_USER");
 
         return tokenConfirmed;
     }
