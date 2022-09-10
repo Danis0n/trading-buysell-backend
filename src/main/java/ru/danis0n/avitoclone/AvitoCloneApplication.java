@@ -19,15 +19,6 @@ public class AvitoCloneApplication {
     CommandLineRunner fill(AdvertService advertService, AppUserService appUserService){
         return args -> {
 
-//            appUserService.saveRole(new Role("ROLE_NOT_CONFIRMED"));
-//            appUserService.saveRole(new Role(null,"ROLE_MANAGER"));
-//
-//            appUserService.addRoleToAppUser("alex","ROLE_ADMIN");
-//            appUserService.addRoleToAppUser("alex","ROLE_SUPER_ADMIN");
-//            appUserService.addRoleToAppUser("alex","ROLE_MANAGER");
-
-            appUserService.addRoleToAppUser(appUserService.getAppUserEntity("dasa"),"ROLE_NOT_CONFIRMED");
-
 
         };
     }

@@ -32,11 +32,14 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
+    private final String loginUrl = "/api/login";
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)));
-        jwtAuthenticationFilter.setFilterProcessesUrl("/api/login");
+        jwtAuthenticationFilter.setFilterProcessesUrl(loginUrl);
 
         requestsConfigInit(http);
 
