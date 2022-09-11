@@ -1,18 +1,22 @@
 package ru.danis0n.avitoclone.service.comment;
 
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.danis0n.avitoclone.dto.Comment;
 import ru.danis0n.avitoclone.dto.CommentRequest;
+import ru.danis0n.avitoclone.dto.RegistrationRequest;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
 import ru.danis0n.avitoclone.entity.CommentEntity;
 import ru.danis0n.avitoclone.repository.CommentRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
+import ru.danis0n.avitoclone.util.JsonUtil;
 import ru.danis0n.avitoclone.util.JwtUtil;
 import ru.danis0n.avitoclone.util.ObjectMapperUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +27,18 @@ public class CommentServiceImpl implements CommentService{
 
     private final ObjectMapperUtil objectMapperUtil;
     private final JwtUtil jwtUtil;
+    private final JsonUtil jsonUtil;
     private final AppUserService appUserService;
     private final CommentRepository commentRepository;
 
     @Override
-    public String saveComment(CommentRequest comment, HttpServletRequest request) {
+    public String saveComment(HttpServletRequest request, HttpServletResponse response) {
+
+        CommentRequest comment = new Gson().fromJson(
+                jsonUtil.getJson(request),
+                CommentRequest.class
+        );
+
         String username = jwtUtil.getUsernameFromRequest(request);
         if(!username.equals(comment.getCreatedBy())){
             return "You don't have enough permissions!";
@@ -38,6 +49,12 @@ public class CommentServiceImpl implements CommentService{
 
         commentRepository.save(commentEntity);
         return "Successful!";
+    }
+
+    // TODO : fill it with code
+    @Override
+    public String updateComment(Long id, HttpServletRequest request) {
+        return null;
     }
 
     public void countRating(CommentEntity comment){

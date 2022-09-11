@@ -8,6 +8,7 @@ import ru.danis0n.avitoclone.dto.CommentRequest;
 import ru.danis0n.avitoclone.service.comment.CommentService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -17,10 +18,14 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    // TODO : ADD JSON SUPPORT FOR CREATING && UPDATE METHOD
     @PostMapping("/save")
-    public ResponseEntity<String> create(@ModelAttribute CommentRequest comment, HttpServletRequest request){
-        return ResponseEntity.ok().body(commentService.saveComment(comment,request));
+    public ResponseEntity<String> create(HttpServletRequest request, HttpServletResponse response){
+        return ResponseEntity.ok().body(commentService.saveComment(request, response));
+    }
+
+    @PostMapping("/update/{id}")
+    public ResponseEntity<String> update(@PathVariable Long id, HttpServletRequest request){
+        return ResponseEntity.ok().body(commentService.updateComment(id,request));
     }
 
     @DeleteMapping("/delete/{id}")
