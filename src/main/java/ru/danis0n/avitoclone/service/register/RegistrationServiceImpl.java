@@ -1,11 +1,10 @@
 package ru.danis0n.avitoclone.service.register;
 
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.danis0n.avitoclone.dto.appuser.AppUser;
-import ru.danis0n.avitoclone.dto.appuser.AppUserInfo;
 import ru.danis0n.avitoclone.dto.Email;
 import ru.danis0n.avitoclone.dto.RegistrationRequest;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
@@ -13,9 +12,11 @@ import ru.danis0n.avitoclone.entity.ConfirmationToken;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.confirm.ConfirmationTokenService;
 import ru.danis0n.avitoclone.service.register.email.EmailService;
+import ru.danis0n.avitoclone.util.JsonUtil;
 import ru.danis0n.avitoclone.util.JwtUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -29,6 +30,7 @@ public class RegistrationServiceImpl implements RegistrationService{
     private final AppUserService appUserService;
     private final EmailService emailService;
     private final JwtUtil jwtUtil;
+    private final JsonUtil jsonUtil;
     private final ConfirmationTokenService confirmationTokenService;
 
     @Value("${spring.config.registration.confirm.link}")
@@ -52,7 +54,6 @@ public class RegistrationServiceImpl implements RegistrationService{
     @Value("${spring.config.registration.mail.token.confirmed}")
     private String tokenConfirmed;
 
-
     @Override
     public boolean isValidEmail(String email) {
         return appUserService.isExistsAppUserEntityByEmail(email);
@@ -64,24 +65,26 @@ public class RegistrationServiceImpl implements RegistrationService{
     }
 
     @Override
-    public String register(RegistrationRequest request) {
+    public String register(HttpServletRequest request, HttpServletResponse response) {
 
-        boolean isEmail = isValidEmail(request.getEmail());
-        boolean isUsername = isValidUsername(request.getUsername());
+        RegistrationRequest registrationRequest = new Gson().fromJson(
+                jsonUtil.getJson(request),
+                RegistrationRequest.class
+        );
 
-        if(isEmail){
+        if(isValidEmail(registrationRequest.getEmail())){
             return(emailIsNotValid);
         }
-        if(isUsername){
+        if(isValidUsername(registrationRequest.getUsername())){
             return(usernameIsNotValid);
         }
 
-        String token = appUserService.saveAppUser(request);
+        String token = appUserService.saveAppUser(registrationRequest);
 
         String link = confirmLink + token;
 
         emailService.sendSimpleMail(new Email(
-                request.getEmail(),
+                registrationRequest.getEmail(),
                 link,
                 "Hey!",
                 null

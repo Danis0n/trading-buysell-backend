@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.danis0n.avitoclone.util.JsonUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,10 +20,11 @@ import java.util.stream.Collectors;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final JsonUtil jsonUtil;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        String jsonBody = getJson(request);
+        String jsonBody = jsonUtil.getJson(request);
         LoginRequest loginRequest = new Gson().fromJson(jsonBody, LoginRequest.class);
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
@@ -30,15 +32,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 loginRequest.getPassword()
         );
         return authenticationManager.authenticate(token);
-    }
-
-    private String getJson(HttpServletRequest request){
-        try {
-            return request.getReader().lines().collect(
-                    Collectors.joining()).replace(" ", "");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
 

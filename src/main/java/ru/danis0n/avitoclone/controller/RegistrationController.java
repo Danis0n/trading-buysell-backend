@@ -7,6 +7,7 @@ import ru.danis0n.avitoclone.dto.RegistrationRequest;
 import ru.danis0n.avitoclone.service.register.RegistrationService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @RestController
@@ -19,15 +20,8 @@ public class RegistrationController {
     // TODO : ADD JSON SUPPORT FOR REGISTRATION
 
     @PostMapping("/register")
-    public String register(@RequestParam("name")String name,
-                           @RequestParam("username") String username,
-                           @RequestParam("password") String password,
-                           @RequestParam("phone") String phone,
-                           @RequestParam("email") String email){
-        RegistrationRequest request = new RegistrationRequest(
-                name,username,password,email,phone);
-
-        return registrationService.register(request);
+    public String register(HttpServletRequest request, HttpServletResponse response){
+        return registrationService.register(request,response);
     }
 
     @GetMapping("/register/confirm")
