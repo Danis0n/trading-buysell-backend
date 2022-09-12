@@ -98,7 +98,6 @@ public class ObjectMapperUtil {
     }
 
     public Comment mapToComment(CommentEntity commentEntity){
-
         return Comment.builder().
                 createdBy(commentEntity.getCreatedBy().getUsername()).
                 to(commentEntity.getTo().getUsername()).

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.danis0n.avitoclone.dto.Comment;
-import ru.danis0n.avitoclone.dto.CommentRequest;
 import ru.danis0n.avitoclone.service.comment.CommentService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,10 +23,10 @@ public class CommentController {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, HttpServletRequest request){
-        return ResponseEntity.ok().body(commentService.updateComment(id,request));
+    public ResponseEntity<String> update(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response){
+        return ResponseEntity.ok().body(commentService.updateComment(id,request,response));
     }
-
+    // TODO : add response
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id, HttpServletRequest request){
         return ResponseEntity.ok().body(commentService.deleteComment(id,request));
@@ -40,7 +39,7 @@ public class CommentController {
 
     @GetMapping("/get/user/own/{id}")
     public ResponseEntity<List<Comment>> getOwnerComments(@PathVariable String id){
-        return ResponseEntity.ok().body(commentService.getCommentsByOwnerUser(id));
+        return ResponseEntity.ok().body(commentService.getCommentsByCreator(id));
     }
 
 }

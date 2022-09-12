@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.danis0n.avitoclone.dto.Comment;
 import ru.danis0n.avitoclone.dto.CommentRequest;
-import ru.danis0n.avitoclone.dto.RegistrationRequest;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
 import ru.danis0n.avitoclone.entity.CommentEntity;
 import ru.danis0n.avitoclone.repository.CommentRepository;
@@ -34,48 +33,98 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public String saveComment(HttpServletRequest request, HttpServletResponse response) {
 
-        CommentRequest comment = new Gson().fromJson(
-                jsonUtil.getJson(request),
-                CommentRequest.class
-        );
+        CommentRequest comment = getCommentFromJson(request);
 
-        String username = jwtUtil.getUsernameFromRequest(request);
-        if(!username.equals(comment.getCreatedBy())){
+        if(validateUser(
+                getUsername(request), comment.getCreatedBy())) {
             return "You don't have enough permissions!";
         }
 
-        CommentEntity commentEntity = objectMapperUtil.mapToCommentEntity(comment);
+        CommentEntity commentEntity = getCommentEntityFromCommentRequest(comment);
         countRating(commentEntity);
-
-        commentRepository.save(commentEntity);
+        saveComment(commentEntity);
         return "Successful!";
     }
 
-    // TODO : optimize it
     @Override
-    public String updateComment(Long id, HttpServletRequest request) {
+    public String updateComment(Long id, HttpServletRequest request, HttpServletResponse response) {
 
-        CommentRequest comment = new Gson().fromJson(
-                jsonUtil.getJson(request),
-                CommentRequest.class
-        );
+        CommentRequest comment = getCommentFromJson(request);
 
-        String username = jwtUtil.getUsernameFromRequest(request);
-        if(!username.equals(comment.getCreatedBy())){
+        if(validateUser(
+                getUsername(request), comment.getCreatedBy())) {
             return "You don't have enough permissions!";
         }
 
-        CommentEntity commentEntity = commentRepository.findById(id).orElse(null);
+        CommentEntity commentEntity = getCommentEntityById(id);
         if(commentEntity == null){
             return "Not found";
         }
 
-        commentEntity = objectMapperUtil.mapToCommentEntity(comment);
-        commentRepository.save(commentEntity);
+        commentEntity = getCommentEntityFromCommentRequest(comment);
+        saveComment(commentEntity);
         return "Successful";
     }
 
-    public void countRating(CommentEntity comment){
+    @Override
+    public String deleteComment(Long id, HttpServletRequest request) {
+        CommentEntity commentEntity = getCommentEntityById(id);
+        if(commentEntity == null){
+            return "Null!";
+        }
+
+        String editorUser = getUsername(request);
+        String createdByUser = commentEntity.getCreatedBy().getUsername();
+        String toUser = commentEntity.getTo().getUsername();
+
+        if(!validateUser(createdByUser, editorUser) ||
+                !validateUser(toUser, editorUser)) {
+            commentRepository.delete(commentEntity);
+            return "Successful!";
+        }
+
+        return "You don't have enough permissions";
+    }
+
+    @Override
+    public Comment getById(Long id) {
+        CommentEntity commentEntity = getCommentEntityById(id);
+        if(commentEntity == null){
+            return null;
+        }
+        return getCommentFromCommentEntity(commentEntity);
+    }
+
+    @Override
+    public List<Comment> getCommentsByUser(String username) {
+        AppUserEntity user = getAppUserEntityFromString(username);
+        List<CommentEntity> commentEntities = commentRepository.getByTo(user);
+
+        List<Comment> comments = new ArrayList<>();
+        for(CommentEntity entity : commentEntities){
+            comments.add(getCommentFromCommentEntity(entity));
+        }
+        return comments;
+    }
+
+    @Override
+    public List<Comment> getCommentsByCreator(String username) {
+        AppUserEntity user = getAppUserEntityFromString(username);
+        List<CommentEntity> commentEntities = commentRepository.getByCreatedBy(user);
+
+        List<Comment> comments = new ArrayList<>();
+        for(CommentEntity entity : commentEntities){
+            comments.add(getCommentFromCommentEntity(entity));
+        }
+        return comments;
+    }
+
+    @Override
+    public List<Comment> getCommentsByUserId(Long id) {
+        return null;
+    }
+
+    private void countRating(CommentEntity comment){
         AppUserEntity user = comment.getTo();
         float prevRating = user.getUserInfo().getRating();
 
@@ -90,59 +139,38 @@ public class CommentServiceImpl implements CommentService{
         comment.setTo(user);
     }
 
-    @Override
-    public String deleteComment(Long id, HttpServletRequest request) {
-        CommentEntity commentEntity = commentRepository.findById(id).orElse(null);
-        if(commentEntity == null){
-            return "Null!";
-        }
-
-        String username = jwtUtil.getUsernameFromRequest(request);
-        AppUserEntity user = appUserService.getAppUserEntity(username);
-
-        if (commentEntity.getCreatedBy().equals(user) ||
-                commentEntity.getTo().equals(user)){
-
-            commentRepository.delete(commentEntity);
-            return "Successful!";
-        }
-        return "You don't have enough permissions";
+    private CommentRequest getCommentFromJson(HttpServletRequest request){
+        return new Gson().fromJson(
+                jsonUtil.getJson(request),
+                CommentRequest.class
+        );
     }
 
-    @Override
-    public Comment getById(Long id) {
-        CommentEntity commentEntity = commentRepository.findById(id).orElse(null);
-        if(commentEntity == null){
-            return null;
-        }
-        return objectMapperUtil.mapToComment(commentEntity);
+    private boolean validateUser(String commentCreator, String commentEditor){
+        return !commentCreator.equals(commentEditor);
     }
 
-    @Override
-    public List<Comment> getCommentsByUser(String username) {
-        AppUserEntity user = appUserService.getAppUserEntity(username);
-        List<CommentEntity> commentEntities = commentRepository.getByTo(user);
-        List<Comment> comments = new ArrayList<>();
-        for(CommentEntity entity : commentEntities){
-            comments.add(objectMapperUtil.mapToComment(entity));
-            log.info("+ Comment");
-        }
-        return comments;
+    private String getUsername(HttpServletRequest request){
+        return jwtUtil.getUsernameFromRequest(request);
     }
 
-    @Override
-    public List<Comment> getCommentsByOwnerUser(String username) {
-        AppUserEntity user = appUserService.getAppUserEntity(username);
-        List<CommentEntity> commentEntities = commentRepository.getByCreatedBy(user);
-        List<Comment> comments = new ArrayList<>();
-        for(CommentEntity entity : commentEntities){
-            comments.add(objectMapperUtil.mapToComment(entity));
-        }
-        return comments;
+    private CommentEntity getCommentEntityFromCommentRequest(CommentRequest comment){
+        return objectMapperUtil.mapToCommentEntity(comment);
     }
 
-    @Override
-    public List<Comment> getCommentsByUserId(Long id) {
-        return null;
+    private Comment getCommentFromCommentEntity(CommentEntity comment){
+        return objectMapperUtil.mapToComment(comment);
+    }
+
+    private AppUserEntity getAppUserEntityFromString(String username){
+        return appUserService.getAppUserEntity(username);
+    }
+
+    private CommentEntity getCommentEntityById(Long id){
+        return commentRepository.findById(id).orElse(null);
+    }
+
+    private void saveComment(CommentEntity comment){
+        commentRepository.save(comment);
     }
 }
