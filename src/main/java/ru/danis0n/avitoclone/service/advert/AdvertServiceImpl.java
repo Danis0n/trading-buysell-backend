@@ -37,6 +37,8 @@ public class AdvertServiceImpl implements AdvertService{
     private final AdvertRepository advertRepository;
     private final AdvertTypeRepository advertTypeRepository;
 
+    // TODO : REFACTOR IT !
+
     @Override
     public String create(HttpServletRequest request,
                          String title, String location,
@@ -177,6 +179,8 @@ public class AdvertServiceImpl implements AdvertService{
         type.setType(advertType.getName());
         advertTypeRepository.save(type);
     }
+
+    // TODO : FIX THIS!
 
     @Override
     public void addTypeToAdvert(String type, Long id) {

@@ -33,6 +33,8 @@ public class AuthServiceImpl implements AuthService{
     private final RefreshTokenService refreshTokenService;
     private final AppUserService appUserService;
 
+    // TODO : REFACTOR IT !
+
     @Override
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);

@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.http.HttpRequest;
 
 public interface RegistrationService {
-    boolean isValidEmail(String email);
-    boolean isValidUsername(String username);
     String register(HttpServletRequest request, HttpServletResponse response);
     String confirmToken(String token);
     String updateToken(HttpServletRequest request);

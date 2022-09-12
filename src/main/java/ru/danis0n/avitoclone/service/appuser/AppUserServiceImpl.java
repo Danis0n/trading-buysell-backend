@@ -39,6 +39,8 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     private final JwtUtil jwtUtil;
     private final ConfirmationTokenService confirmationTokenService;
 
+    // TODO : REFACTOR IT !
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AppUserEntity user = appUserRepository.findByUsername(username);
@@ -160,16 +162,12 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     @Override
     public void addRoleToAppUser(AppUserEntity user, String roleName) {
-//        AppUserEntity user = appUserRepository.findByUsername(username);
-        log.info(user.getUsername());
         RoleEntity role = roleRepository.findByName(roleName);
-        log.info(role.getName());
         user.addRoleToAppUser(role);
     }
 
     @Override
-    public void removeRoleFromAppUser(String username, String roleName) {
-        AppUserEntity user = appUserRepository.findByUsername(username);
+    public void removeRoleFromAppUser(AppUserEntity user, String roleName) {
         RoleEntity role = roleRepository.findByName(roleName);
         user.getRoles().remove(role);
     }
