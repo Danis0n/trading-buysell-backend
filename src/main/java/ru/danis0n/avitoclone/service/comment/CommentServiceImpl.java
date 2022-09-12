@@ -51,10 +51,28 @@ public class CommentServiceImpl implements CommentService{
         return "Successful!";
     }
 
-    // TODO : fill it with code
+    // TODO : optimize it
     @Override
     public String updateComment(Long id, HttpServletRequest request) {
-        return null;
+
+        CommentRequest comment = new Gson().fromJson(
+                jsonUtil.getJson(request),
+                CommentRequest.class
+        );
+
+        String username = jwtUtil.getUsernameFromRequest(request);
+        if(!username.equals(comment.getCreatedBy())){
+            return "You don't have enough permissions!";
+        }
+
+        CommentEntity commentEntity = commentRepository.findById(id).orElse(null);
+        if(commentEntity == null){
+            return "Not found";
+        }
+
+        commentEntity = objectMapperUtil.mapToCommentEntity(comment);
+        commentRepository.save(commentEntity);
+        return "Successful";
     }
 
     public void countRating(CommentEntity comment){
