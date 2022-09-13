@@ -64,6 +64,11 @@ public class JwtUtil implements Serializable {
 
     public String getUsernameFromRequest(HttpServletRequest request){
         String tokenFromRequest = request.getHeader(AUTHORIZATION);
+
+        if(!tokenFromRequest.startsWith("Bearer ")){
+            return null;
+        }
+
         String token = tokenFromRequest.substring("Bearer ".length());
         return getUsernameFromToken(token);
     }

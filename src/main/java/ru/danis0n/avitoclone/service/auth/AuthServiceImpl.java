@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -33,17 +32,14 @@ public class AuthServiceImpl implements AuthService{
     private final RefreshTokenService refreshTokenService;
     private final AppUserService appUserService;
 
-    // TODO : REFACTOR IT !
-
     @Override
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
 
         try {
-            String username = jwtUtil.getUsernameFromToken(authorizationHeader);
-            AppUserEntity user = appUserService.getAppUserEntity(username);
+            String username = getUsernameFromRequest(request);
+            AppUserEntity user = getAppUserEntity(username);
 
-            Map<String,String> tokens = jwtUtil.generateTokenMap(
+            Map<String,String> tokens = generateTokenMap(
                     user,
                     request
             );
@@ -56,7 +52,7 @@ public class AuthServiceImpl implements AuthService{
                     new AuthResponse(
                             tokens.get("accessToken"),
                             tokens.get("refreshToken"),
-                            mapperUtil.mapToAppUserWithParams(user)
+                            mapToAppUserWithParams(user)
                     )
             );
 
@@ -70,19 +66,22 @@ public class AuthServiceImpl implements AuthService{
 
         try {
             Map<String,String> cookieMap = getCookieMapFromRequest(request.getCookies());
-
             String refreshToken = cookieMap.get("refreshToken");
-            String username =  jwtUtil.getUsernameFromToken(refreshToken);
+            String username =  getUsernameFromToken(refreshToken);
 
-            AppUserEntity appUser = appUserService.getAppUserEntity(username);
+            AppUserEntity appUser = getAppUserEntity(username);
 
-            if(!refreshTokenService.validateToken(appUser,refreshToken)){
+            if(!validateToken(appUser,refreshToken)){
                 // TODO : ...
                 return;
             }
 
-            Map<String,String> tokens = jwtUtil.generateTokenMap(appUser,request);
-            refreshTokenService.saveToken(appUser,tokens.get("refreshToken"));
+            Map<String,String> tokens = generateTokenMap(
+                    appUser,
+                    request
+            );
+
+            saveToken(appUser,tokens.get("refreshToken"));
 
             setResponseWithParams(response,tokens.get("refreshToken"),username);
 
@@ -91,7 +90,7 @@ public class AuthServiceImpl implements AuthService{
                     new AuthResponse(
                             tokens.get("accessToken"),
                             tokens.get("refreshToken"),
-                            mapperUtil.mapToAppUserWithParams(appUser)
+                            mapToAppUserWithParams(appUser)
                     )
             );
 
@@ -102,11 +101,10 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response) {
+
         try {
-            String username = jwtUtil.getUsernameFromRequest(request);
-            refreshTokenService.deleteToken(
-                    appUserService.getAppUserEntity(username)
-            );
+            String username = getUsernameFromRequest(request);
+            deleteToken(getAppUserEntity(username));
             setResponseDefault(response,username);
 
             try {
@@ -118,6 +116,10 @@ public class AuthServiceImpl implements AuthService{
         }catch (Exception e) {
             manageException(e,response);
         }
+    }
+
+    private void deleteToken(AppUserEntity user){
+        refreshTokenService.deleteToken(user);
     }
 
     private void saveToken(AppUserEntity user, String token){
@@ -156,6 +158,30 @@ public class AuthServiceImpl implements AuthService{
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    private String getUsernameFromRequest(HttpServletRequest request){
+        return jwtUtil.getUsernameFromRequest(request);
+    }
+
+    private String getUsernameFromToken(String refreshToken){
+        return jwtUtil.getUsernameFromToken(refreshToken);
+    }
+
+    private Map<String,String> generateTokenMap(AppUserEntity user, HttpServletRequest request){
+        return jwtUtil.generateTokenMap(user,request);
+    }
+
+    private AppUser mapToAppUserWithParams(AppUserEntity user){
+        return mapperUtil.mapToAppUserWithParams(user);
+    }
+
+    private AppUserEntity getAppUserEntity(String username){
+        return appUserService.getAppUserEntity(username);
+    }
+
+    private boolean validateToken(AppUserEntity user, String refreshToken){
+        return refreshTokenService.validateToken(user,refreshToken);
     }
 
 }
