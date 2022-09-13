@@ -17,6 +17,7 @@ import ru.danis0n.avitoclone.entity.RoleEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,7 @@ public class JwtUtil implements Serializable {
     private String generateAccessToken(AppUserEntity user, Algorithm algorithm, HttpServletRequest request){
         return  JWT.create().
                 withSubject(user.getUsername()).
-                withExpiresAt(new Date(System.currentTimeMillis() + 20 * 60 * 1000)).
+                withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000)).
                 withIssuer(request.getRequestURI()).
                 withClaim("roles",user.getRoles().
                         stream().map(RoleEntity::getName).collect(Collectors.toList())).
@@ -64,11 +65,8 @@ public class JwtUtil implements Serializable {
 
     public String getUsernameFromRequest(HttpServletRequest request){
         String tokenFromRequest = request.getHeader(AUTHORIZATION);
-
-        if(!tokenFromRequest.startsWith("Bearer ")){
+        if(!tokenFromRequest.startsWith("Bearer "))
             return null;
-        }
-
         String token = tokenFromRequest.substring("Bearer ".length());
         return getUsernameFromToken(token);
     }
@@ -86,6 +84,16 @@ public class JwtUtil implements Serializable {
     public DecodedJWT getDecodedJwt(String secret,String token){
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         return getDecodedJwt(algorithm,token);
+    }
+    // TODO : check it
+    public Boolean validateTime(String token){
+        DecodedJWT decodedJWT = getDecodedJwt("secret",token);
+
+        log.info(String.valueOf(decodedJWT.getExpiresAt().getTime()));
+        log.info(String.valueOf(new Date(System.currentTimeMillis()).getTime()));
+
+        return decodedJWT.getExpiresAt().getTime()
+                >= new Date(System.currentTimeMillis()).getTime();
     }
 
     public Collection<SimpleGrantedAuthority> getAuthorities(String[] roles) {

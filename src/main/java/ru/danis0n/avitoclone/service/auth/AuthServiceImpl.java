@@ -32,6 +32,9 @@ public class AuthServiceImpl implements AuthService{
     private final RefreshTokenService refreshTokenService;
     private final AppUserService appUserService;
 
+    // TODO : get cookie from request in refreshToken(..){}
+
+    // deprecated : remove
     @Override
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
 
@@ -61,6 +64,7 @@ public class AuthServiceImpl implements AuthService{
         }
     }
 
+    // TODO : implement if-s
     @Override
     public void auth(HttpServletRequest request, HttpServletResponse response){
 
@@ -72,7 +76,12 @@ public class AuthServiceImpl implements AuthService{
             AppUserEntity appUser = getAppUserEntity(username);
 
             if(!validateToken(appUser,refreshToken)){
-                // TODO : ...
+                // TODO : incorrect_token
+                return;
+            }
+
+            if(!validateTime(refreshToken)){
+                // TODO : out_of_date_token
                 return;
             }
 
@@ -96,6 +105,10 @@ public class AuthServiceImpl implements AuthService{
         }catch (Exception e){
             manageException(e,response);
         }
+    }
+
+    private boolean validateTime(String token){
+        return jwtUtil.validateTime(token);
     }
 
     @Override
