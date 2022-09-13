@@ -82,7 +82,6 @@ public class AuthServiceImpl implements AuthService{
             );
 
             saveToken(appUser,tokens.get("refreshToken"));
-
             setResponseWithParams(response,tokens.get("refreshToken"),username);
 
             new ObjectMapper().writeValue(
