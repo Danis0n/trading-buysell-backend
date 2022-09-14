@@ -39,11 +39,9 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     private final JwtUtil jwtUtil;
     private final ConfirmationTokenService confirmationTokenService;
 
-    // TODO : REFACTOR IT !
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AppUserEntity user = appUserRepository.findByUsername(username);
+        AppUserEntity user = findByUsername(username);
         if(user == null){
             log.error("User not found in the database");
             throw new UsernameNotFoundException("User not found in the database");
@@ -63,9 +61,8 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     @Override
     public String saveAppUser(RegistrationRequest userRequest) {
-        AppUserEntity entity = mapperUtil.mapToNewAppUserEntityFromRequest(userRequest);
-        log.info("saved new user");
-        appUserRepository.save(entity);
+        AppUserEntity entity = mapToNewAppUserEntityFromRequest(userRequest);
+        saveUser(entity);
         addRoleToAppUser(entity,"ROLE_NOT_CONFIRMED");
 
         String token = UUID.randomUUID().toString();
@@ -76,7 +73,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
                 LocalDateTime.now().plusDays(1),
                 entity
         );
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        saveConfirmationToken(confirmationToken);
         return token;
     }
 
@@ -90,14 +87,14 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     @Override
     public String banAppUserById(String id, HttpServletRequest request) {
-        AppUserEntity user = appUserRepository.findByUsername(id);
+        AppUserEntity user = findByUsername(id);
         if(user == null){
             return "null";
         }
 
-        String username = jwtUtil.getUsernameFromRequest(request);
+        String username = getUsernameFromRequest(request);
 
-        if(user.equals(appUserRepository.findByUsername(username))){
+        if(user.equals(findByUsername(username))){
             return "You can't ban yourself";
         }
 
@@ -107,7 +104,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     @Override
     public String unBanAppUserById(String id) {
-        AppUserEntity user = appUserRepository.findByUsername(id);
+        AppUserEntity user = findByUsername(id);
         if(user == null){
             return "null";
         }
@@ -117,21 +114,21 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     @Override
     public AppUser getAppUser(String username) {
-        AppUserEntity entity = appUserRepository.findByUsername(username);
-        return mapperUtil.mapToAppUserWithParams(entity);
+        AppUserEntity entity = findByUsername(username);
+        return mapToAppUserWithParams(entity);
     }
 
     @Override
     public AppUserEntity getAppUserEntity(String username) {
-        return appUserRepository.findByUsername(username);
+        return findByUsername(username);
     }
 
     @Override
     public List<AppUser> getAppUsers() {
-        List<AppUserEntity> entities = appUserRepository.findAll();
+        List<AppUserEntity> entities = findAllUsers();
         List<AppUser> users = new ArrayList<>();
         entities.forEach(e -> {
-            users.add(mapperUtil.mapToAppUserWithParams(e));
+            users.add(mapToAppUserWithParams(e));
         });
 
         return users;
@@ -139,36 +136,18 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     @Override
     public AppUser getAppUserById(Long id) {
-        return mapperUtil.mapToAppUserWithParams(appUserRepository.findById(id).get());
-    }
-
-    private void manageBanned(AppUserEntity user, String bannedOrNot){
-        user.getRoles().clear();
-        switch (bannedOrNot){
-            case "BAN":{
-                lockAppUser(user.getUsername());
-                addRoleToAppUser(user,"ROLE_BANNED");
-                break;
-            }
-            case "UNBAN":{
-                unLockAppUser(user.getUsername());
-                addRoleToAppUser(user,"ROLE_USER");
-                break;
-            }
-            default:{
-            }
-        }
+        return mapToAppUserWithParams(appUserRepository.findById(id).get());
     }
 
     @Override
     public void addRoleToAppUser(AppUserEntity user, String roleName) {
-        RoleEntity role = roleRepository.findByName(roleName);
+        RoleEntity role = findByName(roleName);
         user.addRoleToAppUser(role);
     }
 
     @Override
     public void removeRoleFromAppUser(AppUserEntity user, String roleName) {
-        RoleEntity role = roleRepository.findByName(roleName);
+        RoleEntity role = findByName(roleName);
         user.getRoles().remove(role);
     }
 
@@ -195,5 +174,55 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     @Override
     public boolean isExistsAppUserEntityByUsername(String username) {
         return appUserRepository.existsAppUserEntityByUsername(username);
+    }
+
+    private AppUserEntity findByUsername(String username){
+        return appUserRepository.findByUsername(username);
+    }
+
+    private void manageBanned(AppUserEntity user, String bannedOrNot){
+        user.getRoles().clear();
+        switch (bannedOrNot){
+            case "BAN":{
+                lockAppUser(user.getUsername());
+                addRoleToAppUser(user,"ROLE_BANNED");
+                break;
+            }
+            case "UNBAN":{
+                unLockAppUser(user.getUsername());
+                addRoleToAppUser(user,"ROLE_USER");
+                break;
+            }
+            default:{
+            }
+        }
+    }
+
+    private AppUserEntity mapToNewAppUserEntityFromRequest(RegistrationRequest request){
+        return mapperUtil.mapToNewAppUserEntityFromRequest(request);
+    }
+
+    private void saveUser(AppUserEntity user){
+        appUserRepository.save(user);
+    }
+
+    private void saveConfirmationToken(ConfirmationToken token){
+        confirmationTokenService.saveConfirmationToken(token);
+    }
+
+    private String getUsernameFromRequest(HttpServletRequest request){
+        return jwtUtil.getUsernameFromRequest(request);
+    }
+
+    private AppUser mapToAppUserWithParams(AppUserEntity user){
+        return mapperUtil.mapToAppUserWithParams(user);
+    }
+
+    private List<AppUserEntity> findAllUsers(){
+        return appUserRepository.findAll();
+    }
+
+    private RoleEntity findByName(String role){
+        return roleRepository.findByName(role);
     }
 }

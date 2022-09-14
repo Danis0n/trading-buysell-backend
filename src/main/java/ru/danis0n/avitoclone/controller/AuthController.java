@@ -17,11 +17,6 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @GetMapping("/token/refresh")
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        authService.refreshToken(request,response);
-    }
-
     @PostMapping("/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         authService.logout(request,response);

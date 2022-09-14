@@ -32,38 +32,6 @@ public class AuthServiceImpl implements AuthService{
     private final RefreshTokenService refreshTokenService;
     private final AppUserService appUserService;
 
-    // TODO : get cookie from request in refreshToken(..){}
-
-    // deprecated : remove
-    @Override
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
-
-        try {
-            String username = getUsernameFromRequest(request);
-            AppUserEntity user = getAppUserEntity(username);
-
-            Map<String,String> tokens = generateTokenMap(
-                    user,
-                    request
-            );
-
-            saveToken(user,tokens.get("refreshToken"));
-            setResponseWithParams(response,tokens.get("refreshToken"),username);
-
-            new ObjectMapper().writeValue(
-                    response.getOutputStream(),
-                    new AuthResponse(
-                            tokens.get("accessToken"),
-                            tokens.get("refreshToken"),
-                            mapToAppUserWithParams(user)
-                    )
-            );
-
-        } catch (Exception e){
-            manageException(e,response);
-        }
-    }
-
     // TODO : implement if-s
     @Override
     public void auth(HttpServletRequest request, HttpServletResponse response){
@@ -107,10 +75,6 @@ public class AuthServiceImpl implements AuthService{
         }
     }
 
-    private boolean validateTime(String token){
-        return jwtUtil.validateTime(token);
-    }
-
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response) {
 
@@ -128,6 +92,10 @@ public class AuthServiceImpl implements AuthService{
         }catch (Exception e) {
             manageException(e,response);
         }
+    }
+
+    private boolean validateTime(String token){
+        return jwtUtil.validateTime(token);
     }
 
     private void deleteToken(AppUserEntity user){
