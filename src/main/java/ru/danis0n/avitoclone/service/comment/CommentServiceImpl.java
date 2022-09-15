@@ -30,6 +30,8 @@ public class CommentServiceImpl implements CommentService{
     private final AppUserService appUserService;
     private final CommentRepository commentRepository;
 
+    // TODO : refactor this
+
     @Override
     public String saveComment(HttpServletRequest request, HttpServletResponse response) {
 

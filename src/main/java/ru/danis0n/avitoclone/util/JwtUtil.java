@@ -88,10 +88,6 @@ public class JwtUtil implements Serializable {
     // TODO : check it
     public Boolean validateTime(String token){
         DecodedJWT decodedJWT = getDecodedJwt("secret",token);
-
-        log.info(String.valueOf(decodedJWT.getExpiresAt().getTime()));
-        log.info(String.valueOf(new Date(System.currentTimeMillis()).getTime()));
-
         return decodedJWT.getExpiresAt().getTime()
                 >= new Date(System.currentTimeMillis()).getTime();
     }

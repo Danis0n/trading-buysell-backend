@@ -49,20 +49,20 @@ public class AdvertServiceImpl implements AdvertService{
         if(tokenFromRequest != null && tokenFromRequest.startsWith("Bearer ")){
             try{
                 String token = tokenFromRequest.substring("Bearer ".length());
-                String username = jwtUtil.getUsernameFromToken(token);
+                String username = getUsernameFromToken(token);
+
                 log.info("New advert was created by {}",username);
 
                 AdvertEntity advert = new AdvertEntity();
-                advert.setUser(appUserService.getAppUserEntity(username));
+                advert.setUser(getAppUserEntity(username));
                 buildAdvert(advert,title,location,description,price,files,type);
-                advertRepository.save(advert);
+                saveAdvert(advert);
 
                 return "Successful";
             }catch (Exception e){
                 return "Exception while creating";
             }
         }
-
         return "Error!";
     }
 
@@ -72,63 +72,38 @@ public class AdvertServiceImpl implements AdvertService{
                          String description, String price,
                          MultipartFile[] files, String type) {
 
-        String username = jwtUtil.getUsernameFromRequest(request);
-        AdvertEntity advert = advertRepository.findById(id).orElse(null);
+        String username = getUsernameFromRequest(request);
+        AdvertEntity advert = findById(id);
 
         if(advert == null){
             return "null";
         }
 
-        if (!advert.getUser().equals(appUserService.getAppUserEntity(username))){
+        if (!advert.getUser().equals(getAppUserEntity(username))){
             return "You don't have permission for it";
         }
 
         buildAdvert(advert,title,location,description,price,files,type);
-        advertRepository.save(advert);
+        saveAdvert(advert);
         return "Successful";
     }
 
     @Override
     public String deleteById(HttpServletRequest request,Long id) {
 
-        String username = jwtUtil.getUsernameFromRequest(request);
-        AdvertEntity advert = advertRepository.findById(id).orElse(null);
+        String username = getUsernameFromRequest(request);
+        AdvertEntity advert = findById(id);
 
         if(advert == null){
             return "null";
         }
 
-        if (!advert.getUser().equals(appUserService.getAppUserEntity(username))){
+        if (!advert.getUser().equals(getAppUserEntity(username))){
             return "You don't have permission for it";
         }
 
         advertRepository.delete(advert);
         return "Successful";
-    }
-
-    private void buildAdvert(AdvertEntity advert,
-                             String title, String location,
-                             String description, String price,
-                             MultipartFile[] files, String type){
-        advert.setTitle(title);
-        advert.setLocation(location);
-        advert.setDescription(description);
-        advert.setPrice(price);
-        advert.setType(advertTypeRepository.findByType(type));
-
-        imageService.clearImageListByAd(advert);
-        advert.clearList();
-        buildImagesForAdvert(advert,files);
-    }
-
-    private void buildImagesForAdvert(AdvertEntity advert, MultipartFile[] files) {
-        for(MultipartFile file : files){
-            try{
-                advert.addImageToAd(imageService.saveFile(file,advert));
-            }catch (IOException e){
-                System.out.println("Exception here: AD-SERVICE= " + e);
-            }
-        }
     }
 
     @Override
@@ -192,4 +167,50 @@ public class AdvertServiceImpl implements AdvertService{
     @Override
     public void removeTypeFromAdvert(String type, Long id) {
     }
+
+    private void buildAdvert(AdvertEntity advert,
+                             String title, String location,
+                             String description, String price,
+                             MultipartFile[] files, String type){
+        advert.setTitle(title);
+        advert.setLocation(location);
+        advert.setDescription(description);
+        advert.setPrice(price);
+        advert.setType(advertTypeRepository.findByType(type));
+
+        imageService.clearImageListByAd(advert);
+        advert.clearList();
+        buildImagesForAdvert(advert,files);
+    }
+
+    private void buildImagesForAdvert(AdvertEntity advert, MultipartFile[] files) {
+        for(MultipartFile file : files){
+            try{
+                advert.addImageToAd(imageService.saveFile(file,advert));
+            }catch (IOException e){
+                System.out.println("Exception here: AD-SERVICE= " + e);
+            }
+        }
+    }
+
+    private String getUsernameFromToken(String token){
+        return jwtUtil.getUsernameFromToken(token);
+    }
+
+    private AppUserEntity getAppUserEntity(String username){
+        return appUserService.getAppUserEntity(username);
+    }
+
+    private void saveAdvert(AdvertEntity advert){
+        advertRepository.save(advert);
+    }
+
+    private String getUsernameFromRequest(HttpServletRequest request){
+        return jwtUtil.getUsernameFromRequest(request);
+    }
+
+    private AdvertEntity findById(Long id){
+        return advertRepository.findById(id).orElse(null);
+    }
+
 }

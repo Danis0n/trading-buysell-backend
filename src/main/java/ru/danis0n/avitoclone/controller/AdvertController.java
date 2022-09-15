@@ -19,7 +19,7 @@ public class AdvertController {
     private final AdvertService advertService;
 
     // TODO : refactor to json data format
-
+    
     @PostMapping("/create")
     public String create(HttpServletRequest request,
                          @RequestParam("title") String title,

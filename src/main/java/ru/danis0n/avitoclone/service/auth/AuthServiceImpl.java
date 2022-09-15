@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
@@ -43,13 +43,17 @@ public class AuthServiceImpl implements AuthService{
 
             AppUserEntity appUser = getAppUserEntity(username);
 
+            // TODO : fix it
+
             if(!validateToken(appUser,refreshToken)){
                 // TODO : incorrect_token
+                manageOutOfDate(response);
                 return;
             }
 
             if(!validateTime(refreshToken)){
                 // TODO : out_of_date_token
+                manageOutOfDate(response);
                 return;
             }
 
@@ -128,10 +132,21 @@ public class AuthServiceImpl implements AuthService{
     private void manageException(Exception e,HttpServletResponse response){
         log.error("Error {}", e.getMessage());
         response.setHeader("error", e.getMessage());
-        response.setStatus(FORBIDDEN.value());
+        response.setStatus(UNAUTHORIZED.value());
 
         Map<String,String> error = new HashMap<>();
         error.put("error_message", e.getMessage());
+        response.setContentType(APPLICATION_JSON_VALUE);
+        try {
+            new ObjectMapper().writeValue(response.getOutputStream(),error);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void manageOutOfDate(HttpServletResponse response){
+        response.setStatus(UNAUTHORIZED.value());
+        Map<String,String> error = new HashMap<>();
         response.setContentType(APPLICATION_JSON_VALUE);
         try {
             new ObjectMapper().writeValue(response.getOutputStream(),error);
