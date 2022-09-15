@@ -73,7 +73,7 @@ public class AdvertServiceImpl implements AdvertService{
                          MultipartFile[] files, String type) {
 
         String username = getUsernameFromRequest(request);
-        AdvertEntity advert = findById(id);
+        AdvertEntity advert = findAdvertById(id);
 
         if(advert == null){
             return "null";
@@ -92,7 +92,7 @@ public class AdvertServiceImpl implements AdvertService{
     public String deleteById(HttpServletRequest request,Long id) {
 
         String username = getUsernameFromRequest(request);
-        AdvertEntity advert = findById(id);
+        AdvertEntity advert = findAdvertById(id);
 
         if(advert == null){
             return "null";
@@ -102,65 +102,74 @@ public class AdvertServiceImpl implements AdvertService{
             return "You don't have permission for it";
         }
 
-        advertRepository.delete(advert);
+        deleteAdvertById(advert);
         return "Successful";
     }
 
     @Override
     public Advert getById(Long id) {
-        AdvertEntity advert = advertRepository.findById(id).get();
-        System.out.println("advert = " + advert);
-        return mapperUtil.mapToAdvert(advert);
+        AdvertEntity advert = findAdvertById(id);
+        return mapToAdvert(advert);
     }
 
     @Override
     public List<Advert> getAllByType(String type) {
-        AdvertTypeEntity typeEntity = advertTypeRepository.findByType(type);
-        List<AdvertEntity> advertsByType = advertRepository.findAllByType(typeEntity);
+        AdvertTypeEntity typeEntity = findByType(type);
+        List<AdvertEntity> advertsByType = findAllAdvertEntitiesByType(typeEntity);
 
         List<Advert> adverts = new ArrayList<>();
 
         for (AdvertEntity advert : advertsByType){
-            adverts.add(mapperUtil.mapToAdvert(advert));
+            adverts.add(mapToAdvert(advert));
         }
         return adverts;
+    }
+
+    private List<AdvertEntity> findAllAdvertEntitiesByType(AdvertTypeEntity type){
+        return advertRepository.findAllByType(type);
+    }
+
+    private void deleteAdvertById(AdvertEntity advert){
+        advertRepository.delete(advert);
     }
 
     @Override
     public List<Advert> getAll() {
         List<Advert> adverts = new ArrayList<>();
-        for (AdvertEntity advert : advertRepository.findAll()){
-            adverts.add(mapperUtil.mapToAdvert(advert));
+        for (AdvertEntity advert : findAllAdvertEntities()){
+            adverts.add(mapToAdvert(advert));
         }
         return adverts;
     }
 
     @Override
     public List<Advert> getAllByUser(String username) {
-        AppUserEntity user = appUserService.getAppUserEntity(username);
-        List<AdvertEntity> advertsByUser = advertRepository.findAllByUser(user);
+        AppUserEntity user = getAppUserEntity(username);
+        List<AdvertEntity> advertsByUser = findAllAdvertEntitiesByUser(user);
         List<Advert> adverts = new ArrayList<>();
 
         for (AdvertEntity advert : advertsByUser){
-            adverts.add(mapperUtil.mapToAdvert(advert));
+            adverts.add(mapToAdvert(advert));
         }
         return adverts;
     }
-
 
     @Override
     public void createType(AdvertType advertType) {
         AdvertTypeEntity type = new AdvertTypeEntity();
         type.setType(advertType.getName());
-        advertTypeRepository.save(type);
+        saveType(type);
     }
 
     // TODO : FIX THIS!
 
     @Override
     public void addTypeToAdvert(String type, Long id) {
-        AdvertTypeEntity advertType = advertTypeRepository.findByType(type);
-        AdvertEntity advert = advertRepository.findById(id).get();
+        AdvertTypeEntity advertType = findByType(type);
+        AdvertEntity advert = findAdvertById(id);
+        if(advert == null){
+            return;
+        }
         advert.setType(advertType);
     }
 
@@ -176,7 +185,7 @@ public class AdvertServiceImpl implements AdvertService{
         advert.setLocation(location);
         advert.setDescription(description);
         advert.setPrice(price);
-        advert.setType(advertTypeRepository.findByType(type));
+        advert.setType(findByType(type));
 
         imageService.clearImageListByAd(advert);
         advert.clearList();
@@ -209,8 +218,28 @@ public class AdvertServiceImpl implements AdvertService{
         return jwtUtil.getUsernameFromRequest(request);
     }
 
-    private AdvertEntity findById(Long id){
+    private AdvertEntity findAdvertById(Long id){
         return advertRepository.findById(id).orElse(null);
+    }
+
+    private Advert mapToAdvert(AdvertEntity advert){
+        return mapperUtil.mapToAdvert(advert);
+    }
+
+    private void saveType(AdvertTypeEntity type){
+        advertTypeRepository.save(type);
+    }
+
+    private AdvertTypeEntity findByType(String type){
+        return advertTypeRepository.findByType(type);
+    }
+
+    private List<AdvertEntity> findAllAdvertEntities(){
+        return advertRepository.findAll();
+    }
+
+    private List<AdvertEntity> findAllAdvertEntitiesByUser(AppUserEntity user){
+        return advertRepository.findAllByUser(user);
     }
 
 }
