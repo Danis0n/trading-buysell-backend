@@ -22,12 +22,12 @@ public class AppUserController {
 
     private final AppUserService userService;
 
-    @GetMapping("/users")
+    @GetMapping("/users/get/all")
     public ResponseEntity<List<AppUser>> getUsers(){
         return ResponseEntity.ok().body(userService.getAppUsers());
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/users/get/{id}")
     public ResponseEntity<AppUser> getUser(@PathVariable Long id){
         return ResponseEntity.ok().body(userService.getAppUserById(id));
     }

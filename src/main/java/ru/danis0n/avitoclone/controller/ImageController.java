@@ -22,8 +22,6 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    // TODO : ADD JSON SUPPORT FOR UPLOADING
-
     @PostMapping("/upload")
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
         try {

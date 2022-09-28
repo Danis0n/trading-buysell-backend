@@ -28,6 +28,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Component
 public class JwtUtil implements Serializable {
 
+    // TODO : FIX token live-time
+
     public DecodedJWT getDecodedJwt(Algorithm algorithm, String token){
         JWTVerifier verifier = JWT.require(algorithm).build();
         return verifier.verify(token);
@@ -48,7 +50,7 @@ public class JwtUtil implements Serializable {
     private String generateAccessToken(AppUserEntity user, Algorithm algorithm, HttpServletRequest request){
         return  JWT.create().
                 withSubject(user.getUsername()).
-                withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000)).
+                withExpiresAt(new Date(System.currentTimeMillis() + 20 * 30 * 60 * 1000)).
                 withIssuer(request.getRequestURI()).
                 withClaim("roles",user.getRoles().
                         stream().map(RoleEntity::getName).collect(Collectors.toList())).

@@ -59,6 +59,7 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
+    // TODO : FIX all requests
     public void requestsConfigInit(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
@@ -91,12 +92,12 @@ public class SecurityConfiguration {
         http.authorizeRequests().
                 antMatchers(DELETE,"/api/comment/**").hasAnyAuthority(superAdmin,admin,manager,user);
         http.authorizeRequests().
-                antMatchers(GET,"/api/comment/**").hasAnyAuthority(superAdmin,admin,manager,user,roleNotConfirmed);
+                antMatchers(GET,"/api/comment/**").permitAll();
 
         http.authorizeRequests().
-                antMatchers(GET, "/api/users/**").hasAnyAuthority(superAdmin,admin,manager,user);
+                antMatchers(GET, "/api/users/**").permitAll();
         http.authorizeRequests().
-                antMatchers(POST,"/api/users/**").hasAnyAuthority(superAdmin,admin);
+                antMatchers(POST,"/api/users/**").hasAnyAuthority(superAdmin,admin,user);
         http.authorizeRequests().
                 antMatchers(POST,"/api/role/**").hasAnyAuthority(superAdmin,admin);
 

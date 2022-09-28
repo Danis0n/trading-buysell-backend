@@ -2,12 +2,15 @@ package ru.danis0n.avitoclone.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.danis0n.avitoclone.dto.Advert;
 import ru.danis0n.avitoclone.service.advert.AdvertService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -20,13 +23,17 @@ public class AdvertController {
 
     // TODO : refactor to json data format
     
-    @PostMapping("/create")
+    @PostMapping(
+            value = "/create",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public String create(HttpServletRequest request,
                          @RequestParam("title") String title,
                          @RequestParam("location") String location,
                          @RequestParam("description") String description,
                          @RequestParam("price") String price,
-                         @RequestParam("files")MultipartFile[] files,
+                         @RequestParam("files") MultipartFile[] files,
                          @RequestParam("type") String type){
         return advertService.create(request,title,location,description,price,files,type);
     }

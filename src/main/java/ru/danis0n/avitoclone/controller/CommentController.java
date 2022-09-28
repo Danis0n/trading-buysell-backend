@@ -16,7 +16,7 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
-
+    // TODO : FIX COMMENTS IDS
     @PostMapping("/save")
     public ResponseEntity<String> create(HttpServletRequest request, HttpServletResponse response){
         return ResponseEntity.ok().body(commentService.saveComment(request, response));
@@ -33,10 +33,10 @@ public class CommentController {
     }
 
     @GetMapping("/get/user/{id}")
-    public ResponseEntity<List<Comment>> getComments(@PathVariable String id){
+    public ResponseEntity<List<Comment>> getComments(@PathVariable Long id){
         return ResponseEntity.ok().body(commentService.getCommentsByUser(id));
     }
-
+    // TODO : FIX {ID}
     @GetMapping("/get/user/own/{id}")
     public ResponseEntity<List<Comment>> getOwnerComments(@PathVariable String id){
         return ResponseEntity.ok().body(commentService.getCommentsByCreator(id));

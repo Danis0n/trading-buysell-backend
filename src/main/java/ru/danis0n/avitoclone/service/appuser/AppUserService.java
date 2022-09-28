@@ -14,7 +14,8 @@ public interface AppUserService {
     Role saveRole(Role role);
     AppUser getAppUser(String username);
     AppUser getAppUserById(Long id);
-    AppUserEntity getAppUserEntity(String username);
+    AppUserEntity getAppUserEntityByUsername(String username);
+    AppUserEntity getAppUserEntityById(Long id);
     List<AppUser> getAppUsers();
     void enableAppUser(String username);
     void addRoleToAppUser(AppUserEntity user, String roleName);

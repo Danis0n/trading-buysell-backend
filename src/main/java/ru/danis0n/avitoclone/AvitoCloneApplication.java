@@ -3,9 +3,6 @@ package ru.danis0n.avitoclone;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import ru.danis0n.avitoclone.dto.AdvertType;
-import ru.danis0n.avitoclone.dto.Role;
 import ru.danis0n.avitoclone.service.advert.AdvertService;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 
@@ -26,9 +23,9 @@ public class AvitoCloneApplication {
             String user = "ROLE_USER";
             String roleNotConfirmed = "ROLE_NOT_CONFIRMED";
 
-            appUserService.addRoleToAppUser(appUserService.getAppUserEntity("alex"),superAdmin);
-            appUserService.addRoleToAppUser(appUserService.getAppUserEntity("alex"),admin);
-            appUserService.addRoleToAppUser(appUserService.getAppUserEntity("alex"),manager);
+            appUserService.addRoleToAppUser(appUserService.getAppUserEntityByUsername("alex"),superAdmin);
+            appUserService.addRoleToAppUser(appUserService.getAppUserEntityByUsername("alex"),admin);
+            appUserService.addRoleToAppUser(appUserService.getAppUserEntityByUsername("alex"),manager);
         };
     }
 

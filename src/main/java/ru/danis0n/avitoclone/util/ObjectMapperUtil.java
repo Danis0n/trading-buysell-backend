@@ -99,8 +99,8 @@ public class ObjectMapperUtil {
 
     public Comment mapToComment(CommentEntity commentEntity){
         return Comment.builder().
-                createdBy(commentEntity.getCreatedBy().getUsername()).
-                to(commentEntity.getTo().getUsername()).
+                createdBy(commentEntity.getCreatedBy().getId().toString()).
+                to(commentEntity.getTo().getId().toString()).
                 id(commentEntity.getId()).
                 advertName(commentEntity.getAdvertName()).
                 title(commentEntity.getTitle()).
@@ -111,8 +111,8 @@ public class ObjectMapperUtil {
 
     public CommentEntity mapToCommentEntity(CommentRequest commentRequest){
         return CommentEntity.builder().
-                to(appUserRepository.findByUsername(commentRequest.getTo())).
-                createdBy(appUserRepository.findByUsername(commentRequest.getCreatedBy())).
+                to(appUserRepository.findById(Long.valueOf(commentRequest.getTo())).orElse(null)).
+                createdBy(appUserRepository.findById(Long.valueOf(commentRequest.getCreatedBy())).orElse(null)).
                 title(commentRequest.getTitle()).
                 description(commentRequest.getDescription()).
                 advertName(commentRequest.getAdvertName()).

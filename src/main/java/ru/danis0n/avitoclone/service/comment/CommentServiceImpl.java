@@ -36,9 +36,10 @@ public class CommentServiceImpl implements CommentService{
     public String saveComment(HttpServletRequest request, HttpServletResponse response) {
 
         CommentRequest comment = getCommentFromJson(request);
+        AppUserEntity user = getAppUserEntityFromString(getUsername(request));
 
-        if(validateUser(
-                getUsername(request), comment.getCreatedBy())) {
+        if(!validateUser(
+                user.getId().toString(), comment.getCreatedBy())) {
             return "You don't have enough permissions!";
         }
 
@@ -52,8 +53,9 @@ public class CommentServiceImpl implements CommentService{
     public String updateComment(Long id, HttpServletRequest request, HttpServletResponse response) {
 
         CommentRequest comment = getCommentFromJson(request);
+        AppUserEntity user = getAppUserEntityFromString(getUsername(request));
 
-        if(validateUser(
+        if(!validateUser(
                 getUsername(request), comment.getCreatedBy())) {
             return "You don't have enough permissions!";
         }
@@ -70,17 +72,23 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public String deleteComment(Long id, HttpServletRequest request) {
+
         CommentEntity commentEntity = getCommentEntityById(id);
         if(commentEntity == null){
             return "Null!";
         }
 
+        AppUserEntity editor = appUserService.getAppUserEntityByUsername(getUsername(request));
+        AppUserEntity creator = appUserService.getAppUserEntityById(commentEntity.getCreatedBy().getId());
+        AppUserEntity to = appUserService.getAppUserEntityById(commentEntity.getTo().getId());
+
+
         String editorUser = getUsername(request);
         String createdByUser = commentEntity.getCreatedBy().getUsername();
         String toUser = commentEntity.getTo().getUsername();
 
-        if(!validateUser(createdByUser, editorUser) ||
-                !validateUser(toUser, editorUser)) {
+        if(validateUser(creator.getUsername(), editor.getUsername()) ||
+                validateUser(to.getUsername(), editor.getUsername())) {
             commentRepository.delete(commentEntity);
             return "Successful!";
         }
@@ -98,8 +106,8 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public List<Comment> getCommentsByUser(String username) {
-        AppUserEntity user = getAppUserEntityFromString(username);
+    public List<Comment> getCommentsByUser(Long id) {
+        AppUserEntity user = appUserService.getAppUserEntityById(id);
         List<CommentEntity> commentEntities = commentRepository.getByTo(user);
 
         List<Comment> comments = new ArrayList<>();
@@ -149,7 +157,7 @@ public class CommentServiceImpl implements CommentService{
     }
 
     private boolean validateUser(String commentCreator, String commentEditor){
-        return !commentCreator.equals(commentEditor);
+        return commentCreator.equals(commentEditor);
     }
 
     private String getUsername(HttpServletRequest request){
@@ -165,7 +173,7 @@ public class CommentServiceImpl implements CommentService{
     }
 
     private AppUserEntity getAppUserEntityFromString(String username){
-        return appUserService.getAppUserEntity(username);
+        return appUserService.getAppUserEntityByUsername(username);
     }
 
     private CommentEntity getCommentEntityById(Long id){

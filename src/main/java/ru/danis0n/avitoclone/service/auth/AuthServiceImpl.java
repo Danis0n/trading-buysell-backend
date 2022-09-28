@@ -147,6 +147,7 @@ public class AuthServiceImpl implements AuthService{
     private void manageOutOfDate(HttpServletResponse response){
         response.setStatus(UNAUTHORIZED.value());
         Map<String,String> error = new HashMap<>();
+        error.put("value", "out of date");
         response.setContentType(APPLICATION_JSON_VALUE);
         try {
             new ObjectMapper().writeValue(response.getOutputStream(),error);
@@ -172,7 +173,7 @@ public class AuthServiceImpl implements AuthService{
     }
 
     private AppUserEntity getAppUserEntity(String username){
-        return appUserService.getAppUserEntity(username);
+        return appUserService.getAppUserEntityByUsername(username);
     }
 
     private boolean validateToken(AppUserEntity user, String refreshToken){

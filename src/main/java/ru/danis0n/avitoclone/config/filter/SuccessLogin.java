@@ -39,7 +39,7 @@ public class SuccessLogin implements ApplicationListener<AuthenticationSuccessEv
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent evt) {
         String username = evt.getAuthentication().getName();
-        AppUserEntity user = appUserService.getAppUserEntity(username);
+        AppUserEntity user = appUserService.getAppUserEntityByUsername(username);
 
         Map<String,String> tokens = jwtUtil.generateTokenMap(user,request);
         saveToken(

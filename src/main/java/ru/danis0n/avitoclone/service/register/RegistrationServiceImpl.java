@@ -158,7 +158,7 @@ public class RegistrationServiceImpl implements RegistrationService{
     }
 
     private AppUserEntity getAppUserByUsername(String username){
-        return appUserService.getAppUserEntity(username);
+        return appUserService.getAppUserEntityByUsername(username);
     }
 
     private String saveAppUserWithToken(RegistrationRequest request){
