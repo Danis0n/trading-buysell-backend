@@ -3,7 +3,7 @@ package ru.danis0n.avitoclone.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.danis0n.avitoclone.dto.Comment;
+import ru.danis0n.avitoclone.dto.comment.Comment;
 import ru.danis0n.avitoclone.service.comment.CommentService;
 
 import javax.servlet.http.HttpServletRequest;

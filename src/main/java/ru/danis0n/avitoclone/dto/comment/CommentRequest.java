@@ -1,4 +1,4 @@
-package ru.danis0n.avitoclone.dto;
+package ru.danis0n.avitoclone.dto.comment;
 
 import lombok.*;
 
@@ -7,13 +7,13 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Comment {
+public class CommentRequest {
 
-    private Long id;
     private String to;
     private String createdBy;
     private String advertName;
     private String title;
     private String description;
     private float rating;
+
 }

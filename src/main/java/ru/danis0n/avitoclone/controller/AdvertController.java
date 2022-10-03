@@ -5,12 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.danis0n.avitoclone.dto.Advert;
+import ru.danis0n.avitoclone.dto.advert.Advert;
 import ru.danis0n.avitoclone.service.advert.AdvertService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j

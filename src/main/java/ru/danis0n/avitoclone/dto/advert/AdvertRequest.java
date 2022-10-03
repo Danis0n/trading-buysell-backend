@@ -1,4 +1,4 @@
-package ru.danis0n.avitoclone.dto;
+package ru.danis0n.avitoclone.dto.advert;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

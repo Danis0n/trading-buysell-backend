@@ -2,8 +2,6 @@ package ru.danis0n.avitoclone.dto.appuser;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @Builder

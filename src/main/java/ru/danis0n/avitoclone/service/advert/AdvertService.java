@@ -1,9 +1,8 @@
 package ru.danis0n.avitoclone.service.advert;
 
 import org.springframework.web.multipart.MultipartFile;
-import ru.danis0n.avitoclone.dto.Advert;
-import ru.danis0n.avitoclone.dto.AdvertType;
-import ru.danis0n.avitoclone.entity.AdvertEntity;
+import ru.danis0n.avitoclone.dto.advert.Advert;
+import ru.danis0n.avitoclone.dto.advert.AdvertType;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

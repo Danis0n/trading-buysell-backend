@@ -1,8 +1,8 @@
-package ru.danis0n.avitoclone.dto;
+package ru.danis0n.avitoclone.dto.advert;
 
 import lombok.*;
+import ru.danis0n.avitoclone.dto.Image;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

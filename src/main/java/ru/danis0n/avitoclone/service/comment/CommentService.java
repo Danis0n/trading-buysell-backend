@@ -1,6 +1,6 @@
 package ru.danis0n.avitoclone.service.comment;
 
-import ru.danis0n.avitoclone.dto.Comment;
+import ru.danis0n.avitoclone.dto.comment.Comment;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
