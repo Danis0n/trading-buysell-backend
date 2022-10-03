@@ -139,7 +139,6 @@ public class AdvertServiceImpl implements AdvertService{
         for (AdvertEntity advert : findAllAdvertEntities()){
             adverts.add(mapToAdvert(advert));
         }
-        log.info("get list");
         return adverts;
     }
 

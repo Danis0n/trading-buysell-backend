@@ -82,11 +82,6 @@ public class CommentServiceImpl implements CommentService{
         AppUserEntity creator = appUserService.getAppUserEntityById(commentEntity.getCreatedBy().getId());
         AppUserEntity to = appUserService.getAppUserEntityById(commentEntity.getTo().getId());
 
-
-        String editorUser = getUsername(request);
-        String createdByUser = commentEntity.getCreatedBy().getUsername();
-        String toUser = commentEntity.getTo().getUsername();
-
         if(validateUser(creator.getUsername(), editor.getUsername()) ||
                 validateUser(to.getUsername(), editor.getUsername())) {
             commentRepository.delete(commentEntity);

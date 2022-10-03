@@ -45,7 +45,7 @@ public class ObjectMapperUtil {
                 name(userEntity.getUserInfo().getName()).
                 email(userEntity.getUserInfo().getEmail()).
                 phone(userEntity.getUserInfo().getPhone()).
-                rating(userEntity.getUserInfo().getRating()).
+                rating(userEntity.getUserInfo().getRating().toString().substring(0,3)).
                 dateOfCreation(userEntity.getUserInfo().getDateOfCreation().toString()).
                 build();
 

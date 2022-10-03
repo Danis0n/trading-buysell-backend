@@ -14,6 +14,6 @@ public class AppUserInfo {
     private String name;
     private String email;
     private String phone;
-    private Float rating;
+    private String rating;
     private String dateOfCreation;
 }
