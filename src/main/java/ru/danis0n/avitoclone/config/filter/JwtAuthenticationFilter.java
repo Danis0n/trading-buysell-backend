@@ -25,7 +25,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String jsonBody = jsonUtil.getJson(request);
-        LoginRequest loginRequest = new Gson().fromJson(jsonBody, LoginRequest.class);
+        LoginRequest loginRequest = jsonUtil.getGson()
+                .fromJson(jsonBody, LoginRequest.class);
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                 loginRequest.getUsername(),

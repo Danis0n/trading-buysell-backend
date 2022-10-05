@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.danis0n.avitoclone.dto.advert.Advert;
+import ru.danis0n.avitoclone.dto.advert.AdvertSearchRequest;
 import ru.danis0n.avitoclone.dto.advert.AdvertType;
 import ru.danis0n.avitoclone.entity.AdvertEntity;
 import ru.danis0n.avitoclone.entity.AdvertTypeEntity;
@@ -14,6 +15,7 @@ import ru.danis0n.avitoclone.repository.AdvertRepository;
 import ru.danis0n.avitoclone.repository.AdvertTypeRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.image.ImageService;
+import ru.danis0n.avitoclone.util.JsonUtil;
 import ru.danis0n.avitoclone.util.JwtUtil;
 import ru.danis0n.avitoclone.util.ObjectMapperUtil;
 
@@ -33,6 +35,7 @@ public class AdvertServiceImpl implements AdvertService{
     private final AppUserService appUserService;
     private final ImageService imageService;
     private final JwtUtil jwtUtil;
+    private final JsonUtil jsonUtil;
     private final ObjectMapperUtil mapperUtil;
     private final AdvertRepository advertRepository;
     private final AdvertTypeRepository advertTypeRepository;
@@ -125,14 +128,6 @@ public class AdvertServiceImpl implements AdvertService{
         return adverts;
     }
 
-    private List<AdvertEntity> findAllAdvertEntitiesByType(AdvertTypeEntity type){
-        return advertRepository.findAllByType(type);
-    }
-
-    private void deleteAdvertById(AdvertEntity advert){
-        advertRepository.delete(advert);
-    }
-
     @Override
     public List<Advert> getAll() {
         List<Advert> adverts = new ArrayList<>();
@@ -155,13 +150,24 @@ public class AdvertServiceImpl implements AdvertService{
     }
 
     @Override
+    public List<Advert> getByParams(HttpServletRequest request) {
+        AdvertSearchRequest searchRequest = getSearchRequest(request);
+        log.info(searchRequest.toString());
+        return null;
+    }
+
+    private AdvertSearchRequest getSearchRequest(HttpServletRequest request){
+        String jsonBody = jsonUtil.getJson(request);
+        return jsonUtil.getGson()
+                .fromJson(jsonBody, AdvertSearchRequest.class);
+    }
+
+    @Override
     public void createType(AdvertType advertType) {
         AdvertTypeEntity type = new AdvertTypeEntity();
         type.setType(advertType.getName());
         saveType(type);
     }
-
-    // TODO : FIX THIS!
 
     @Override
     public void addTypeToAdvert(String type, Long id) {
@@ -176,6 +182,15 @@ public class AdvertServiceImpl implements AdvertService{
     @Override
     public void removeTypeFromAdvert(String type, Long id) {
     }
+
+    private List<AdvertEntity> findAllAdvertEntitiesByType(AdvertTypeEntity type){
+        return advertRepository.findAllByType(type);
+    }
+
+    private void deleteAdvertById(AdvertEntity advert){
+        advertRepository.delete(advert);
+    }
+
 
     private void buildAdvert(AdvertEntity advert,
                              String title, String location,

@@ -1,5 +1,6 @@
 package ru.danis0n.avitoclone.config;
 
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -38,8 +39,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), new JsonUtil());
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), new JsonUtil(new Gson()));
         jwtAuthenticationFilter.setFilterProcessesUrl(loginUrl);
 
         requestsConfigInit(http);

@@ -19,7 +19,7 @@ public class AdvertController {
 
     private final AdvertService advertService;
 
-    // TODO : refactor to json data format
+    // TODO : refactor to ResponseEntity
     
     @PostMapping(
             value = "/create",
@@ -61,6 +61,11 @@ public class AdvertController {
     @GetMapping("/get/type/{id}")
     public List<Advert> getAllByType(@PathVariable String id){
         return advertService.getAllByType(id);
+    }
+
+    @GetMapping("/get/params")
+    public List<Advert> getAllByParams(HttpServletRequest request){
+        return advertService.getByParams(request);
     }
 
     @GetMapping("/get/{id}")

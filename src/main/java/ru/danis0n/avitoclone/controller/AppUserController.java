@@ -23,39 +23,33 @@ public class AppUserController {
     private final AppUserService userService;
 
     @GetMapping("/users/get/all")
-    public ResponseEntity<List<AppUser>> getUsers(){
+    public ResponseEntity<List<AppUser>> getUsers() {
         return ResponseEntity.ok().body(userService.getAppUsers());
     }
 
     @GetMapping("/users/get/{id}")
-    public ResponseEntity<AppUser> getUser(@PathVariable Long id){
+    public ResponseEntity<AppUser> getUser(@PathVariable Long id) {
         return ResponseEntity.ok().body(userService.getAppUserById(id));
     }
 
     @PostMapping("/users/ban/{id}")
-    public ResponseEntity<String> banUser(@PathVariable String id, HttpServletRequest request){
-        return ResponseEntity.ok().body(userService.banAppUserById(id,request));
+    public ResponseEntity<String> banUser(@PathVariable String id, HttpServletRequest request) {
+        return ResponseEntity.ok().body(userService.banAppUserById(id, request));
     }
 
     @PostMapping("/users/unban/{id}")
-    public ResponseEntity<String> unBanUser(@PathVariable String id){
+    public ResponseEntity<String> unBanUser(@PathVariable String id) {
         return ResponseEntity.ok().body(userService.unBanAppUserById(id));
     }
 
     @PostMapping("/role/save")
-    public ResponseEntity<Role> saveRole(@RequestBody Role role){
+    public ResponseEntity<Role> saveRole(@RequestBody Role role) {
         URI uri = URI.create(
                 ServletUriComponentsBuilder.fromCurrentContextPath()
                         .path("/api/user/save").toUriString());
 
         return ResponseEntity.created(uri).body(userService.saveRole(role));
     }
-
-//    @PostMapping("/role/add/user")
-//    public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form){
-//        userService.addRoleToAppUser(form.getRoleName(), form.getRoleName());
-//        return ResponseEntity.ok().build();
-//    }
 }
 
 @Data

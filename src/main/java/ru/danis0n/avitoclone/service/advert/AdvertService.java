@@ -14,6 +14,7 @@ public interface AdvertService {
     Advert getById(Long id);
     List<Advert> getAllByType(String type);
     List<Advert> getAllByUser(String username);
+    List<Advert> getByParams(HttpServletRequest request);
     List<Advert> getAll();
     void createType(AdvertType auto);
     void addTypeToAdvert(String type, Long id);
