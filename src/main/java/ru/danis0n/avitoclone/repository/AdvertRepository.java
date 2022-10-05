@@ -2,8 +2,8 @@ package ru.danis0n.avitoclone.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.danis0n.avitoclone.entity.AdvertEntity;
-import ru.danis0n.avitoclone.entity.AdvertTypeEntity;
+import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
+import ru.danis0n.avitoclone.entity.advert.AdvertTypeEntity;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
 
 import java.util.List;

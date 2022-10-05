@@ -2,6 +2,7 @@ package ru.danis0n.avitoclone.entity;
 
 
 import lombok.*;
+import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 
 import javax.persistence.*;
 import java.util.*;

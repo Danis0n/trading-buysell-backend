@@ -7,7 +7,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.danis0n.avitoclone.dto.Image;
-import ru.danis0n.avitoclone.entity.AdvertEntity;
+import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.ImageEntity;
 import ru.danis0n.avitoclone.repository.ImageRepository;
 

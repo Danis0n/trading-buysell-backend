@@ -1,12 +1,12 @@
-package ru.danis0n.avitoclone.entity;
+package ru.danis0n.avitoclone.entity.advert;
 
 import lombok.*;
+import ru.danis0n.avitoclone.entity.AppUserEntity;
+import ru.danis0n.avitoclone.entity.ImageEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
