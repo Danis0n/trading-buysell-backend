@@ -152,9 +152,41 @@ public class AdvertServiceImpl implements AdvertService{
     @Override
     public List<Advert> getByParams(HttpServletRequest request) {
         AdvertSearchRequest searchRequest = getSearchRequest(request);
-        log.info(searchRequest.toString());
+
+        if (isNone(searchRequest)) {
+            if(searchRequest.getMinPrice().equals("50") &&
+               searchRequest.getMaxPrice().equals("1000000")){
+                return getAll();
+            }
+            else{
+                return mapperUtil.getAllMapToAdvert(
+                        getByPrice(searchRequest.getMinPrice(),searchRequest.getMaxPrice())
+                );
+            }
+        }
+
+
+        if(!searchRequest.getType().equals("none")) {
+
+        }
+
         return null;
     }
+
+    private boolean isNone(AdvertSearchRequest searchRequest){
+        return searchRequest.getTitle().equals("none")       &&
+                searchRequest.getType().equals("none")        &&
+                searchRequest.getLocation().equals("none");
+    }
+
+    private List<AdvertEntity> getByPrice(String less, String greater){
+        return advertRepository.findAllByPriceSmart(less,greater);
+    }
+
+    private List<AdvertEntity> getByTitleContains(String title){
+        return advertRepository.findByTitleSmart(title);
+    }
+
 
     private AdvertSearchRequest getSearchRequest(HttpServletRequest request){
         String jsonBody = jsonUtil.getJson(request);

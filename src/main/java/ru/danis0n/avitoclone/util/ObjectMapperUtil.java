@@ -17,6 +17,7 @@ import ru.danis0n.avitoclone.service.image.ImageService;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -81,6 +82,15 @@ public class ObjectMapperUtil {
                 adverts(new HashSet<>()).
                 roles(new ArrayList<>()).
                 build();
+    }
+
+    public List<Advert> getAllMapToAdvert(List<AdvertEntity> entities) {
+        List<Advert> adverts = new ArrayList<>();
+        for(AdvertEntity advert : entities){
+            adverts.add(mapToAdvert(advert));
+        }
+
+        return adverts;
     }
 
     public Advert mapToAdvert(AdvertEntity advertEntity) {
