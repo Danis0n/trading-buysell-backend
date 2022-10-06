@@ -7,6 +7,7 @@ import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.advert.AdvertTypeEntity;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -20,8 +21,8 @@ public interface AdvertRepository extends JpaRepository<AdvertEntity,Long> {
     List<AdvertEntity> findByTitleSmart(String title);
     @Query(
             nativeQuery = true,
-            value = "SELECT * FROM adverts WHERE price >= ?1 AND price <= ?2")
-    List<AdvertEntity> findAllByPriceSmart(String less, String greater);
+            value = "SELECT * FROM adverts WHERE price BETWEEN ?1 AND ?2")
+    List<AdvertEntity> findAllByPriceSmart(BigDecimal less, BigDecimal greater);
 
 }
 

@@ -21,6 +21,7 @@ import ru.danis0n.avitoclone.util.ObjectMapperUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -164,22 +165,19 @@ public class AdvertServiceImpl implements AdvertService{
                 );
             }
         }
-
-
-        if(!searchRequest.getType().equals("none")) {
-
+        else {
+            return null;
         }
 
-        return null;
     }
 
     private boolean isNone(AdvertSearchRequest searchRequest){
-        return searchRequest.getTitle().equals("none")       &&
-                searchRequest.getType().equals("none")        &&
+        return searchRequest.getTitle().equals("none") &&
+                searchRequest.getType().equals("none") &&
                 searchRequest.getLocation().equals("none");
     }
 
-    private List<AdvertEntity> getByPrice(String less, String greater){
+    private List<AdvertEntity> getByPrice(BigDecimal less, BigDecimal greater){
         return advertRepository.findAllByPriceSmart(less,greater);
     }
 

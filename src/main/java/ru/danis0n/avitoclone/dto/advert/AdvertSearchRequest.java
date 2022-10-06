@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @ToString
@@ -12,7 +14,7 @@ import lombok.ToString;
 public class AdvertSearchRequest {
     private String title;
     private String type;
-    private String maxPrice;
-    private String minPrice;
+    private BigDecimal maxPrice;
+    private BigDecimal minPrice;
     private String location;
 }
