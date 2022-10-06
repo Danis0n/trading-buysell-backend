@@ -152,11 +152,19 @@ public class AdvertServiceImpl implements AdvertService{
 
     @Override
     public List<Advert> getByParams(HttpServletRequest request) {
+        BigDecimal minConst = new BigDecimal(50);
+        BigDecimal maxConst = new BigDecimal(1000000);
         AdvertSearchRequest searchRequest = getSearchRequest(request);
+        
+        String title = searchRequest.getTitle();
+        String type = searchRequest.getType();
+        String location = searchRequest.getLocation();
+        BigDecimal minPrice = searchRequest.getMinPrice();
+        BigDecimal maxPrice = searchRequest.getMaxPrice();
 
         if (isNone(searchRequest)) {
-            if(searchRequest.getMinPrice().equals("50") &&
-               searchRequest.getMaxPrice().equals("1000000")){
+            if(searchRequest.getMinPrice().equals(minConst) &&
+               searchRequest.getMaxPrice().equals(maxConst)){
                 return getAll();
             }
             else{
@@ -166,9 +174,67 @@ public class AdvertServiceImpl implements AdvertService{
             }
         }
         else {
+            boolean isTitle = !title.equals("none");
+            boolean isType = !type.equals("none");
+            boolean isLocation = !location.equals("none");
+
+            if(isTitle && isType && isLocation){
+                log.info("full search");
+                return mapperUtil.getAllMapToAdvert(
+                        advertRepository.findAllByFullSearch(
+                            title,
+                            advertTypeRepository.findByType(searchRequest.getType()).getId(),
+                            location,
+                            minPrice,
+                            maxPrice));
+            } else if(!isTitle && !isType && isLocation){
+                log.info("search by location");
+                return mapperUtil.getAllMapToAdvert(
+                        advertRepository.findAllByLocation(
+                                searchRequest.getLocation(),
+                                searchRequest.getMinPrice(),
+                                searchRequest.getMaxPrice()));
+            } else if(isTitle && !isType && !isLocation) {
+                log.info("search by title");
+                return mapperUtil.getAllMapToAdvert(
+                        advertRepository.findAllByTitle(
+                                searchRequest.getTitle(),
+                                searchRequest.getMinPrice(),
+                                searchRequest.getMaxPrice()));
+            } else if(!isTitle && isType && !isLocation) {
+                log.info("search by type");
+                return mapperUtil.getAllMapToAdvert(
+                        advertRepository.findAllByType(
+                                advertTypeRepository.findByType(searchRequest.getType())));
+            } else if(!isTitle && isType){
+                log.info("search by type & location");
+                return mapperUtil.getAllMapToAdvert(
+                        advertRepository.findAllByTypeAndLocation(
+                                advertTypeRepository.findByType(
+                                        searchRequest.getType()).getId(),
+                                        searchRequest.getLocation(),
+                                        searchRequest.getMinPrice(),
+                                        searchRequest.getMaxPrice()));
+            } else if(isTitle && isType) {
+                log.info("search by type & title");
+                return mapperUtil.getAllMapToAdvert(
+                        advertRepository.findAllByTypeAndTitle(
+                                advertTypeRepository.findByType(
+                                        searchRequest.getType()).getId(),
+                                searchRequest.getTitle(),
+                                searchRequest.getMinPrice(),
+                                searchRequest.getMaxPrice()));
+            } else if(isTitle) {
+                log.info("search by title & location");
+                return mapperUtil.getAllMapToAdvert(
+                        advertRepository.findAllByTitleAndLocation(
+                            searchRequest.getTitle(),
+                            searchRequest.getLocation(),
+                            searchRequest.getMinPrice(),
+                            searchRequest.getMaxPrice()));
+            }
             return null;
         }
-
     }
 
     private boolean isNone(AdvertSearchRequest searchRequest){
