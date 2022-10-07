@@ -84,7 +84,7 @@ public class ObjectMapperUtil {
                 build();
     }
 
-    public List<Advert> getAllMapToAdvert(List<AdvertEntity> entities) {
+    public List<Advert> mapListToAdverts(List<AdvertEntity> entities) {
         List<Advert> adverts = new ArrayList<>();
         for(AdvertEntity advert : entities){
             adverts.add(mapToAdvert(advert));

@@ -41,8 +41,6 @@ public class AdvertServiceImpl implements AdvertService{
     private final AdvertRepository advertRepository;
     private final AdvertTypeRepository advertTypeRepository;
 
-    // TODO : REFACTOR IT !
-
     @Override
     public String create(HttpServletRequest request,
                          String title, String location,
@@ -154,108 +152,85 @@ public class AdvertServiceImpl implements AdvertService{
     public List<Advert> getByParams(HttpServletRequest request) {
         BigDecimal minConst = new BigDecimal(50);
         BigDecimal maxConst = new BigDecimal(1000000);
+        String emptyValue = "none";
         AdvertSearchRequest searchRequest = getSearchRequest(request);
         
         String title = searchRequest.getTitle();
         String type = searchRequest.getType();
+        Long typeId = null;
+        if(!type.equals(emptyValue)){
+            typeId = findByType(type).getId();
+        }
         String location = searchRequest.getLocation();
         BigDecimal minPrice = searchRequest.getMinPrice();
         BigDecimal maxPrice = searchRequest.getMaxPrice();
 
-        if (isNone(searchRequest)) {
-            if(searchRequest.getMinPrice().equals(minConst) &&
-               searchRequest.getMaxPrice().equals(maxConst)){
+        if (isAllNone(title, type, location)) {
+            if(minPrice.equals(minConst) && maxPrice.equals(maxConst)){
                 return getAll();
             }
-            else{
-                return mapperUtil.getAllMapToAdvert(
-                        getByPrice(searchRequest.getMinPrice(),searchRequest.getMaxPrice())
-                );
-            }
+            else return mapToListOfAdverts(getByPrice(minPrice,maxPrice));
         }
         else {
-            boolean isTitle = !title.equals("none");
-            boolean isType = !type.equals("none");
-            boolean isLocation = !location.equals("none");
+            Boolean isTitle = !title.equals(emptyValue);
+            Boolean isType = !type.equals(emptyValue);
+            Boolean isLocation = !location.equals(emptyValue);
 
-            if(isTitle && isType && isLocation){
-                log.info("full search");
-                return mapperUtil.getAllMapToAdvert(
-                        advertRepository.findAllByFullSearch(
-                            title,
-                            advertTypeRepository.findByType(searchRequest.getType()).getId(),
-                            location,
-                            minPrice,
-                            maxPrice));
-            } else if(!isTitle && !isType && isLocation){
-                log.info("search by location");
-                return mapperUtil.getAllMapToAdvert(
-                        advertRepository.findAllByLocation(
-                                searchRequest.getLocation(),
-                                searchRequest.getMinPrice(),
-                                searchRequest.getMaxPrice()));
-            } else if(isTitle && !isType && !isLocation) {
-                log.info("search by title");
-                return mapperUtil.getAllMapToAdvert(
-                        advertRepository.findAllByTitle(
-                                searchRequest.getTitle(),
-                                searchRequest.getMinPrice(),
-                                searchRequest.getMaxPrice()));
-            } else if(!isTitle && isType && !isLocation) {
-                log.info("search by type");
-                return mapperUtil.getAllMapToAdvert(
-                        advertRepository.findAllByType(
-                                advertTypeRepository.findByType(searchRequest.getType())));
-            } else if(!isTitle && isType){
-                log.info("search by type & location");
-                return mapperUtil.getAllMapToAdvert(
-                        advertRepository.findAllByTypeAndLocation(
-                                advertTypeRepository.findByType(
-                                        searchRequest.getType()).getId(),
-                                        searchRequest.getLocation(),
-                                        searchRequest.getMinPrice(),
-                                        searchRequest.getMaxPrice()));
-            } else if(isTitle && isType) {
-                log.info("search by type & title");
-                return mapperUtil.getAllMapToAdvert(
-                        advertRepository.findAllByTypeAndTitle(
-                                advertTypeRepository.findByType(
-                                        searchRequest.getType()).getId(),
-                                searchRequest.getTitle(),
-                                searchRequest.getMinPrice(),
-                                searchRequest.getMaxPrice()));
-            } else if(isTitle) {
-                log.info("search by title & location");
-                return mapperUtil.getAllMapToAdvert(
-                        advertRepository.findAllByTitleAndLocation(
-                            searchRequest.getTitle(),
-                            searchRequest.getLocation(),
-                            searchRequest.getMinPrice(),
-                            searchRequest.getMaxPrice()));
-            }
-            return null;
+            return getAllByOneOrMoreParams(
+                    isTitle,isType,isLocation,
+                    title,location,typeId,
+                    minPrice,maxPrice);
         }
     }
 
-    private boolean isNone(AdvertSearchRequest searchRequest){
-        return searchRequest.getTitle().equals("none") &&
-                searchRequest.getType().equals("none") &&
-                searchRequest.getLocation().equals("none");
+    private List<Advert> getAllByOneOrMoreParams(Boolean isTitle, Boolean isType, Boolean isLocation,
+                                                 String title, String location, Long typeId,
+                                                 BigDecimal minPrice, BigDecimal maxPrice) {
+        if (isTitle && isType && isLocation) {
+            return mapToListOfAdverts(
+                    advertRepository.findAllByFullSearch(
+                            title, typeId, location, minPrice, maxPrice));
+        } else if (!isTitle && !isType && isLocation) {
+            return mapToListOfAdverts(
+                    advertRepository.findAllByLocation(location, minPrice, maxPrice));
+        } else if (isTitle && !isType && !isLocation) {
+            return mapToListOfAdverts(
+                    advertRepository.findAllByTitle(title, minPrice, maxPrice));
+        } else if (!isTitle && isType && !isLocation) {
+            return mapToListOfAdverts(
+                    advertRepository.findAllByType(typeId));
+
+        } else if (!isTitle && isType) {
+            return mapToListOfAdverts(
+                    advertRepository.findAllByTypeAndLocation(
+                            typeId, location, minPrice, maxPrice));
+        } else if (isTitle && isType) {
+            return mapToListOfAdverts(
+                    advertRepository.findAllByTypeAndTitle(
+                            typeId, title, minPrice, maxPrice));
+        } else{
+            return mapToListOfAdverts(
+                    advertRepository.findAllByTitleAndLocation(
+                            title, location, minPrice, maxPrice));
+        }
+    }
+
+    private Boolean isAllNone(String title, String type, String location){
+        return title.equals("none") && type.equals("none") && location.equals("none");
     }
 
     private List<AdvertEntity> getByPrice(BigDecimal less, BigDecimal greater){
         return advertRepository.findAllByPriceSmart(less,greater);
     }
 
-    private List<AdvertEntity> getByTitleContains(String title){
-        return advertRepository.findByTitleSmart(title);
-    }
-
-
     private AdvertSearchRequest getSearchRequest(HttpServletRequest request){
         String jsonBody = jsonUtil.getJson(request);
         return jsonUtil.getGson()
                 .fromJson(jsonBody, AdvertSearchRequest.class);
+    }
+
+    private List<Advert> mapToListOfAdverts(List<AdvertEntity> advertEntities){
+        return mapperUtil.mapListToAdverts(advertEntities);
     }
 
     @Override
@@ -280,7 +255,7 @@ public class AdvertServiceImpl implements AdvertService{
     }
 
     private List<AdvertEntity> findAllAdvertEntitiesByType(AdvertTypeEntity type){
-        return advertRepository.findAllByType(type);
+        return advertRepository.findAllByType(type.getId());
     }
 
     private void deleteAdvertById(AdvertEntity advert){

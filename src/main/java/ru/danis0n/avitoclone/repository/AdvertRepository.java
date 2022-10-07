@@ -53,7 +53,13 @@ public interface AdvertRepository extends JpaRepository<AdvertEntity,Long> {
                     " price BETWEEN ?2 AND ?3 "
     )
     List<AdvertEntity> findAllByTitle(String title, BigDecimal minPrice, BigDecimal maxPrice);
-    List<AdvertEntity> findAllByType(AdvertTypeEntity type);
+    @Query(
+            nativeQuery = true,
+            value = "SELECT * FROM adverts" +
+                    " WHERE" +
+                    " type_id = ?1"
+    )
+    List<AdvertEntity> findAllByType(Long typeId);
     @Query(
             nativeQuery = true,
             value = "SELECT * FROM adverts" +
