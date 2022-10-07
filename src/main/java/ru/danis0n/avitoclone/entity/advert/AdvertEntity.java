@@ -5,6 +5,7 @@ import ru.danis0n.avitoclone.entity.AppUserEntity;
 import ru.danis0n.avitoclone.entity.ImageEntity;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +30,7 @@ public class AdvertEntity {
     private String location;
 
     @Column(name = "price")
-    private String price;
+    private BigDecimal price;
 
     @Column(name = "description")
     private String description;

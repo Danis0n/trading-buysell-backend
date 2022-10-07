@@ -40,64 +40,57 @@ public class AdvertServiceImpl implements AdvertService{
     private final ObjectMapperUtil mapperUtil;
     private final AdvertRepository advertRepository;
     private final AdvertTypeRepository advertTypeRepository;
-
+//  TODO : implement all checks for creation/updating
+//    TODO : implement search by similar (already in some method..)
     @Override
     public String create(HttpServletRequest request,
                          String title, String location,
-                         String description, String price,
+                         String description, BigDecimal price,
                          MultipartFile[] files, String type) {
+        try{
+            String username = getUsernameFromRequest(request);
 
-        String tokenFromRequest = request.getHeader(AUTHORIZATION);
-        if(tokenFromRequest != null && tokenFromRequest.startsWith("Bearer ")){
-            try{
-                String token = tokenFromRequest.substring("Bearer ".length());
-                String username = getUsernameFromToken(token);
+            AdvertEntity advert = new AdvertEntity();
+            advert.setUser(getAppUserEntity(username));
+            buildAdvert(advert,title,location,description,price,files,type);
+            saveAdvert(advert);
+            log.info("New advert was created by {}",username);
 
-                log.info("New advert was created by {}",username);
-
-                AdvertEntity advert = new AdvertEntity();
-                advert.setUser(getAppUserEntity(username));
-                buildAdvert(advert,title,location,description,price,files,type);
-                saveAdvert(advert);
-
-                return "Successful";
-            }catch (Exception e){
-                return "Exception while creating";
-            }
+            return "New advert was created";
+        }catch (Exception e){
+            return "Exception while creating";
         }
-        return "Error!";
     }
 
     @Override
     public String update(HttpServletRequest request, Long id,
                          String title, String location,
-                         String description, String price,
+                         String description, BigDecimal price,
                          MultipartFile[] files, String type) {
 
         String username = getUsernameFromRequest(request);
         AdvertEntity advert = findAdvertById(id);
 
         if(advert == null){
-            return "null";
+            return "Advert with this id was not found";
         }
 
         if (!advert.getUser().equals(getAppUserEntity(username))){
-            return "You don't have permission for it";
+            return "You don't have permission to do it";
         }
 
         buildAdvert(advert,title,location,description,price,files,type);
         saveAdvert(advert);
-        return "Successful";
+        return "Advert has been updated";
     }
 
     @Override
     public String deleteById(HttpServletRequest request,Long id) {
-
         String username = getUsernameFromRequest(request);
         AdvertEntity advert = findAdvertById(id);
 
         if(advert == null){
-            return "null";
+            return "Advert with this id was not found";
         }
 
         if (!advert.getUser().equals(getAppUserEntity(username))){
@@ -105,12 +98,13 @@ public class AdvertServiceImpl implements AdvertService{
         }
 
         deleteAdvertById(advert);
-        return "Successful";
+        return "Advert has been deleted";
     }
 
     @Override
     public Advert getById(Long id) {
         AdvertEntity advert = findAdvertById(id);
+        if(advert == null) return null;
         return mapToAdvert(advert);
     }
 
@@ -264,7 +258,7 @@ public class AdvertServiceImpl implements AdvertService{
 
     private void buildAdvert(AdvertEntity advert,
                              String title, String location,
-                             String description, String price,
+                             String description, BigDecimal price,
                              MultipartFile[] files, String type){
         advert.setTitle(title);
         advert.setLocation(location);

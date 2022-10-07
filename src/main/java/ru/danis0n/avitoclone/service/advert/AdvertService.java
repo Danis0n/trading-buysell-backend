@@ -5,12 +5,13 @@ import ru.danis0n.avitoclone.dto.advert.Advert;
 import ru.danis0n.avitoclone.dto.advert.AdvertType;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface AdvertService {
 
-    String create(HttpServletRequest request, String title, String location, String description, String price, MultipartFile[] files, String type);
-    String update(HttpServletRequest request, Long id, String title, String location, String description, String price, MultipartFile[] files, String type);
+    String create(HttpServletRequest request, String title, String location, String description, BigDecimal price, MultipartFile[] files, String type);
+    String update(HttpServletRequest request, Long id, String title, String location, String description, BigDecimal price, MultipartFile[] files, String type);
     Advert getById(Long id);
     List<Advert> getAllByType(String type);
     List<Advert> getAllByUser(String username);

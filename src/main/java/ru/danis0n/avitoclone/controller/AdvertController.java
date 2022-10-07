@@ -9,6 +9,7 @@ import ru.danis0n.avitoclone.dto.advert.Advert;
 import ru.danis0n.avitoclone.service.advert.AdvertService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
@@ -19,8 +20,6 @@ public class AdvertController {
 
     private final AdvertService advertService;
 
-    // TODO : refactor to ResponseEntity
-    
     @PostMapping(
             value = "/create",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -30,7 +29,7 @@ public class AdvertController {
                          @RequestParam("title") String title,
                          @RequestParam("location") String location,
                          @RequestParam("description") String description,
-                         @RequestParam("price") String price,
+                         @RequestParam("price") BigDecimal price,
                          @RequestParam("files") MultipartFile[] files,
                          @RequestParam("type") String type){
         return advertService.create(request,title,location,description,price,files,type);
@@ -42,7 +41,7 @@ public class AdvertController {
                          @RequestParam("title") String title,
                          @RequestParam("location") String location,
                          @RequestParam("description") String description,
-                         @RequestParam("price") String price,
+                         @RequestParam("price") BigDecimal price,
                          @RequestParam("files")MultipartFile[] files,
                          @RequestParam("type") String type){
         return advertService.update(request, id, title,location,description,price,files,type);
