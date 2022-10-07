@@ -183,6 +183,27 @@ public class AdvertServiceImpl implements AdvertService{
         }
     }
 
+    @Override
+    public void createType(AdvertType advertType) {
+        AdvertTypeEntity type = new AdvertTypeEntity();
+        type.setType(advertType.getName());
+        saveType(type);
+    }
+
+    @Override
+    public void addTypeToAdvert(String type, Long id) {
+        AdvertTypeEntity advertType = findByType(type);
+        AdvertEntity advert = findAdvertById(id);
+        if(advert == null){
+            return;
+        }
+        advert.setType(advertType);
+    }
+
+    @Override
+    public void removeTypeFromAdvert(String type, Long id) {
+    }
+
     private List<Advert> getAllByOneOrMoreParams(Boolean isTitle, Boolean isType, Boolean isLocation,
                                                  String title, String location, Long typeId,
                                                  BigDecimal minPrice, BigDecimal maxPrice) {
@@ -233,27 +254,6 @@ public class AdvertServiceImpl implements AdvertService{
         return mapperUtil.mapListToAdverts(advertEntities);
     }
 
-    @Override
-    public void createType(AdvertType advertType) {
-        AdvertTypeEntity type = new AdvertTypeEntity();
-        type.setType(advertType.getName());
-        saveType(type);
-    }
-
-    @Override
-    public void addTypeToAdvert(String type, Long id) {
-        AdvertTypeEntity advertType = findByType(type);
-        AdvertEntity advert = findAdvertById(id);
-        if(advert == null){
-            return;
-        }
-        advert.setType(advertType);
-    }
-
-    @Override
-    public void removeTypeFromAdvert(String type, Long id) {
-    }
-
     private List<AdvertEntity> findAllAdvertEntitiesByType(AdvertTypeEntity type){
         return advertRepository.findAllByType(type.getId());
     }
@@ -261,7 +261,6 @@ public class AdvertServiceImpl implements AdvertService{
     private void deleteAdvertById(AdvertEntity advert){
         advertRepository.delete(advert);
     }
-
 
     private void buildAdvert(AdvertEntity advert,
                              String title, String location,
