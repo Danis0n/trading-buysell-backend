@@ -62,7 +62,7 @@ public class AdvertController {
         return advertService.getAllByType(id);
     }
 
-    @GetMapping("/get/params")
+    @PostMapping("/get/params")
     public List<Advert> getAllByParams(HttpServletRequest request){
         return advertService.getByParams(request);
     }

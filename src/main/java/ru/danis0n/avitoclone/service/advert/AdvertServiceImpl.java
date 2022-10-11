@@ -145,7 +145,7 @@ public class AdvertServiceImpl implements AdvertService{
     @Override
     public List<Advert> getByParams(HttpServletRequest request) {
         BigDecimal minConst = new BigDecimal(50);
-        BigDecimal maxConst = new BigDecimal(1000000);
+        BigDecimal maxConst = new BigDecimal(10000000);
         String emptyValue = "none";
         AdvertSearchRequest searchRequest = getSearchRequest(request);
         

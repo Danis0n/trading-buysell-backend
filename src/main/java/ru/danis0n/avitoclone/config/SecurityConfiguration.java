@@ -82,6 +82,8 @@ public class SecurityConfiguration {
         http.authorizeRequests().
                 antMatchers(GET,"/api/advert/**").permitAll();
         http.authorizeRequests().
+                antMatchers(POST,"/api/advert/get/params").permitAll();
+        http.authorizeRequests().
                 antMatchers(POST,"/api/advert/create").hasAnyAuthority(superAdmin,admin,manager,user);
 
         http.authorizeRequests().
