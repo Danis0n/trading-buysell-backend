@@ -52,6 +52,11 @@ public class AdvertController {
         return advertService.getAll();
     }
 
+    @GetMapping("/get/latest")
+    public List<Advert> getLatest(){
+        return advertService.getLatest();
+    }
+
     @GetMapping("/get/user/{id}")
     public List<Advert> getAllByUsername(@PathVariable String id){
         return advertService.getAllByUser(id);

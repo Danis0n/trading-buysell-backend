@@ -16,6 +16,11 @@ public interface AdvertRepository extends JpaRepository<AdvertEntity,Long> {
     List<AdvertEntity> findAllByUser(AppUserEntity user);
     @Query(
             nativeQuery = true,
+            value = "SELECT * FROM adverts ORDER BY date_of_creation DESC LIMIT 12"
+    )
+    List<AdvertEntity> findAllLatest();
+    @Query(
+            nativeQuery = true,
             value = "SELECT * FROM adverts WHERE SIMILARITY(title, ?1) > 0.1 ")
     List<AdvertEntity> findByTitleSmart(String title);
     @Query(

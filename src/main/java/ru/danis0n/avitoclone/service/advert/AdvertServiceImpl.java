@@ -1,5 +1,6 @@
 package ru.danis0n.avitoclone.service.advert;
 
+import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,8 +41,7 @@ public class AdvertServiceImpl implements AdvertService{
     private final ObjectMapperUtil mapperUtil;
     private final AdvertRepository advertRepository;
     private final AdvertTypeRepository advertTypeRepository;
-//  TODO : implement all checks for creation/updating
-//    TODO : implement search by similar (already in some method..)
+
     @Override
     public String create(HttpServletRequest request,
                          String title, String location,
@@ -128,6 +128,11 @@ public class AdvertServiceImpl implements AdvertService{
             adverts.add(mapToAdvert(advert));
         }
         return adverts;
+    }
+
+    @Override
+    public List<Advert> getLatest() {
+        return mapToListOfAdverts(advertRepository.findAllLatest());
     }
 
     @Override
