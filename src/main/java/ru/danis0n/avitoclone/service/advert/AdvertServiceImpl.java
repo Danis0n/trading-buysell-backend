@@ -131,8 +131,13 @@ public class AdvertServiceImpl implements AdvertService{
     }
 
     @Override
-    public List<Advert> getLatest() {
-        return mapToListOfAdverts(advertRepository.findAllLatest());
+    public List<Advert> getLatest(Long quantity) {
+        return mapToListOfAdverts(advertRepository.findAllLatest(quantity));
+    }
+
+    @Override
+    public List<Advert> getExamples() {
+        return mapToListOfAdverts(advertRepository.findExamples());
     }
 
     @Override

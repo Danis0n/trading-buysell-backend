@@ -53,8 +53,14 @@ public class AdvertController {
     }
 
     @GetMapping("/get/latest")
-    public List<Advert> getLatest(){
-        return advertService.getLatest();
+    public List<Advert> getLatest() {
+        final Long quantity = 12L;
+        return advertService.getLatest(quantity);
+    }
+
+    @GetMapping("/get/examples")
+    public List<Advert> getExamples() {
+        return advertService.getExamples();
     }
 
     @GetMapping("/get/user/{id}")

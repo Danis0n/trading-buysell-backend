@@ -16,9 +16,9 @@ public interface AdvertRepository extends JpaRepository<AdvertEntity,Long> {
     List<AdvertEntity> findAllByUser(AppUserEntity user);
     @Query(
             nativeQuery = true,
-            value = "SELECT * FROM adverts ORDER BY date_of_creation DESC LIMIT 12"
+            value = "SELECT * FROM adverts ORDER BY date_of_creation DESC LIMIT ?1"
     )
-    List<AdvertEntity> findAllLatest();
+    List<AdvertEntity> findAllLatest(Long quantity);
     @Query(
             nativeQuery = true,
             value = "SELECT * FROM adverts WHERE SIMILARITY(title, ?1) > 0.1 ")
@@ -98,6 +98,12 @@ public interface AdvertRepository extends JpaRepository<AdvertEntity,Long> {
                     " price BETWEEN ?3 AND ?4 "
     )
     List<AdvertEntity> findAllByTitleAndLocation(String title, String location, BigDecimal minPrice, BigDecimal maxPrice);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT * FROM adverts ORDER BY random() LIMIT 6"
+    )
+    List<AdvertEntity> findExamples();
 }
 
 
