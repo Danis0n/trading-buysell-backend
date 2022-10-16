@@ -16,7 +16,6 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
-    // TODO : FIX COMMENTS IDS
     @PostMapping("/save")
     public ResponseEntity<String> create(HttpServletRequest request, HttpServletResponse response){
         return ResponseEntity.ok().body(commentService.saveComment(request, response));

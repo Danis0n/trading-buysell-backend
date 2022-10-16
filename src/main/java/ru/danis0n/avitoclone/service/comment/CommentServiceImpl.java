@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,7 +38,7 @@ public class CommentServiceImpl implements CommentService{
 
         CommentRequest comment = getCommentFromJson(request);
         AppUserEntity user = getAppUserEntityFromString(getUsername(request));
-
+        log.info(comment.toString());
         if(!validateUser(
                 user.getId().toString(), comment.getCreatedBy())) {
             return "You don't have enough permissions!";
@@ -53,7 +54,7 @@ public class CommentServiceImpl implements CommentService{
     public String updateComment(Long id, HttpServletRequest request, HttpServletResponse response) {
 
         CommentRequest comment = getCommentFromJson(request);
-        AppUserEntity user = getAppUserEntityFromString(getUsername(request));
+//        AppUserEntity user = getAppUserEntityFromString(getUsername(request));
 
         if(!validateUser(
                 getUsername(request), comment.getCreatedBy())) {
@@ -145,7 +146,7 @@ public class CommentServiceImpl implements CommentService{
     }
 
     private CommentRequest getCommentFromJson(HttpServletRequest request){
-        return new Gson().fromJson(
+        return jsonUtil.getGson().fromJson(
                 jsonUtil.getJson(request),
                 CommentRequest.class
         );

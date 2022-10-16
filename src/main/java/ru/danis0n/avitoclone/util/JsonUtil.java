@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @AllArgsConstructor
+@Slf4j
 public class JsonUtil {
 
     private final Gson gson;
@@ -22,7 +24,7 @@ public class JsonUtil {
     public String getJson(HttpServletRequest request){
         try {
             return request.getReader().lines().collect(
-                    Collectors.joining()).replace(" ", "");
+                    Collectors.joining()).trim();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

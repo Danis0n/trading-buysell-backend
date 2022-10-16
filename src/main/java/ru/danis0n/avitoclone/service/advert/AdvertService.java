@@ -14,7 +14,7 @@ public interface AdvertService {
     String update(HttpServletRequest request, Long id, String title, String location, String description, BigDecimal price, MultipartFile[] files, String type);
     Advert getById(Long id);
     List<Advert> getAllByType(String type);
-    List<Advert> getAllByUser(String username);
+    List<Advert> getAllByUser(Long id);
     List<Advert> getByParams(HttpServletRequest request);
     List<Advert> getAll();
     List<Advert> getLatest(Long quantity);

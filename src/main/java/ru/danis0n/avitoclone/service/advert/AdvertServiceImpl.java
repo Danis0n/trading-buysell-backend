@@ -141,8 +141,8 @@ public class AdvertServiceImpl implements AdvertService{
     }
 
     @Override
-    public List<Advert> getAllByUser(String username) {
-        AppUserEntity user = getAppUserEntity(username);
+    public List<Advert> getAllByUser(Long id) {
+        AppUserEntity user = getAppUserEntityById(id);
         List<AdvertEntity> advertsByUser = findAllAdvertEntitiesByUser(user);
         List<Advert> adverts = new ArrayList<>();
 
@@ -297,6 +297,10 @@ public class AdvertServiceImpl implements AdvertService{
 
     private AppUserEntity getAppUserEntity(String username){
         return appUserService.getAppUserEntityByUsername(username);
+    }
+
+    private AppUserEntity getAppUserEntityById(Long id){
+        return appUserService.getAppUserEntityById(id);
     }
 
     private void saveAdvert(AdvertEntity advert){
