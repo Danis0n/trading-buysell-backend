@@ -76,14 +76,14 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public List<Comment> getCommentsByUser(Long id) {
-        AppUserEntity user = appUserService.getAppUserEntityById(id);
+        AppUserEntity user = getAppUserEntityById(id);
         List<CommentEntity> commentEntities = commentRepository.getByTo(user);
         return mapListToComments(commentEntities);
     }
 
     @Override
-    public List<Comment> getCommentsByCreator(String username) {
-        AppUserEntity user = getAppUserEntityByUsername(username);
+    public List<Comment> getCommentsByCreator(Long id) {
+        AppUserEntity user = getAppUserEntityById(id);
         List<CommentEntity> commentEntities = commentRepository.getByCreatedBy(user);
         return mapListToComments(commentEntities);
     }
@@ -146,4 +146,9 @@ public class CommentServiceImpl implements CommentService{
     private void saveComment(CommentEntity comment){
         commentRepository.save(comment);
     }
+
+    private AppUserEntity getAppUserEntityById(Long id){
+        return appUserService.getAppUserEntityById(id);
+    }
+
 }

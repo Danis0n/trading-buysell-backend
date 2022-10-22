@@ -31,7 +31,6 @@ import java.util.UUID;
 @Transactional
 @RequiredArgsConstructor
 public class AppUserServiceImpl implements AppUserService, UserDetailsService {
-    // TODO : fix all 'by-id'
     private final AppUserRepository appUserRepository;
     private final AppUserInfoRepository appUserInfoRepository;
     private final RoleRepository roleRepository;
@@ -145,7 +144,11 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     @Override
     public AppUser getAppUserById(Long id) {
-        return mapToAppUserWithParams(appUserRepository.findById(id).get());
+        AppUserEntity user = appUserRepository.findById(id).orElse(null);
+        if(user != null){
+            return mapToAppUserWithParams(user);
+        }
+        return null;
     }
 
     @Override

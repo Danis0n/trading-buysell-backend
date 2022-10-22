@@ -32,7 +32,7 @@ public class CommentController {
     }
     // TODO : FIX {ID}
     @GetMapping("/get/user/own/{id}")
-    public ResponseEntity<List<Comment>> getOwnerComments(@PathVariable String id){
+    public ResponseEntity<List<Comment>> getOwnerComments(@PathVariable Long id){
         return ResponseEntity.ok().body(commentService.getCommentsByCreator(id));
     }
 

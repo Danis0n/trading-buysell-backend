@@ -59,7 +59,6 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    // TODO : FIX all requests
     public void requestsConfigInit(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
