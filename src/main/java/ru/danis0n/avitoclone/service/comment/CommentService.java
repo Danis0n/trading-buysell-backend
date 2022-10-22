@@ -10,7 +10,6 @@ public interface CommentService {
 
     Comment getById(Long id);
     String saveComment(HttpServletRequest request, HttpServletResponse response);
-    String updateComment(Long id, HttpServletRequest request, HttpServletResponse response);
     String deleteComment(Long id, HttpServletRequest request);
     List<Comment> getCommentsByUser(Long username);
     List<Comment> getCommentsByCreator(String username);

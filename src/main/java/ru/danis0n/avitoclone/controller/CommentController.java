@@ -21,11 +21,6 @@ public class CommentController {
         return ResponseEntity.ok().body(commentService.saveComment(request, response));
     }
 
-    @PostMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response){
-        return ResponseEntity.ok().body(commentService.updateComment(id,request,response));
-    }
-    // TODO : add response
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id, HttpServletRequest request){
         return ResponseEntity.ok().body(commentService.deleteComment(id,request));

@@ -106,7 +106,6 @@ public class SecurityConfiguration {
         http.formLogin().defaultSuccessUrl("/api/login",true);
     }
 
-//     TODO : MANAGE IT
     @Bean
     public CorsFilter corsFilter() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

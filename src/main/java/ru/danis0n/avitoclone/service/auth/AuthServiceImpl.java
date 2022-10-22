@@ -32,27 +32,18 @@ public class AuthServiceImpl implements AuthService{
     private final RefreshTokenService refreshTokenService;
     private final AppUserService appUserService;
 
-    // TODO : implement if-s
     @Override
     public void auth(HttpServletRequest request, HttpServletResponse response){
 
         try {
             Map<String,String> cookieMap = getCookieMapFromRequest(request.getCookies());
             String refreshToken = cookieMap.get("refreshToken");
-            String username =  getUsernameFromToken(refreshToken);
 
-            AppUserEntity appUser = getAppUserEntity(username);
+            AppUserEntity appUser = getAppUserEntityByUsername(
+                    getUsernameFromToken(refreshToken));
 
-            // TODO : fix it
-
-            if(!validateToken(appUser,refreshToken)){
-                // TODO : incorrect_token
-                manageOutOfDate(response);
-                return;
-            }
-
-            if(!validateTime(refreshToken)){
-                // TODO : out_of_date_token
+            if(!validateToken(appUser, refreshToken) || !validateTime(refreshToken) ){
+                deleteToken(appUser);
                 manageOutOfDate(response);
                 return;
             }
@@ -63,7 +54,7 @@ public class AuthServiceImpl implements AuthService{
             );
 
             saveToken(appUser,tokens.get("refreshToken"));
-            setResponseWithParams(response,tokens.get("refreshToken"),username);
+            setResponseWithParams(response,tokens.get("refreshToken"), appUser.getUsername());
 
             new ObjectMapper().writeValue(
                     response.getOutputStream(),
@@ -84,7 +75,7 @@ public class AuthServiceImpl implements AuthService{
 
         try {
             String username = getUsernameFromRequest(request);
-            deleteToken(getAppUserEntity(username));
+            deleteToken(getAppUserEntityByUsername(username));
             setResponseDefault(response,username);
 
             try {
@@ -96,10 +87,6 @@ public class AuthServiceImpl implements AuthService{
         }catch (Exception e) {
             manageException(e,response);
         }
-    }
-
-    private boolean validateTime(String token){
-        return jwtUtil.validateTime(token);
     }
 
     private void deleteToken(AppUserEntity user){
@@ -172,12 +159,16 @@ public class AuthServiceImpl implements AuthService{
         return mapperUtil.mapToAppUserWithParams(user);
     }
 
-    private AppUserEntity getAppUserEntity(String username){
+    private AppUserEntity getAppUserEntityByUsername(String username){
         return appUserService.getAppUserEntityByUsername(username);
     }
 
     private boolean validateToken(AppUserEntity user, String refreshToken){
         return refreshTokenService.validateToken(user,refreshToken);
+    }
+
+    private boolean validateTime(String token){
+        return jwtUtil.validateTime(token);
     }
 
 }

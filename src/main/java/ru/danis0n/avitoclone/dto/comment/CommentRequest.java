@@ -10,8 +10,8 @@ import lombok.*;
 @NoArgsConstructor
 public class CommentRequest {
 
-    private String to;
-    private String createdBy;
+    private Long to;
+    private Long createdBy;
     private String advertName;
     private String title;
     private String description;

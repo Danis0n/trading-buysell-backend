@@ -33,8 +33,6 @@ public class RegistrationServiceImpl implements RegistrationService{
     private final JsonUtil jsonUtil;
     private final ConfirmationTokenService confirmationTokenService;
 
-    // TODO : REFACTOR IT !
-
     @Value("${spring.config.registration.confirm.link}")
     private String confirmLink;
 

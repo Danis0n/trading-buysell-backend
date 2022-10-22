@@ -1,6 +1,5 @@
 package ru.danis0n.avitoclone.service.comment;
 
-import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,31 +15,27 @@ import ru.danis0n.avitoclone.util.ObjectMapperUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService{
 
-    private final ObjectMapperUtil objectMapperUtil;
+    private final ObjectMapperUtil mapperUtil;
     private final JwtUtil jwtUtil;
     private final JsonUtil jsonUtil;
     private final AppUserService appUserService;
     private final CommentRepository commentRepository;
 
-    // TODO : refactor this
-
     @Override
     public String saveComment(HttpServletRequest request, HttpServletResponse response) {
 
         CommentRequest comment = getCommentFromJson(request);
-        AppUserEntity user = getAppUserEntityFromString(getUsername(request));
+        AppUserEntity user = getAppUserEntityByUsername(getUsernameFromRequest(request));
         log.info(comment.toString());
         if(!validateUser(
-                user.getId().toString(), comment.getCreatedBy())) {
+                user.getId(), comment.getCreatedBy())) {
             return "You don't have enough permissions!";
         }
 
@@ -51,27 +46,6 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public String updateComment(Long id, HttpServletRequest request, HttpServletResponse response) {
-
-        CommentRequest comment = getCommentFromJson(request);
-//        AppUserEntity user = getAppUserEntityFromString(getUsername(request));
-
-        if(!validateUser(
-                getUsername(request), comment.getCreatedBy())) {
-            return "You don't have enough permissions!";
-        }
-
-        CommentEntity commentEntity = getCommentEntityById(id);
-        if(commentEntity == null){
-            return "Not found";
-        }
-
-        commentEntity = getCommentEntityFromCommentRequest(comment);
-        saveComment(commentEntity);
-        return "Successful";
-    }
-
-    @Override
     public String deleteComment(Long id, HttpServletRequest request) {
 
         CommentEntity commentEntity = getCommentEntityById(id);
@@ -79,16 +53,15 @@ public class CommentServiceImpl implements CommentService{
             return "Null!";
         }
 
-        AppUserEntity editor = appUserService.getAppUserEntityByUsername(getUsername(request));
-        AppUserEntity creator = appUserService.getAppUserEntityById(commentEntity.getCreatedBy().getId());
-        AppUserEntity to = appUserService.getAppUserEntityById(commentEntity.getTo().getId());
+        Long editorId = appUserService.getAppUserEntityByUsername(getUsernameFromRequest(request)).getId();
+        Long creatorId = appUserService.getAppUserEntityById(commentEntity.getCreatedBy().getId()).getId();
+        Long toId = appUserService.getAppUserEntityById(commentEntity.getTo().getId()).getId();
 
-        if(validateUser(creator.getUsername(), editor.getUsername()) ||
-                validateUser(to.getUsername(), editor.getUsername())) {
+        if(validateUser(creatorId, editorId) ||
+                validateUser(toId, editorId)) {
             commentRepository.delete(commentEntity);
             return "Successful!";
         }
-
         return "You don't have enough permissions";
     }
 
@@ -105,29 +78,23 @@ public class CommentServiceImpl implements CommentService{
     public List<Comment> getCommentsByUser(Long id) {
         AppUserEntity user = appUserService.getAppUserEntityById(id);
         List<CommentEntity> commentEntities = commentRepository.getByTo(user);
-
-        List<Comment> comments = new ArrayList<>();
-        for(CommentEntity entity : commentEntities){
-            comments.add(getCommentFromCommentEntity(entity));
-        }
-        return comments;
+        return mapListToComments(commentEntities);
     }
 
     @Override
     public List<Comment> getCommentsByCreator(String username) {
-        AppUserEntity user = getAppUserEntityFromString(username);
+        AppUserEntity user = getAppUserEntityByUsername(username);
         List<CommentEntity> commentEntities = commentRepository.getByCreatedBy(user);
-
-        List<Comment> comments = new ArrayList<>();
-        for(CommentEntity entity : commentEntities){
-            comments.add(getCommentFromCommentEntity(entity));
-        }
-        return comments;
+        return mapListToComments(commentEntities);
     }
 
     @Override
     public List<Comment> getCommentsByUserId(Long id) {
         return null;
+    }
+
+    private List<Comment> mapListToComments(List<CommentEntity> commentEntities) {
+        return mapperUtil.mapListToComments(commentEntities);
     }
 
     private void countRating(CommentEntity comment){
@@ -152,23 +119,23 @@ public class CommentServiceImpl implements CommentService{
         );
     }
 
-    private boolean validateUser(String commentCreator, String commentEditor){
+    private boolean validateUser(Long commentCreator, Long commentEditor){
         return commentCreator.equals(commentEditor);
     }
 
-    private String getUsername(HttpServletRequest request){
+    private String getUsernameFromRequest(HttpServletRequest request){
         return jwtUtil.getUsernameFromRequest(request);
     }
 
     private CommentEntity getCommentEntityFromCommentRequest(CommentRequest comment){
-        return objectMapperUtil.mapToCommentEntity(comment);
+        return mapperUtil.mapToCommentEntity(comment);
     }
 
     private Comment getCommentFromCommentEntity(CommentEntity comment){
-        return objectMapperUtil.mapToComment(comment);
+        return mapperUtil.mapToComment(comment);
     }
 
-    private AppUserEntity getAppUserEntityFromString(String username){
+    private AppUserEntity getAppUserEntityByUsername(String username){
         return appUserService.getAppUserEntityByUsername(username);
     }
 
