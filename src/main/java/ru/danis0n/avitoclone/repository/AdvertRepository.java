@@ -3,17 +3,19 @@ package ru.danis0n.avitoclone.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ru.danis0n.avitoclone.dto.advert.Advert;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
-import ru.danis0n.avitoclone.entity.advert.AdvertTypeEntity;
-import ru.danis0n.avitoclone.entity.AppUserEntity;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
 public interface AdvertRepository extends JpaRepository<AdvertEntity,Long> {
-    List<AdvertEntity> findAllByUser(AppUserEntity user);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT * FROM adverts WHERE user_id = ?1"
+    )
+    List<AdvertEntity> findAllByUserId(Long userId);
     @Query(
             nativeQuery = true,
             value = "SELECT * FROM adverts ORDER BY date_of_creation DESC LIMIT ?1"

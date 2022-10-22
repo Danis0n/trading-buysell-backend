@@ -64,7 +64,7 @@ public class AdvertController {
     }
 
     @GetMapping("/get/user/{id}")
-    public List<Advert> getAllByUsername(@PathVariable Long id){
+    public List<Advert> getAllByUserId(@PathVariable Long id){
         return advertService.getAllByUser(id);
     }
 
