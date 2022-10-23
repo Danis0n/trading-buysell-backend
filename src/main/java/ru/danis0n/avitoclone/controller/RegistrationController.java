@@ -17,8 +17,6 @@ public class RegistrationController {
 
     private final RegistrationService registrationService;
 
-    // TODO : implement response body {accT, refrT, user}
-
     @PostMapping("/register")
     public String register(HttpServletRequest request, HttpServletResponse response){
         return registrationService.register(request,response);

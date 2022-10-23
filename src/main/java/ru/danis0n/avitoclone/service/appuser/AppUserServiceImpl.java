@@ -6,6 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.danis0n.avitoclone.dto.RegistrationRequest;
@@ -20,6 +21,7 @@ import ru.danis0n.avitoclone.util.JwtUtil;
 import ru.danis0n.avitoclone.util.ObjectMapperUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +38,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     private final RoleRepository roleRepository;
     private final ObjectMapperUtil mapperUtil;
     private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
@@ -77,6 +80,86 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
+    public String saveUserPassword(Long id, String password, HttpServletRequest request, HttpServletResponse response) {
+
+        AppUserEntity user = findById(id);
+        if(user == null) {
+            return "User does not exist!";
+        }
+        String username = getUsernameFromRequest(request);
+
+        if(!validateUser(user.getUsername(),username)) {
+            return "You don't have enough permissions!";
+        }
+
+        user.setPassword(passwordEncoder.encode(password));
+        saveUser(user);
+        log.info("User {} has new 'password'",username);
+        return "Success!";
+    }
+
+    @Override
+    public String saveUserName(Long id, String name, HttpServletRequest request, HttpServletResponse response) {
+
+        AppUserEntity user = findById(id);
+        if(user == null) {
+            return "User does not exist!";
+        }
+        String username = getUsernameFromRequest(request);
+
+        if(!validateUser(user.getUsername(),username)) {
+            return "You don't have enough permissions!";
+        }
+
+        user.getUserInfo().setName(name);
+        saveUser(user);
+        log.info("User {} has new 'name': {}",username,name);
+        return "Success!";
+    }
+
+    @Override
+    public String saveUserPhone(Long id, String phone, HttpServletRequest request, HttpServletResponse response) {
+
+        AppUserEntity user = findById(id);
+        if(user == null) {
+            return "User does not exist!";
+        }
+        String username = getUsernameFromRequest(request);
+
+        if(!validateUser(user.getUsername(),username)) {
+            return "You don't have enough permissions!";
+        }
+
+        user.getUserInfo().setPhone(phone);
+        saveUser(user);
+        log.info("User {} has new 'phone': {}",username,phone);
+        return "Success!";
+    }
+
+    @Override
+    public String saveUserEmail(Long id, String email, HttpServletRequest request, HttpServletResponse response) {
+
+        AppUserEntity user = findById(id);
+        if(user == null) {
+            return "User does not exist!";
+        }
+        String username = getUsernameFromRequest(request);
+
+        if(!validateUser(user.getUsername(),username)) {
+            return "You don't have enough permissions!";
+        }
+
+        user.getUserInfo().setEmail(email);
+        saveUser(user);
+        log.info("User {} has new 'email': {}",username,email);
+        return "Success!";
+    }
+
+    private boolean validateUser(String username1, String username2) {
+        return username1.equals(username2);
+    }
+
+    @Override
     public Role saveRole(Role role) {
         RoleEntity entity = new RoleEntity();
         entity.setName(role.getName());
@@ -85,8 +168,8 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public String banAppUserById(String id, HttpServletRequest request) {
-        AppUserEntity user = findByUsername(id);
+    public String banAppUserById(Long id, HttpServletRequest request) {
+        AppUserEntity user = findById(id);
         if(user == null){
             return "null";
         }
@@ -102,8 +185,8 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public String unBanAppUserById(String id) {
-        AppUserEntity user = findByUsername(id);
+    public String unBanAppUserById(Long id) {
+        AppUserEntity user = findById(id);
         if(user == null){
             return "null";
         }

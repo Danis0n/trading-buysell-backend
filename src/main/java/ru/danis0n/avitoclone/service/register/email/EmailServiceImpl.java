@@ -71,10 +71,8 @@ public class EmailServiceImpl implements EmailService {
             return "Mail sent Successfully";
         }
 
-        // Catch block to handle MessagingException
         catch (MessagingException e) {
 
-            // Display message when exception occurred
             return "Error while sending mail!!!";
         }
     }

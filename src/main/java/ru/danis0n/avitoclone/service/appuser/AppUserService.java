@@ -7,6 +7,7 @@ import ru.danis0n.avitoclone.dto.Role;
 import ru.danis0n.avitoclone.entity.AppUserEntity;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface AppUserService {
@@ -24,6 +25,10 @@ public interface AppUserService {
     boolean isExistsAppUserEntityByUsername(String username);
     void lockAppUser(String username);
     void unLockAppUser(String username);
-    String banAppUserById(String id, HttpServletRequest request);
-    String unBanAppUserById(String id);
+    String banAppUserById(Long id, HttpServletRequest request);
+    String unBanAppUserById(Long id);
+    String saveUserPassword(Long id, String password, HttpServletRequest request, HttpServletResponse response);
+    String saveUserName(Long id, String name, HttpServletRequest request, HttpServletResponse response);
+    String saveUserPhone(Long id, String phone, HttpServletRequest request, HttpServletResponse response);
+    String saveUserEmail(Long id, String email, HttpServletRequest request, HttpServletResponse response);
 }

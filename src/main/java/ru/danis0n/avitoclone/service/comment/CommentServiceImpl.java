@@ -34,8 +34,7 @@ public class CommentServiceImpl implements CommentService{
         CommentRequest comment = getCommentFromJson(request);
         AppUserEntity user = getAppUserEntityByUsername(getUsernameFromRequest(request));
         log.info(comment.toString());
-        if(!validateUser(
-                user.getId(), comment.getCreatedBy())) {
+        if(!validateUser(user.getId(), comment.getCreatedBy())) {
             return "You don't have enough permissions!";
         }
 
@@ -54,11 +53,10 @@ public class CommentServiceImpl implements CommentService{
         }
 
         Long editorId = appUserService.getAppUserEntityByUsername(getUsernameFromRequest(request)).getId();
-        Long creatorId = appUserService.getAppUserEntityById(commentEntity.getCreatedBy().getId()).getId();
-        Long toId = appUserService.getAppUserEntityById(commentEntity.getTo().getId()).getId();
+        Long creatorId = commentEntity.getCreatedBy().getId();
+        Long toId = commentEntity.getTo().getId();
 
-        if(validateUser(creatorId, editorId) ||
-                validateUser(toId, editorId)) {
+        if(validateUser(creatorId, editorId) || validateUser(toId, editorId)) {
             commentRepository.delete(commentEntity);
             return "Successful!";
         }

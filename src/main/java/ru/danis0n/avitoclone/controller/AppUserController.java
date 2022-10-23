@@ -11,6 +11,7 @@ import ru.danis0n.avitoclone.dto.Role;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.util.List;
 
@@ -32,13 +33,37 @@ public class AppUserController {
         return ResponseEntity.ok().body(userService.getAppUserById(id));
     }
 
+    @PutMapping("/users/{id}/password/save")
+    public ResponseEntity<String> saveUserPassword(@PathVariable Long id, @RequestParam("password") String password,
+                                                   HttpServletRequest request, HttpServletResponse response){
+        return ResponseEntity.ok().body(userService.saveUserPassword(id,password,request,response));
+    }
+
+    @PutMapping("/users/{id}/name/save")
+    public ResponseEntity<String> saveUserName(@PathVariable Long id, @RequestParam("name") String name,
+                                               HttpServletRequest request, HttpServletResponse response){
+        return ResponseEntity.ok().body(userService.saveUserName(id,name,request,response));
+    }
+
+    @PutMapping("/users/{id}/phone/save")
+    public ResponseEntity<String> saveUserPhone(@PathVariable Long id, @RequestParam("phone") String phone,
+                                                HttpServletRequest request, HttpServletResponse response){
+        return ResponseEntity.ok().body(userService.saveUserPhone(id,phone,request,response));
+    }
+
+    @PutMapping("/users/{id}/email/save")
+    public ResponseEntity<String> saveUserEmail(@PathVariable Long id, @RequestParam("email") String email,
+                                                HttpServletRequest request, HttpServletResponse response){
+        return ResponseEntity.ok().body(userService.saveUserEmail(id,email,request,response));
+    }
+
     @PostMapping("/users/ban/{id}")
-    public ResponseEntity<String> banUser(@PathVariable String id, HttpServletRequest request) {
+    public ResponseEntity<String> banUser(@PathVariable Long id, HttpServletRequest request) {
         return ResponseEntity.ok().body(userService.banAppUserById(id, request));
     }
 
     @PostMapping("/users/unban/{id}")
-    public ResponseEntity<String> unBanUser(@PathVariable String id) {
+    public ResponseEntity<String> unBanUser(@PathVariable Long id) {
         return ResponseEntity.ok().body(userService.unBanAppUserById(id));
     }
 

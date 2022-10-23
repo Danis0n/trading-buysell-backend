@@ -30,7 +30,7 @@ public class CommentController {
     public ResponseEntity<List<Comment>> getComments(@PathVariable Long id){
         return ResponseEntity.ok().body(commentService.getCommentsByUser(id));
     }
-    // TODO : FIX {ID}
+
     @GetMapping("/get/user/own/{id}")
     public ResponseEntity<List<Comment>> getOwnerComments(@PathVariable Long id){
         return ResponseEntity.ok().body(commentService.getCommentsByCreator(id));
