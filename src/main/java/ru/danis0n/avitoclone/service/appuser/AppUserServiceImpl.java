@@ -80,34 +80,29 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public String saveUserPassword(Long id, String password, String oldPassword, HttpServletRequest request, HttpServletResponse response) {
+    public String saveUserPassword(Long id, String newPassword, String oldPassword, HttpServletRequest request, HttpServletResponse response) {
 
         AppUserEntity user = findById(id);
         if(user == null) {
             return "User does not exist!";
         }
         String username = getUsernameFromRequest(request);
+        String DBPassword = user.getPassword();
 
         if(!validateUser(user.getUsername(),username)) {
             return "You don't have enough permissions!";
         }
 
-        if(!matchPassword(oldPassword, user.getPassword())){
-            return "Old password doesn't matches the real password!";
+        boolean isNotValid = validateEqualInputPasswords(newPassword,oldPassword,DBPassword) ||
+                validateEqualOldPasswordFromDB(oldPassword,DBPassword);
+
+        if(isNotValid) {
+            return "Password error!";
         }
 
-        if(password.equals(oldPassword) || matchPassword(password,user.getPassword())){
-            return "Input passwords are equal!";
-        }
-
-        user.setPassword(encoder.encode(password));
-        saveUser(user);
+        manageNewPassword(newPassword, user);
         log.info("User {} has new 'password'",username);
         return "Success!";
-    }
-
-    private boolean matchPassword(String newPassword, String oldPassword) {
-        return encoder.matches(newPassword,oldPassword);
     }
 
     @Override
@@ -281,6 +276,23 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     @Override
     public boolean isExistsAppUserEntityByUsername(String username) {
         return appUserRepository.existsAppUserEntityByUsername(username);
+    }
+
+    private Boolean validateEqualOldPasswordFromDB(String oldPassword, String DBPassword) {
+        return !matchPassword(oldPassword, DBPassword);
+    }
+
+    private Boolean validateEqualInputPasswords(String newPassword, String oldPassword, String DBPassword) {
+        return oldPassword.equals(newPassword) || matchPassword(newPassword, DBPassword);
+    }
+
+    private boolean matchPassword(String currentPassword, String DBPassword) {
+        return encoder.matches(currentPassword,DBPassword);
+    }
+
+    private void manageNewPassword(String newPassword, AppUserEntity user) {
+        user.setPassword(encoder.encode(newPassword));
+        saveUser(user);
     }
 
     private AppUserEntity findByUsername(String username){

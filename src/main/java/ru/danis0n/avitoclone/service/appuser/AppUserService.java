@@ -27,7 +27,7 @@ public interface AppUserService {
     void unLockAppUser(String username);
     String banAppUserById(Long id, HttpServletRequest request);
     String unBanAppUserById(Long id);
-    String saveUserPassword(Long id, String password,String oldPassword, HttpServletRequest request, HttpServletResponse response);
+    String saveUserPassword(Long id, String newPassword,String oldPassword, HttpServletRequest request, HttpServletResponse response);
     String saveUserName(Long id, String name, HttpServletRequest request, HttpServletResponse response);
     String saveUserPhone(Long id, String phone, HttpServletRequest request, HttpServletResponse response);
     String saveUserEmail(Long id, String email, HttpServletRequest request, HttpServletResponse response);

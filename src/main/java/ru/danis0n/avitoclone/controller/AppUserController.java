@@ -35,10 +35,10 @@ public class AppUserController {
 
     @PutMapping("/users/{id}/password/save")
     public ResponseEntity<String> saveUserPassword(@PathVariable Long id,
-                                                   @RequestParam("password") String password,
+                                                   @RequestParam("newPassword") String newPassword,
                                                    @RequestParam("oldPassword") String oldPassword,
                                                    HttpServletRequest request, HttpServletResponse response){
-        return ResponseEntity.ok().body(userService.saveUserPassword(id,password,oldPassword,request,response));
+        return ResponseEntity.ok().body(userService.saveUserPassword(id,newPassword,oldPassword,request,response));
     }
 
     @PutMapping("/users/{id}/name/save")
