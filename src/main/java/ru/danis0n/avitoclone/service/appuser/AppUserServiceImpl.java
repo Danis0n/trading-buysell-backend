@@ -89,7 +89,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         String username = getUsernameFromRequest(request);
         String DBPassword = user.getPassword();
 
-        if(!validateUser(user.getUsername(),username))
+        if(validateNotUser(user.getUsername(), username))
             return "You don't have enough permissions!";
 
         boolean isNotValid = validateEqualInputPasswords(newPassword,oldPassword,DBPassword) ||
@@ -107,18 +107,21 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     public String saveUserName(Long id, String name, HttpServletRequest request, HttpServletResponse response) {
 
         AppUserEntity user = findById(id);
-        if(user == null) {
+        if(user == null)
             return "User does not exist!";
-        }
-        String username = getUsernameFromRequest(request);
 
-        if(!validateUser(user.getUsername(),username)) {
+        String username = getUsernameFromRequest(request);
+        String currentUsername = user.getUsername();
+        String currentName = user.getUserInfo().getName();
+
+        if(validateNotUser(currentUsername, username))
             return "You don't have enough permissions!";
-        }
+
+        if(name.equals(currentName))
+            return "You have the same name already!";
 
         user.getUserInfo().setName(name);
         saveUser(user);
-        log.info("User {} has new 'name': {}",username,name);
         return "Success!";
     }
 
@@ -126,18 +129,21 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     public String saveUserPhone(Long id, String phone, HttpServletRequest request, HttpServletResponse response) {
 
         AppUserEntity user = findById(id);
-        if(user == null) {
+        if(user == null)
             return "User does not exist!";
-        }
-        String username = getUsernameFromRequest(request);
 
-        if(!validateUser(user.getUsername(),username)) {
+        String username = getUsernameFromRequest(request);
+        String currentUsername = user.getUsername();
+        String currentPhone = user.getUserInfo().getPhone();
+
+        if(validateNotUser(currentUsername, username))
             return "You don't have enough permissions!";
-        }
+
+        if(phone.equals(currentPhone))
+            return "You have the same phone already!";
 
         user.getUserInfo().setPhone(phone);
         saveUser(user);
-        log.info("User {} has new 'phone': {}",username,phone);
         return "Success!";
     }
 
@@ -145,23 +151,26 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     public String saveUserEmail(Long id, String email, HttpServletRequest request, HttpServletResponse response) {
 
         AppUserEntity user = findById(id);
-        if(user == null) {
+        if(user == null)
             return "User does not exist!";
-        }
-        String username = getUsernameFromRequest(request);
 
-        if(!validateUser(user.getUsername(),username)) {
+        String username = getUsernameFromRequest(request);
+        String currentEmail = user.getUserInfo().getEmail();
+        String currentUsername = user.getUsername();
+
+        if(validateNotUser(currentUsername, username))
             return "You don't have enough permissions!";
-        }
+
+        if(email.equals(currentEmail))
+            return "You have the same email already!";
 
         user.getUserInfo().setEmail(email);
         saveUser(user);
-        log.info("User {} has new 'email': {}",username,email);
         return "Success!";
     }
 
-    private boolean validateUser(String username1, String username2) {
-        return username1.equals(username2);
+    private boolean validateNotUser(String username1, String username2) {
+        return !username1.equals(username2);
     }
 
     @Override
