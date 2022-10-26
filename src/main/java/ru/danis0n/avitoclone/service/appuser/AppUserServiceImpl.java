@@ -6,7 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.danis0n.avitoclone.dto.RegistrationRequest;
@@ -38,7 +38,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     private final RoleRepository roleRepository;
     private final ObjectMapperUtil mapperUtil;
     private final JwtUtil jwtUtil;
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder encoder;
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
@@ -80,7 +80,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public String saveUserPassword(Long id, String password, HttpServletRequest request, HttpServletResponse response) {
+    public String saveUserPassword(Long id, String password, String oldPassword, HttpServletRequest request, HttpServletResponse response) {
 
         AppUserEntity user = findById(id);
         if(user == null) {
@@ -92,10 +92,22 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
             return "You don't have enough permissions!";
         }
 
-        user.setPassword(passwordEncoder.encode(password));
+        if(!matchPassword(oldPassword, user.getPassword())){
+            return "Old password doesn't matches the real password!";
+        }
+
+        if(password.equals(oldPassword) || matchPassword(password,user.getPassword())){
+            return "Input passwords are equal!";
+        }
+
+        user.setPassword(encoder.encode(password));
         saveUser(user);
         log.info("User {} has new 'password'",username);
         return "Success!";
+    }
+
+    private boolean matchPassword(String newPassword, String oldPassword) {
+        return encoder.matches(newPassword,oldPassword);
     }
 
     @Override
