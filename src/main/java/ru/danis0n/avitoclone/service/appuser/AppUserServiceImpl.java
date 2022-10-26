@@ -83,25 +83,23 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     public String saveUserPassword(Long id, String newPassword, String oldPassword, HttpServletRequest request, HttpServletResponse response) {
 
         AppUserEntity user = findById(id);
-        if(user == null) {
+        if(user == null)
             return "User does not exist!";
-        }
+
         String username = getUsernameFromRequest(request);
         String DBPassword = user.getPassword();
 
-        if(!validateUser(user.getUsername(),username)) {
+        if(!validateUser(user.getUsername(),username))
             return "You don't have enough permissions!";
-        }
 
         boolean isNotValid = validateEqualInputPasswords(newPassword,oldPassword,DBPassword) ||
                 validateEqualOldPasswordFromDB(oldPassword,DBPassword);
 
-        if(isNotValid) {
+        if(isNotValid)
             return "Password error!";
-        }
 
-        manageNewPassword(newPassword, user);
-        log.info("User {} has new 'password'",username);
+        user.setPassword(encoder.encode(newPassword));
+        saveUser(user);
         return "Success!";
     }
 
@@ -288,11 +286,6 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     private boolean matchPassword(String currentPassword, String DBPassword) {
         return encoder.matches(currentPassword,DBPassword);
-    }
-
-    private void manageNewPassword(String newPassword, AppUserEntity user) {
-        user.setPassword(encoder.encode(newPassword));
-        saveUser(user);
     }
 
     private AppUserEntity findByUsername(String username){
