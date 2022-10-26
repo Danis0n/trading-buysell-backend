@@ -95,7 +95,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         boolean isNotValid = validateEqualInputPasswords(newPassword,oldPassword,DBPassword) ||
                 validateEqualOldPasswordFromDB(oldPassword,DBPassword);
 
-        if(isNotValid)
+        if(isNotValid || !newPassword.matches("^[A-Za-z0-9_-]{8,20}$"))
             return "Password error!";
 
         user.setPassword(encoder.encode(newPassword));
