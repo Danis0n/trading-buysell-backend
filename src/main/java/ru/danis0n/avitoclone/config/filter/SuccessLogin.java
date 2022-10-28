@@ -8,7 +8,7 @@ import org.springframework.security.authentication.event.AuthenticationSuccessEv
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.danis0n.avitoclone.dto.AuthResponse;
-import ru.danis0n.avitoclone.entity.AppUserEntity;
+import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.refresh.RefreshTokenService;
 import ru.danis0n.avitoclone.util.JwtUtil;

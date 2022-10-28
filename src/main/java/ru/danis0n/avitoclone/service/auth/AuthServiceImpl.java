@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.danis0n.avitoclone.dto.AuthResponse;
 import ru.danis0n.avitoclone.dto.appuser.AppUser;
-import ru.danis0n.avitoclone.entity.AppUserEntity;
+import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.refresh.RefreshTokenService;
 import ru.danis0n.avitoclone.util.JwtUtil;

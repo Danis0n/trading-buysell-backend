@@ -1,6 +1,7 @@
 package ru.danis0n.avitoclone.entity;
 
 import lombok.*;
+import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 
 import javax.persistence.*;
 

@@ -1,6 +1,6 @@
 package ru.danis0n.avitoclone.service.refresh;
 
-import ru.danis0n.avitoclone.entity.AppUserEntity;
+import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 
 public interface RefreshTokenService {
     void saveToken(AppUserEntity appUser, String token);

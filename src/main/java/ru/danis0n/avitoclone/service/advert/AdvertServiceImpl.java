@@ -9,7 +9,7 @@ import ru.danis0n.avitoclone.dto.advert.Advert;
 import ru.danis0n.avitoclone.dto.advert.AdvertType;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.advert.AdvertTypeEntity;
-import ru.danis0n.avitoclone.entity.AppUserEntity;
+import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.repository.AdvertRepository;
 import ru.danis0n.avitoclone.repository.AdvertTypeRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;

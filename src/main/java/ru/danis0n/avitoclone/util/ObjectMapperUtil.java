@@ -12,6 +12,8 @@ import ru.danis0n.avitoclone.dto.comment.Comment;
 import ru.danis0n.avitoclone.dto.comment.CommentRequest;
 import ru.danis0n.avitoclone.entity.*;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
+import ru.danis0n.avitoclone.entity.user.AppUserEntity;
+import ru.danis0n.avitoclone.entity.user.AppUserInfoEntity;
 import ru.danis0n.avitoclone.repository.AppUserRepository;
 import ru.danis0n.avitoclone.service.image.ImageService;
 

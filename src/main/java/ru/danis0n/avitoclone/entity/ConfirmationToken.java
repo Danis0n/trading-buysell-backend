@@ -1,10 +1,9 @@
 package ru.danis0n.avitoclone.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.stereotype.Service;
+import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

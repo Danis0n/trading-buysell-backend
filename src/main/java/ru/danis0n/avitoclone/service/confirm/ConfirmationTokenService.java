@@ -1,6 +1,6 @@
 package ru.danis0n.avitoclone.service.confirm;
 
-import ru.danis0n.avitoclone.entity.AppUserEntity;
+import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.entity.ConfirmationToken;
 
 import java.util.Optional;

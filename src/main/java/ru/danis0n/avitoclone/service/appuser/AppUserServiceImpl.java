@@ -13,6 +13,7 @@ import ru.danis0n.avitoclone.dto.RegistrationRequest;
 import ru.danis0n.avitoclone.dto.appuser.AppUser;
 import ru.danis0n.avitoclone.dto.Role;
 import ru.danis0n.avitoclone.entity.*;
+import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.repository.AppUserInfoRepository;
 import ru.danis0n.avitoclone.repository.AppUserRepository;
 import ru.danis0n.avitoclone.repository.RoleRepository;

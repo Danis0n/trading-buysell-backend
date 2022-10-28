@@ -5,19 +5,13 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.procedure.spi.ParameterRegistrationImplementor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
-import ru.danis0n.avitoclone.dto.appuser.AppUser;
-import ru.danis0n.avitoclone.dto.Role;
-import ru.danis0n.avitoclone.entity.AppUserEntity;
+import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.entity.RoleEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
