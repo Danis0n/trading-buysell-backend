@@ -30,7 +30,7 @@ public class FullTypeEntity {
     @OneToOne
     @JoinColumn(
             nullable = false,
-            name = "type_id"
+            name = "main_type_id"
     )
     private MainTypeEntity mainType;
 
@@ -46,8 +46,16 @@ public class FullTypeEntity {
     @OneToOne
     @JoinColumn(
             nullable = false,
-            name = "sub_sub_type_id"
+            name = "title_type_id"
     )
-    private SubSubTypeEntity subSubType;
+    private TitleTypeEntity titleType;
+
+//    apple, samsung, huawei, LG ...
+    @OneToOne
+    @JoinColumn(
+            nullable = false,
+            name = "brand_type_id"
+    )
+    private BrandTypeEntity brandType;
 
 }
