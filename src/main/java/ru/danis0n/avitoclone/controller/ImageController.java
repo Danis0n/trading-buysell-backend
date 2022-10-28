@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.danis0n.avitoclone.dto.Image;
-import ru.danis0n.avitoclone.entity.ImageEntity;
+import ru.danis0n.avitoclone.entity.advert.ImageEntity;
 import ru.danis0n.avitoclone.service.image.ImageService;
 
 import java.util.List;

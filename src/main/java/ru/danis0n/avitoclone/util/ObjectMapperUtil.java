@@ -10,11 +10,13 @@ import ru.danis0n.avitoclone.dto.appuser.AppUser;
 import ru.danis0n.avitoclone.dto.appuser.AppUserInfo;
 import ru.danis0n.avitoclone.dto.comment.Comment;
 import ru.danis0n.avitoclone.dto.comment.CommentRequest;
-import ru.danis0n.avitoclone.entity.*;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
+import ru.danis0n.avitoclone.entity.advert.CommentEntity;
+import ru.danis0n.avitoclone.entity.advert.ImageEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserInfoEntity;
-import ru.danis0n.avitoclone.repository.AppUserRepository;
+import ru.danis0n.avitoclone.entity.user.RoleEntity;
+import ru.danis0n.avitoclone.repository.user.AppUserRepository;
 import ru.danis0n.avitoclone.service.image.ImageService;
 
 import java.util.ArrayList;

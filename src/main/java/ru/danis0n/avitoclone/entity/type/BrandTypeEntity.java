@@ -10,18 +10,18 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "main_types")
-public class MainTypeEntity {
+@Table(name = "brand_type")
+public class BrandTypeEntity {
 
     @Id
     @SequenceGenerator(
-            name = "main_type_sequence",
-            sequenceName = "main_type_sequence",
+            name = "brand_type_sequence",
+            sequenceName = "brand_type_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "main_type_sequence"
+            generator = "brand_type_sequence"
     )
     private Long id;
 

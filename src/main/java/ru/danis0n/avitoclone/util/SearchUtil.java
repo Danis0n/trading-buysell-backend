@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import ru.danis0n.avitoclone.dto.advert.AdvertSearchRequest;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.advert.AdvertTypeEntity;
-import ru.danis0n.avitoclone.repository.AdvertRepository;
-import ru.danis0n.avitoclone.repository.AdvertTypeRepository;
+import ru.danis0n.avitoclone.repository.advert.AdvertRepository;
+import ru.danis0n.avitoclone.repository.advert.AdvertTypeRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;

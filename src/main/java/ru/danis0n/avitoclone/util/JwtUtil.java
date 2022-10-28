@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
-import ru.danis0n.avitoclone.entity.RoleEntity;
+import ru.danis0n.avitoclone.entity.user.RoleEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;

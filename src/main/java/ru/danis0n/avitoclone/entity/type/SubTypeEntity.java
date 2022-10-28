@@ -1,26 +1,30 @@
 package ru.danis0n.avitoclone.entity.type;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
 @Entity
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "sub_types")
 public class SubTypeEntity {
 
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(
+            name = "sub_type_sequence",
+            sequenceName = "sub_type_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "sub_type_sequence"
+    )
     private Long id;
 
-    @Column(name = "name")
     private String name;
 
 }

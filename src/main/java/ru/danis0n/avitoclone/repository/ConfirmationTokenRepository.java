@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
-import ru.danis0n.avitoclone.entity.ConfirmationToken;
+import ru.danis0n.avitoclone.entity.token.ConfirmationToken;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;

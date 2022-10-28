@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.danis0n.avitoclone.dto.comment.Comment;
 import ru.danis0n.avitoclone.dto.comment.CommentRequest;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
-import ru.danis0n.avitoclone.entity.CommentEntity;
+import ru.danis0n.avitoclone.entity.advert.CommentEntity;
 import ru.danis0n.avitoclone.repository.CommentRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.util.JsonUtil;

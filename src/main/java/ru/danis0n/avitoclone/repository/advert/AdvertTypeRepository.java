@@ -1,4 +1,4 @@
-package ru.danis0n.avitoclone.repository;
+package ru.danis0n.avitoclone.repository.advert;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

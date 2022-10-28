@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
-import ru.danis0n.avitoclone.entity.RefreshToken;
+import ru.danis0n.avitoclone.entity.token.RefreshToken;
 import ru.danis0n.avitoclone.repository.RefreshTokenRepository;
 
 @Service
