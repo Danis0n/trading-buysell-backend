@@ -8,6 +8,6 @@ import lombok.ToString;
 public class TypeRequest {
     private String titleType;
     private String[] mainType;
-    private String subType;
+    private String[] subType;
     private String[] brandType;
 }
