@@ -9,8 +9,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface AdvertService {
-    String create(HttpServletRequest request, String title, String location, String description, BigDecimal price, MultipartFile[] files, String type);
-    String update(HttpServletRequest request, Long id, String title, String location, String description, BigDecimal price, MultipartFile[] files, String type);
+    String create(HttpServletRequest request, String title, String location, String description, BigDecimal price, MultipartFile[] files, String mainType, String brandType, String titleType, String subType);
+    String update(HttpServletRequest request, Long id, String title, String location, String description, BigDecimal price, MultipartFile[] files);
     Advert getById(Long id);
     List<Advert> getAllByType(String type);
     List<Advert> getAllByUser(Long id);

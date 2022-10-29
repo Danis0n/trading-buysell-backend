@@ -31,8 +31,11 @@ public class AdvertController {
                          @RequestParam("description") String description,
                          @RequestParam("price") BigDecimal price,
                          @RequestParam("files") MultipartFile[] files,
-                         @RequestParam("type") String type){
-        return advertService.create(request,title,location,description,price,files,type);
+                         @RequestParam("mainType") String mainType,
+                         @RequestParam("brandType") String brandType,
+                         @RequestParam("titleType") String titleType,
+                         @RequestParam("subType") String subType){
+        return advertService.create(request,title,location,description,price,files,mainType,brandType,titleType,subType);
     }
 
     @PostMapping("/update/{id}")
@@ -42,9 +45,8 @@ public class AdvertController {
                          @RequestParam("location") String location,
                          @RequestParam("description") String description,
                          @RequestParam("price") BigDecimal price,
-                         @RequestParam("files")MultipartFile[] files,
-                         @RequestParam("type") String type){
-        return advertService.update(request, id, title,location,description,price,files,type);
+                         @RequestParam("files")MultipartFile[] files) {
+        return advertService.update(request,id,title,location,description,price,files);
     }
 
     @GetMapping("/get/all")

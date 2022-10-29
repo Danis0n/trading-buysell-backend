@@ -6,5 +6,6 @@ import ru.danis0n.avitoclone.entity.type.BrandTypeEntity;
 
 @Repository
 public interface BrandTypeRepository extends JpaRepository<BrandTypeEntity, Long> {
-
+    BrandTypeEntity getById(Long id);
+    BrandTypeEntity getByName(String name);
 }

@@ -7,11 +7,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.danis0n.avitoclone.dto.advert.Advert;
 import ru.danis0n.avitoclone.dto.advert.AdvertType;
+import ru.danis0n.avitoclone.dto.type.FullType;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.advert.AdvertTypeEntity;
+import ru.danis0n.avitoclone.entity.type.FullTypeEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.repository.advert.AdvertRepository;
 import ru.danis0n.avitoclone.repository.advert.AdvertTypeRepository;
+import ru.danis0n.avitoclone.repository.type.*;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.image.ImageService;
 import ru.danis0n.avitoclone.util.JsonUtil;
@@ -34,23 +37,29 @@ public class AdvertServiceImpl implements AdvertService{
     private final AppUserService appUserService;
     private final ImageService imageService;
     private final JwtUtil jwtUtil;
-    private final JsonUtil jsonUtil;
     private final ObjectMapperUtil mapperUtil;
     private final SearchUtil searchUtil;
     private final AdvertRepository advertRepository;
     private final AdvertTypeRepository advertTypeRepository;
+    private final BrandTypeRepository brandTypeRepository;
+    private final SubTypeRepository subTypeRepository;
+    private final TitleTypeRepository titleTypeRepository;
+    private final MainTypeRepository mainTypeRepository;
+    private final FullTypeRepository fullTypeRepository;
 
     @Override
     public String create(HttpServletRequest request,
                          String title, String location,
                          String description, BigDecimal price,
-                         MultipartFile[] files, String type) {
+                         MultipartFile[] files,
+                         String mainType, String brandType,
+                         String titleType, String subType) {
         try{
             String username = getUsernameFromRequest(request);
 
             AdvertEntity advert = new AdvertEntity();
             advert.setUser(getAppUserEntityByUsername(username));
-            buildAdvert(advert,title,location,description,price,files,type);
+            handleNewAdvert(advert,title,location,description,price,files, mainType, brandType,titleType, subType);
             saveAdvert(advert);
             log.info("New advert was created by {}",username);
 
@@ -60,11 +69,40 @@ public class AdvertServiceImpl implements AdvertService{
         }
     }
 
+    private void handleNewAdvert(AdvertEntity advert, String title, String location, String description,
+                                 BigDecimal price, MultipartFile[] files, String mainType, String brandType,
+                                 String titleType, String subType) {
+
+        FullTypeEntity type = handleNewTypeForAdvert(mainType,brandType,titleType,subType);
+
+        advert.setTitle(title);
+        advert.setLocation(location);
+        advert.setDescription(description);
+        advert.setPrice(price);
+        advert.setType(type);
+
+        imageService.clearImageListByAd(advert);
+        advert.clearList();
+        buildImagesForAdvert(advert,files);
+
+    }
+
+    private FullTypeEntity handleNewTypeForAdvert(String mainType, String brandType, String titleType, String subType) {
+        log.info(mainType, brandType,titleType, subType);
+        FullTypeEntity type = new FullTypeEntity();
+        type.setMainType(mainTypeRepository.getByName(mainType));
+        type.setBrandType(brandTypeRepository.getByName(brandType));
+        type.setTitleType(titleTypeRepository.getByName(titleType));
+        type.setSubType(subTypeRepository.getByName(subType));
+        fullTypeRepository.save(type);
+        return type;
+    }
+
     @Override
     public String update(HttpServletRequest request, Long id,
                          String title, String location,
                          String description, BigDecimal price,
-                         MultipartFile[] files, String type) {
+                         MultipartFile[] files) {
 
         AdvertEntity advert = findAdvertById(id);
 
@@ -79,7 +117,7 @@ public class AdvertServiceImpl implements AdvertService{
             return "You don't have permission to do it";
         }
 
-        buildAdvert(advert,title,location,description,price,files,type);
+        buildAdvert(advert,title,location,description,price,files);
         saveAdvert(advert);
         return "Advert has been updated";
     }
@@ -169,12 +207,11 @@ public class AdvertServiceImpl implements AdvertService{
     private void buildAdvert(AdvertEntity advert,
                              String title, String location,
                              String description, BigDecimal price,
-                             MultipartFile[] files, String type){
+                             MultipartFile[] files){
         advert.setTitle(title);
         advert.setLocation(location);
         advert.setDescription(description);
         advert.setPrice(price);
-        advert.setType(findByType(type));
 
         imageService.clearImageListByAd(advert);
         advert.clearList();

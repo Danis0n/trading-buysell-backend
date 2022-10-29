@@ -2,6 +2,7 @@ package ru.danis0n.avitoclone.dto.advert;
 
 import lombok.*;
 import ru.danis0n.avitoclone.dto.Image;
+import ru.danis0n.avitoclone.dto.type.FullType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class Advert {
     private String location;
     private String description;
     private Long userId;
-    private AdvertType type;
+    private FullType type;
     private String dateOfCreation;
     List<Image> images = new ArrayList<>();
 

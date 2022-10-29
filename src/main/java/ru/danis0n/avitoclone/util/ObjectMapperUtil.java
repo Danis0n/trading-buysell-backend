@@ -5,14 +5,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.danis0n.avitoclone.dto.*;
 import ru.danis0n.avitoclone.dto.advert.Advert;
-import ru.danis0n.avitoclone.dto.advert.AdvertType;
 import ru.danis0n.avitoclone.dto.appuser.AppUser;
 import ru.danis0n.avitoclone.dto.appuser.AppUserInfo;
 import ru.danis0n.avitoclone.dto.comment.Comment;
 import ru.danis0n.avitoclone.dto.comment.CommentRequest;
+import ru.danis0n.avitoclone.dto.type.*;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.advert.CommentEntity;
 import ru.danis0n.avitoclone.entity.advert.ImageEntity;
+import ru.danis0n.avitoclone.entity.type.*;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserInfoEntity;
 import ru.danis0n.avitoclone.entity.user.RoleEntity;
@@ -96,11 +97,49 @@ public class ObjectMapperUtil {
         return adverts;
     }
 
+    public FullType mapToFullType(FullTypeEntity fullType) {
+        return FullType.builder().
+                mainType(mapToMainType(fullType.getMainType())).
+                brandType(mapToBrandType(fullType.getBrandType())).
+                subType(mapToSubType(fullType.getSubType())).
+                titleType(mapToTitleType(fullType.getTitleType())).
+                build();
+    }
+
+    public BrandType mapToBrandType(BrandTypeEntity brandType) {
+        return BrandType.builder().
+                id(brandType.getId()).
+                name(brandType.getName()).
+                build();
+    }
+
+    public TitleType mapToTitleType(TitleTypeEntity titleType) {
+        return TitleType.builder().
+                id(titleType.getId()).
+                name(titleType.getName()).
+                build();
+    }
+
+    public SubType mapToSubType(SubTypeEntity subType) {
+        return SubType.builder().
+                id(subType.getId()).
+                name(subType.getName()).
+                build();
+    }
+
+    public MainType mapToMainType(MainTypeEntity mainType) {
+        return MainType.builder().
+                id(mainType.getId()).
+                name(mainType.getName()).
+                build();
+    }
+
     public Advert mapToAdvert(AdvertEntity advertEntity) {
+
         Advert advert = Advert.builder().
                 id(advertEntity.getId()).
                 userId(advertEntity.getUser().getId()).
-                type(new AdvertType(advertEntity.getType().getType())).
+                type(mapToFullType(advertEntity.getType())).
                 location(advertEntity.getLocation()).
                 title(advertEntity.getTitle()).
                 price(advertEntity.getPrice()).

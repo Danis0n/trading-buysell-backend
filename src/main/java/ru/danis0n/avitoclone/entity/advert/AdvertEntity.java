@@ -1,6 +1,7 @@
 package ru.danis0n.avitoclone.entity.advert;
 
 import lombok.*;
+import ru.danis0n.avitoclone.entity.type.FullTypeEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 
 import javax.persistence.*;
@@ -42,7 +43,7 @@ public class AdvertEntity {
             nullable = false,
             name = "type_id"
     )
-    private AdvertTypeEntity type;
+    private FullTypeEntity type;
 
     @ManyToOne(
             cascade = CascadeType.REFRESH,

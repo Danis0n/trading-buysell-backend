@@ -6,4 +6,5 @@ import ru.danis0n.avitoclone.entity.type.TitleTypeEntity;
 
 @Repository
 public interface TitleTypeRepository extends JpaRepository<TitleTypeEntity, Long> {
+    TitleTypeEntity getByName(String name);
 }
