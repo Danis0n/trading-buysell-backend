@@ -17,6 +17,7 @@ import ru.danis0n.avitoclone.repository.advert.AdvertTypeRepository;
 import ru.danis0n.avitoclone.repository.type.*;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.image.ImageService;
+import ru.danis0n.avitoclone.service.type.TypeService;
 import ru.danis0n.avitoclone.util.JsonUtil;
 import ru.danis0n.avitoclone.util.JwtUtil;
 import ru.danis0n.avitoclone.util.ObjectMapperUtil;
@@ -40,12 +41,7 @@ public class AdvertServiceImpl implements AdvertService{
     private final ObjectMapperUtil mapperUtil;
     private final SearchUtil searchUtil;
     private final AdvertRepository advertRepository;
-    private final AdvertTypeRepository advertTypeRepository;
-    private final BrandTypeRepository brandTypeRepository;
-    private final SubTypeRepository subTypeRepository;
-    private final TitleTypeRepository titleTypeRepository;
-    private final MainTypeRepository mainTypeRepository;
-    private final FullTypeRepository fullTypeRepository;
+    private final TypeService typeService;
 
     @Override
     public String create(HttpServletRequest request,
@@ -59,7 +55,7 @@ public class AdvertServiceImpl implements AdvertService{
 
             AdvertEntity advert = new AdvertEntity();
             advert.setUser(getAppUserEntityByUsername(username));
-            handleNewAdvert(advert,title,location,description,price,files, mainType, brandType,titleType, subType);
+            buildAdvert(advert,title,location,description,price,files, mainType, brandType,titleType, subType);
             saveAdvert(advert);
             log.info("New advert was created by {}",username);
 
@@ -67,35 +63,6 @@ public class AdvertServiceImpl implements AdvertService{
         }catch (Exception e){
             return "Exception while creating";
         }
-    }
-
-    private void handleNewAdvert(AdvertEntity advert, String title, String location, String description,
-                                 BigDecimal price, MultipartFile[] files, String mainType, String brandType,
-                                 String titleType, String subType) {
-
-        FullTypeEntity type = handleNewTypeForAdvert(mainType,brandType,titleType,subType);
-
-        advert.setTitle(title);
-        advert.setLocation(location);
-        advert.setDescription(description);
-        advert.setPrice(price);
-        advert.setType(type);
-
-        imageService.clearImageListByAd(advert);
-        advert.clearList();
-        buildImagesForAdvert(advert,files);
-
-    }
-
-    private FullTypeEntity handleNewTypeForAdvert(String mainType, String brandType, String titleType, String subType) {
-        log.info(mainType, brandType,titleType, subType);
-        FullTypeEntity type = new FullTypeEntity();
-        type.setMainType(mainTypeRepository.getByName(mainType));
-        type.setBrandType(brandTypeRepository.getByName(brandType));
-        type.setTitleType(titleTypeRepository.getByName(titleType));
-        type.setSubType(subTypeRepository.getByName(subType));
-        fullTypeRepository.save(type);
-        return type;
     }
 
     @Override
@@ -148,18 +115,6 @@ public class AdvertServiceImpl implements AdvertService{
     }
 
     @Override
-    public List<Advert> getAllByType(String type) {
-        Long typeId = findByType(type).getId();
-        List<AdvertEntity> advertsByType = findAllAdvertEntitiesByType(typeId);
-
-        List<Advert> adverts = new ArrayList<>();
-        for (AdvertEntity advert : advertsByType){
-            adverts.add(mapToAdvert(advert));
-        }
-        return adverts;
-    }
-
-    @Override
     public List<Advert> getAll() {
         return mapToListOfAdverts(findAllAdvertEntities());
     }
@@ -185,19 +140,8 @@ public class AdvertServiceImpl implements AdvertService{
         return mapToListOfAdverts(searchUtil.getByParams(request));
     }
 
-    @Override
-    public void createType(AdvertType advertType) {
-        AdvertTypeEntity type = new AdvertTypeEntity();
-        type.setType(advertType.getName());
-        saveType(type);
-    }
-
     private List<Advert> mapToListOfAdverts(List<AdvertEntity> advertEntities){
         return mapperUtil.mapListToAdverts(advertEntities);
-    }
-
-    private List<AdvertEntity> findAllAdvertEntitiesByType(Long typeId){
-        return advertRepository.findAllByType(typeId);
     }
 
     private void deleteAdvert(AdvertEntity advert){
@@ -216,6 +160,24 @@ public class AdvertServiceImpl implements AdvertService{
         imageService.clearImageListByAd(advert);
         advert.clearList();
         buildImagesForAdvert(advert,files);
+    }
+
+    private void buildAdvert(AdvertEntity advert, String title, String location, String description,
+                             BigDecimal price, MultipartFile[] files, String mainType, String brandType,
+                             String titleType, String subType) {
+
+        FullTypeEntity type = typeService.handleNewTypeForAdvert(mainType,brandType,titleType,subType);
+
+        advert.setTitle(title);
+        advert.setLocation(location);
+        advert.setDescription(description);
+        advert.setPrice(price);
+        advert.setType(type);
+
+        imageService.clearImageListByAd(advert);
+        advert.clearList();
+        buildImagesForAdvert(advert,files);
+
     }
 
     private void buildImagesForAdvert(AdvertEntity advert, MultipartFile[] files) {
@@ -246,14 +208,6 @@ public class AdvertServiceImpl implements AdvertService{
 
     private Advert mapToAdvert(AdvertEntity advert){
         return mapperUtil.mapToAdvert(advert);
-    }
-
-    private void saveType(AdvertTypeEntity type){
-        advertTypeRepository.save(type);
-    }
-
-    private AdvertTypeEntity findByType(String type){
-        return advertTypeRepository.findByType(type);
     }
 
     private List<AdvertEntity> findAllAdvertEntities(){

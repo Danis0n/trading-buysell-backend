@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.danis0n.avitoclone.dto.type.TypeRequest;
 
 import java.math.BigDecimal;
 
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class AdvertSearchRequest {
     private String title;
-    private String type;
+    private TypeRequest type;
     private BigDecimal maxPrice;
     private BigDecimal minPrice;
     private String location;

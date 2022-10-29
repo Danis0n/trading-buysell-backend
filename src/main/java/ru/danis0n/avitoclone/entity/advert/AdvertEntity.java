@@ -16,6 +16,11 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SqlResultSetMapping(
+        name = "advertSqlResult",
+        entities = @EntityResult(entityClass = AdvertEntity.class)
+
+)
 public class AdvertEntity {
 
     @Id

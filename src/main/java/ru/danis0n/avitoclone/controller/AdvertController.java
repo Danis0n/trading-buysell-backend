@@ -31,10 +31,10 @@ public class AdvertController {
                          @RequestParam("description") String description,
                          @RequestParam("price") BigDecimal price,
                          @RequestParam("files") MultipartFile[] files,
-                         @RequestParam("mainType") String mainType,
-                         @RequestParam("brandType") String brandType,
                          @RequestParam("titleType") String titleType,
-                         @RequestParam("subType") String subType){
+                         @RequestParam("mainType") String mainType,
+                         @RequestParam("subType") String subType,
+                         @RequestParam("brandType") String brandType) {
         return advertService.create(request,title,location,description,price,files,mainType,brandType,titleType,subType);
     }
 
@@ -68,11 +68,6 @@ public class AdvertController {
     @GetMapping("/get/user/{id}")
     public List<Advert> getAllByUserId(@PathVariable Long id){
         return advertService.getAllByUser(id);
-    }
-
-    @GetMapping("/get/type/{id}")
-    public List<Advert> getAllByType(@PathVariable String id){
-        return advertService.getAllByType(id);
     }
 
     @PostMapping("/get/params")

@@ -90,6 +90,7 @@ public class ObjectMapperUtil {
     }
 
     public List<Advert> mapListToAdverts(List<AdvertEntity> entities) {
+        if(entities == null) return null;
         List<Advert> adverts = new ArrayList<>();
         for(AdvertEntity advert : entities){
             adverts.add(mapToAdvert(advert));

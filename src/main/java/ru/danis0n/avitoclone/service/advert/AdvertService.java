@@ -12,12 +12,10 @@ public interface AdvertService {
     String create(HttpServletRequest request, String title, String location, String description, BigDecimal price, MultipartFile[] files, String mainType, String brandType, String titleType, String subType);
     String update(HttpServletRequest request, Long id, String title, String location, String description, BigDecimal price, MultipartFile[] files);
     Advert getById(Long id);
-    List<Advert> getAllByType(String type);
     List<Advert> getAllByUser(Long id);
     List<Advert> getByParams(HttpServletRequest request);
     List<Advert> getAll();
     List<Advert> getLatest(Long quantity);
     List<Advert> getExamples();
     String deleteById(HttpServletRequest request,Long id);
-    void createType(AdvertType auto);
 }
