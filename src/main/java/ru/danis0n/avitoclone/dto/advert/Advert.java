@@ -20,6 +20,7 @@ public class Advert {
     private String location;
     private String description;
     private Long userId;
+    private Boolean isHidden;
     private FullType type;
     private String dateOfCreation;
     List<Image> images = new ArrayList<>();

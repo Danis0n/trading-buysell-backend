@@ -52,7 +52,8 @@ public class SearchUtil {
                 append(getPriceForQuery(searchRequest.getMinPrice(),searchRequest.getMaxPrice())).append(" AND ").
                 append(getTypesForQuery(typeRequest)).
                 append(getTitleForQuery(searchRequest.getTitle())).
-                append(getLocationForQuery(searchRequest.getLocation()));
+                append(getLocationForQuery(searchRequest.getLocation())).
+                append(" AND is_hidden = false ");
 
         log.info(query.toString());
         return getAllByNativeQuery(String.valueOf(query),sql);
@@ -66,6 +67,7 @@ public class SearchUtil {
                 " FROM adverts \n JOIN types\n" +
                 "\tON adverts.type_id = types.id\n" +
                 "WHERE " + getTypesForQuery(getTypeRequest(request)) +
+                "AND is_hidden = false \n" +
                 "GROUP BY brand_type_id";
         String sql = "advertAvailableSqlResult";
 

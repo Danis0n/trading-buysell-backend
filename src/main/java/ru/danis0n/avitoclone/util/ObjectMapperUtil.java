@@ -148,6 +148,7 @@ public class ObjectMapperUtil {
                 type(mapToFullType(advertEntity.getType())).
                 location(advertEntity.getLocation()).
                 title(advertEntity.getTitle()).
+                isHidden(advertEntity.getIsHidden()).
                 price(advertEntity.getPrice()).
                 description(advertEntity.getDescription()).
                 dateOfCreation(advertEntity.getDateOfCreation().toString()).

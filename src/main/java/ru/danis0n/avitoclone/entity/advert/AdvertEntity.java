@@ -39,6 +39,9 @@ public class AdvertEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "is_hidden")
+    private Boolean isHidden;
+
     @Column(name = "date_of_creation")
     private LocalDateTime dateOfCreation;
 
