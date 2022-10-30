@@ -13,7 +13,6 @@ import ru.danis0n.avitoclone.entity.type.BrandTypeEntity;
 import ru.danis0n.avitoclone.entity.type.MainTypeEntity;
 import ru.danis0n.avitoclone.entity.type.SubTypeEntity;
 import ru.danis0n.avitoclone.entity.type.TitleTypeEntity;
-import ru.danis0n.avitoclone.repository.advert.AdvertRepository;
 import ru.danis0n.avitoclone.repository.type.BrandTypeRepository;
 import ru.danis0n.avitoclone.repository.type.MainTypeRepository;
 import ru.danis0n.avitoclone.repository.type.SubTypeRepository;
@@ -21,6 +20,7 @@ import ru.danis0n.avitoclone.repository.type.TitleTypeRepository;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +33,6 @@ public class SearchUtil {
 
     private EntityManager em;
     private final JsonUtil jsonUtil;
-    private final AdvertRepository advertRepository;
     private final BrandTypeRepository brandTypeRepository;
     private final MainTypeRepository mainTypeRepository;
     private final SubTypeRepository subTypeRepository;
@@ -46,28 +45,31 @@ public class SearchUtil {
         TypeRequest typeRequest = searchRequest.getType();
 
         String sql = "advertSqlResult";
-        String startedQuery = "SELECT * FROM adverts \n" + setJoinIfNecessary(typeRequest);
+        StringBuilder query = new StringBuilder("SELECT * FROM adverts \n").append(setJoinIfNecessary(typeRequest));
 
-        log.info(startedQuery);
+        query.
+                append(getPriceForQuery(searchRequest.getMinPrice(),searchRequest.getMaxPrice())).
+                append(getTypesForQuery(typeRequest)).
+                append(getTitleForQuery(searchRequest.getTitle())).
+                append(getLocationForQuery(searchRequest.getLocation()));
+
+        return getAllByNativeQuery(String.valueOf(query),sql);
+    }
+
+    private StringBuilder getTypesForQuery(TypeRequest typeRequest) {
+
+        if (!isTypeInSearch(typeRequest)) return new StringBuilder("");
+
+        StringBuilder queryPart = new StringBuilder(" AND ");
 
         List<TitleTypeEntity> titleType = new ArrayList<>();
         List<MainTypeEntity> mainTypes = new ArrayList<>();
         List<SubTypeEntity> subType = new ArrayList<>();
         List<BrandTypeEntity> brandType = new ArrayList<>();
 
-        if(isTypeInSearch(typeRequest)) {
-            setTypesIfNecessary(typeRequest,titleType,mainTypes,subType,brandType);
-            startedQuery += setQueryWithTypes(titleType,mainTypes,subType,brandType);
-        }
-
-        log.info(startedQuery);
-
-        String query = "SELECT * FROM adverts\n" +
-                "JOIN types \n" +
-                "\tON adverts.type_id = types.id\n" +
-                "WHERE title_type_id = 1 ";
-
-        return getAllByNativeQuery(query,sql);
+        setTypeToLists(typeRequest,titleType,mainTypes,subType,brandType);
+        queryPart.append(setQueryWithTypes(titleType,mainTypes,subType,brandType));
+        return queryPart;
     }
 
     private String setQueryWithTypes(List<TitleTypeEntity> titleType, List<MainTypeEntity> mainTypes,
@@ -99,17 +101,17 @@ public class SearchUtil {
                     query.append(" )");
                 }
             }
-
         }
-
         return String.valueOf(query);
     }
 
-    private void setTypesIfNecessary(TypeRequest typeRequest,
-                                     List<TitleTypeEntity> titleType,
-                                     List<MainTypeEntity> mainTypes,
-                                     List<SubTypeEntity> subType,
-                                     List<BrandTypeEntity> brandType) {
+    private void setTypeToLists(TypeRequest typeRequest,
+                                List<TitleTypeEntity> titleType,
+                                List<MainTypeEntity> mainTypes,
+                                List<SubTypeEntity> subType,
+                                List<BrandTypeEntity> brandType) {
+
+        if(!isTypeInSearch(typeRequest)) return;
 
         titleType.add(titleTypeRepository.getByName(typeRequest.getTitleType()));
 
@@ -129,21 +131,37 @@ public class SearchUtil {
                 if(!brandTypeArray[0].equals("none"))
                     for(String element : brandTypeArray)
                         brandType.add(brandTypeRepository.getByName(element));
-
             }
         }
-
-
-
     }
 
     private String setJoinIfNecessary(TypeRequest typeRequest) {
         return isTypeInSearch(typeRequest) ? "JOIN types \n" +
-                "\tON adverts.type_id = types.id \n WHERE " : "WHERE ";
+                "\tON adverts.type_id = types.id \n WHERE " : " WHERE ";
     }
 
     private boolean isTypeInSearch(TypeRequest typeRequest) {
         return !typeRequest.getTitleType().equals("none");
+    }
+
+    private StringBuilder getPriceForQuery(BigDecimal minPrice, BigDecimal maxPrice) {
+        return new StringBuilder(String.format("price >= %s AND price <= %s ", minPrice.toString(), maxPrice.toString()));
+    }
+
+    private String getTitleForQuery(String title) {
+        return isTitle(title) ? String.format(" AND SIMILARITY(title, '%s' ) > 0.1", title) : "";
+    }
+
+    private String getLocationForQuery(String location) {
+        return isLocation(location) ? String.format(" AND SIMILARITY(location, '%s' ) > 0.1", location) : "";
+    }
+
+    private boolean isTitle(String title) {
+        return !title.equals("none");
+    }
+
+    private boolean isLocation(String location) {
+        return !location.equals("none");
     }
 
     private List<AdvertEntity> getAllByNativeQuery(String query, String sql) {

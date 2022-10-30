@@ -2,7 +2,6 @@ package ru.danis0n.avitoclone.service.advert;
 
 import org.springframework.web.multipart.MultipartFile;
 import ru.danis0n.avitoclone.dto.advert.Advert;
-import ru.danis0n.avitoclone.dto.advert.AdvertType;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
