@@ -1,6 +1,8 @@
 package ru.danis0n.avitoclone.service.advert;
 
 import org.springframework.web.multipart.MultipartFile;
+import ru.danis0n.avitoclone.dto.advert.Available;
+import ru.danis0n.avitoclone.entity.advert.AdvertAvailable;
 import ru.danis0n.avitoclone.dto.advert.Advert;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +15,7 @@ public interface AdvertService {
     Advert getById(Long id);
     List<Advert> getAllByUser(Long id);
     List<Advert> getByParams(HttpServletRequest request);
-    List<String> getAllAvailable(HttpServletRequest request);
+    List<Available> getAvailableQuantity(HttpServletRequest request);
     List<Advert> getAll();
     List<Advert> getLatest(Long quantity);
     List<Advert> getExamples();

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.danis0n.avitoclone.dto.advert.Advert;
+import ru.danis0n.avitoclone.dto.advert.Available;
 import ru.danis0n.avitoclone.dto.appuser.AppUser;
 import ru.danis0n.avitoclone.dto.appuser.AppUserInfo;
 import ru.danis0n.avitoclone.dto.appuser.RegistrationRequest;
@@ -11,6 +12,7 @@ import ru.danis0n.avitoclone.dto.appuser.Role;
 import ru.danis0n.avitoclone.dto.comment.Comment;
 import ru.danis0n.avitoclone.dto.comment.CommentRequest;
 import ru.danis0n.avitoclone.dto.type.*;
+import ru.danis0n.avitoclone.entity.advert.AdvertAvailable;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.advert.CommentEntity;
 import ru.danis0n.avitoclone.entity.advert.ImageEntity;
@@ -18,6 +20,7 @@ import ru.danis0n.avitoclone.entity.type.*;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserInfoEntity;
 import ru.danis0n.avitoclone.entity.user.RoleEntity;
+import ru.danis0n.avitoclone.repository.type.BrandTypeRepository;
 import ru.danis0n.avitoclone.repository.user.AppUserRepository;
 import ru.danis0n.avitoclone.service.image.ImageService;
 
@@ -32,6 +35,7 @@ public class ObjectMapperUtil {
     private final ImageService imageService;
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BrandTypeRepository brandTypeRepository;
 
     public Role mapToRole(RoleEntity roleEntity){
         Role role = new Role();
@@ -185,5 +189,16 @@ public class ObjectMapperUtil {
                 advertName(commentRequest.getAdvertName()).
                 rating(commentRequest.getRating()).
                 build();
+    }
+
+    public List<Available> mapToAvailable(List<AdvertAvailable> availables) {
+        List<Available> mappedList = new ArrayList<>();
+
+        for (AdvertAvailable element : availables) {
+            mappedList.add(
+                    new Available(brandTypeRepository.getById(element.getId()).getName(),element.getQuantity())
+            );
+        }
+        return mappedList;
     }
 }

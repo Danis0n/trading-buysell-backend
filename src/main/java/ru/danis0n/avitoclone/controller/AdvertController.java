@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.danis0n.avitoclone.dto.advert.Available;
+import ru.danis0n.avitoclone.entity.advert.AdvertAvailable;
 import ru.danis0n.avitoclone.dto.advert.Advert;
 import ru.danis0n.avitoclone.service.advert.AdvertService;
 
@@ -76,8 +78,8 @@ public class AdvertController {
     }
 
     @PostMapping("/get/available")
-    public List<String> getAllAvailable(HttpServletRequest request) {
-        return advertService.getAllAvailable(request);
+    public List<Available> getAvailableQuantity(HttpServletRequest request) {
+        return advertService.getAvailableQuantity(request);
     }
 
     @GetMapping("/get/{id}")

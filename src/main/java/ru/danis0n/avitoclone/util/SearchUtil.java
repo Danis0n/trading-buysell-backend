@@ -5,7 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import ru.danis0n.avitoclone.dto.advert.Available;
+import ru.danis0n.avitoclone.entity.advert.AdvertAvailable;
 import ru.danis0n.avitoclone.dto.advert.AdvertSearchRequest;
 import ru.danis0n.avitoclone.dto.type.TypeRequest;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
@@ -33,12 +34,12 @@ public class SearchUtil {
 
     private EntityManager em;
     private final JsonUtil jsonUtil;
+    private final ObjectMapperUtil mapperUtil;
     private final BrandTypeRepository brandTypeRepository;
     private final MainTypeRepository mainTypeRepository;
     private final SubTypeRepository subTypeRepository;
     private final TitleTypeRepository titleTypeRepository;
 
-    @Transactional
     public List<AdvertEntity> getByParams(HttpServletRequest request) {
 
         AdvertSearchRequest searchRequest = getSearchRequest(request);
@@ -48,19 +49,40 @@ public class SearchUtil {
         StringBuilder query = new StringBuilder("SELECT * FROM adverts \n").append(setJoinIfNecessary(typeRequest));
 
         query.
-                append(getPriceForQuery(searchRequest.getMinPrice(),searchRequest.getMaxPrice())).
+                append(getPriceForQuery(searchRequest.getMinPrice(),searchRequest.getMaxPrice())).append(" AND ").
                 append(getTypesForQuery(typeRequest)).
                 append(getTitleForQuery(searchRequest.getTitle())).
                 append(getLocationForQuery(searchRequest.getLocation()));
 
+        log.info(query.toString());
         return getAllByNativeQuery(String.valueOf(query),sql);
+    }
+
+    public List<Available> getAvailableQuantity(HttpServletRequest request) {
+
+        String query = "SELECT brand_type_id AS id , COUNT(brand_type_id) AS quantity" +
+                " FROM adverts \n JOIN types\n" +
+                "\tON adverts.type_id = types.id\n" +
+                "WHERE " + getTypesForQuery(getTypeRequest(request)) +
+                "GROUP BY brand_type_id";
+        String sql = "advertAvailableSqlResult";
+        
+        return mapperUtil.mapToAvailable(getBrandQuantity(query,sql));
+    }
+
+    private List<AdvertEntity> getAllByNativeQuery(String query, String sql) {
+        return em.createNativeQuery(query,sql).getResultList();
+    }
+
+    private List<AdvertAvailable> getBrandQuantity(String query, String sql) {
+        return em.createNativeQuery(query,sql).getResultList();
     }
 
     private StringBuilder getTypesForQuery(TypeRequest typeRequest) {
 
-        if (!isTypeInSearch(typeRequest)) return new StringBuilder("");
+        if (!isTypeInSearch(typeRequest)) return new StringBuilder();
 
-        StringBuilder queryPart = new StringBuilder(" AND ");
+        StringBuilder queryPart = new StringBuilder();
 
         List<TitleTypeEntity> titleType = new ArrayList<>();
         List<MainTypeEntity> mainTypes = new ArrayList<>();
@@ -164,13 +186,15 @@ public class SearchUtil {
         return !location.equals("none");
     }
 
-    private List<AdvertEntity> getAllByNativeQuery(String query, String sql) {
-        return em.createNativeQuery(query,sql).getResultList();
-    }
-
     private AdvertSearchRequest getSearchRequest(HttpServletRequest request){
         String jsonBody = jsonUtil.getJson(request);
         return jsonUtil.getGson().
                 fromJson(jsonBody, AdvertSearchRequest.class);
+    }
+
+    private TypeRequest getTypeRequest(HttpServletRequest request){
+        String jsonBody = jsonUtil.getJson(request);
+        return jsonUtil.getGson().
+                fromJson(jsonBody, TypeRequest.class);
     }
 }

@@ -19,7 +19,6 @@ import java.util.Set;
 @SqlResultSetMapping(
         name = "advertSqlResult",
         entities = @EntityResult(entityClass = AdvertEntity.class)
-
 )
 public class AdvertEntity {
 

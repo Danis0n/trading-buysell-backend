@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.danis0n.avitoclone.dto.advert.Available;
+import ru.danis0n.avitoclone.entity.advert.AdvertAvailable;
 import ru.danis0n.avitoclone.dto.advert.Advert;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.type.FullTypeEntity;
@@ -131,6 +133,11 @@ public class AdvertServiceImpl implements AdvertService{
     @Override
     public List<Advert> getByParams(HttpServletRequest request) {
         return mapToListOfAdverts(searchUtil.getByParams(request));
+    }
+
+    @Override
+    public List<Available> getAvailableQuantity(HttpServletRequest request) {
+        return searchUtil.getAvailableQuantity(request);
     }
 
     private List<Advert> mapToListOfAdverts(List<AdvertEntity> advertEntities){
