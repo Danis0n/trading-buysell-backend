@@ -9,5 +9,8 @@ public interface AdminService {
     String notifyUser(Long id, HttpServletRequest request);
     void lockAppUser(Long id);
     void unLockAppUser(Long id);
-    String hideUsersAdverts(Long id);
+    String hideUserAdvertByUserId(Long userId, Long advertId, HttpServletRequest request);
+    String unHideUserAdvertByUserId(Long userId, Long advertId, HttpServletRequest request);
+    String hideAllUserAdvertsByUserId(Long userId, HttpServletRequest request);
+    String unHideAllUserAdvertsByUserId(Long userId, HttpServletRequest request);
 }

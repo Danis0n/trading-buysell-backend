@@ -6,6 +6,7 @@ import ru.danis0n.avitoclone.dto.notification.Message;
 import ru.danis0n.avitoclone.entity.notification.NotificationEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.repository.NotificationRepository;
+import ru.danis0n.avitoclone.repository.advert.AdvertRepository;
 import ru.danis0n.avitoclone.repository.user.AppUserRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.util.JsonUtil;
@@ -19,6 +20,7 @@ public class AdminServiceImpl implements AdminService{
     private final AppUserService appUserService;
     private final AppUserRepository appUserRepository;
     private final NotificationRepository notificationRepository;
+    private final AdvertRepository advertRepository;
     private final JsonUtil jsonUtil;
 
     @Override
@@ -60,10 +62,12 @@ public class AdminServiceImpl implements AdminService{
         switch (bannedOrNot){
             case "BAN":{
                 lockAppUser(user.getId());
+                hideAllAdverts(user.getId());
                 appUserService.addRoleToAppUser(user,"ROLE_BANNED");
                 break;
             }
             case "UNBAN":{
+                unLockAppUser(user.getId());
                 unLockAppUser(user.getId());
                 appUserService.addRoleToAppUser(user,"ROLE_USER");
                 break;
@@ -73,7 +77,7 @@ public class AdminServiceImpl implements AdminService{
         }
 
         Message message = getMessageRequest(request);
-        if (!message.getMessage().equals("")) {
+        if (!message.getMessage().equals("none")) {
             createNotification(message,user);
         }
     }
@@ -96,8 +100,31 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public String hideUsersAdverts(Long id) {
+    public String hideUserAdvertByUserId(Long userId, Long advertId, HttpServletRequest request) {
         return null;
+    }
+
+    @Override
+    public String unHideUserAdvertByUserId(Long userId, Long advertId, HttpServletRequest request) {
+        return null;
+    }
+
+    @Override
+    public String hideAllUserAdvertsByUserId(Long userId, HttpServletRequest request) {
+        return null;
+    }
+
+    @Override
+    public String unHideAllUserAdvertsByUserId(Long userId, HttpServletRequest request) {
+        return null;
+    }
+
+    private void hideAllAdverts(Long userId) {
+        advertRepository.hideAllAdvertsByUserIdAdmin(userId,true);
+    }
+
+    private void unHideAllAdverts(Long userId) {
+        advertRepository.hideAllAdvertsByUserIdAdmin(userId,false);
     }
 
     @Override
