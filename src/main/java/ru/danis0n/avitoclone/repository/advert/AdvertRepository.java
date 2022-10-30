@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface AdvertRepository extends JpaRepository<AdvertEntity,Long> {
 
+    void deleteById(Long id);
     @Query(
             nativeQuery = true,
             value = "SELECT * FROM adverts WHERE user_id = ?1"

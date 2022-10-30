@@ -3,6 +3,7 @@ package ru.danis0n.avitoclone.service.admin;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.danis0n.avitoclone.dto.notification.Message;
+import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.notification.NotificationEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.repository.NotificationRepository;
@@ -118,7 +119,12 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public String powerDeleteAdvert(Long id, HttpServletRequest request) {
-        return null;
+        AdvertEntity advert = advertRepository.findById(id).orElse(null);
+        if(advert != null){
+            advertRepository.deleteById(id);
+            return notifyUser(advert.getUser().getId(),request);
+        }
+        return "none";
     }
 
     @Override
