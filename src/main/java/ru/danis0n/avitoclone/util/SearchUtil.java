@@ -56,7 +56,6 @@ public class SearchUtil {
                 append(" AND is_hidden = false").
                 append(" AND is_hidden_by_admin = false");
 
-        log.info(query.toString());
         return getAllByNativeQuery(String.valueOf(query),sql);
     }
 

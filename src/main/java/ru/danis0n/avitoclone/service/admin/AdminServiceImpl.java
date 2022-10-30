@@ -68,7 +68,7 @@ public class AdminServiceImpl implements AdminService{
             }
             case "UNBAN":{
                 unLockAppUser(user.getId());
-                unLockAppUser(user.getId());
+                unHideAllAdverts(user.getId());
                 appUserService.addRoleToAppUser(user,"ROLE_USER");
                 break;
             }
@@ -80,13 +80,6 @@ public class AdminServiceImpl implements AdminService{
         if (!message.getMessage().equals("none")) {
             createNotification(message,user);
         }
-    }
-
-    private void createNotification(Message message, AppUserEntity user) {
-        NotificationEntity notification = new NotificationEntity();
-        notification.setUser(user);
-        notification.setMessage(message.getMessage());
-        notificationRepository.save(notification);
     }
 
     @Override
@@ -101,30 +94,26 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public String hideUserAdvertByUserId(Long userId, Long advertId, HttpServletRequest request) {
-        return null;
+        advertRepository.hideAdvertByUserIdAdmin(true,userId,advertId);
+        return notifyUser(userId,request);
     }
 
     @Override
     public String unHideUserAdvertByUserId(Long userId, Long advertId, HttpServletRequest request) {
-        return null;
+        advertRepository.hideAdvertByUserIdAdmin(false,userId,advertId);
+        return notifyUser(userId,request);
     }
 
     @Override
     public String hideAllUserAdvertsByUserId(Long userId, HttpServletRequest request) {
-        return null;
+        advertRepository.hideAllAdvertsByUserIdAdmin(true,userId);
+        return notifyUser(userId,request);
     }
 
     @Override
     public String unHideAllUserAdvertsByUserId(Long userId, HttpServletRequest request) {
-        return null;
-    }
-
-    private void hideAllAdverts(Long userId) {
-        advertRepository.hideAllAdvertsByUserIdAdmin(userId,true);
-    }
-
-    private void unHideAllAdverts(Long userId) {
-        advertRepository.hideAllAdvertsByUserIdAdmin(userId,false);
+        advertRepository.hideAllAdvertsByUserIdAdmin(false, userId);
+        return notifyUser(userId,request);
     }
 
     @Override
@@ -134,7 +123,27 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public String notifyUser(Long id, HttpServletRequest request) {
-        return null;
+        Message message = getMessageRequest(request);
+        if (!message.getMessage().equals("none")) {
+            createNotification(message,appUserService.getAppUserEntityById(id));
+            return "User has been notified";
+        }
+        return "none";
+    }
+
+    private void hideAllAdverts(Long userId) {
+        advertRepository.hideAllAdvertsByUserIdAdmin(true, userId);
+    }
+
+    private void unHideAllAdverts(Long userId) {
+        advertRepository.hideAllAdvertsByUserIdAdmin(false, userId);
+    }
+
+    private void createNotification(Message message, AppUserEntity user) {
+        NotificationEntity notification = new NotificationEntity();
+        notification.setUser(user);
+        notification.setMessage(message.getMessage());
+        notificationRepository.save(notification);
     }
 
     private Message getMessageRequest(HttpServletRequest request){

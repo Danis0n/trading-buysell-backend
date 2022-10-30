@@ -1,8 +1,10 @@
 package ru.danis0n.avitoclone.repository.advert;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 
 import java.util.List;
@@ -25,26 +27,34 @@ public interface AdvertRepository extends JpaRepository<AdvertEntity,Long> {
             value = "SELECT * FROM adverts ORDER BY random() LIMIT 6"
     )
     List<AdvertEntity> findExamples();
+    @Transactional
+    @Modifying
     @Query(
             nativeQuery = true,
-            value = "UPDATE adverts SET is_hidden_by_admin = ?2 WHERE user_id = ?1"
+            value = "UPDATE adverts SET is_hidden_by_admin = ?1 WHERE user_id = ?2"
     )
-    void hideAllAdvertsByUserIdAdmin(Long userId, Boolean statement);
+    void hideAllAdvertsByUserIdAdmin(Boolean statement, Long userId);
+    @Transactional
+    @Modifying
     @Query(
             nativeQuery = true,
-            value = "UPDATE adverts SET is_hidden_by_admin = ?3 WHERE user_id = ?1 AND id = ?2"
+            value = "UPDATE adverts SET is_hidden_by_admin = ?1 WHERE user_id = ?2 AND id = ?3"
     )
-    void hideAdvertByUserIdAdmin(Long userId, Long advertId, Boolean statement);
+    void hideAdvertByUserIdAdmin(Boolean statement, Long userId, Long advertId);
+    @Transactional
+    @Modifying
     @Query(
             nativeQuery = true,
-            value = "UPDATE adverts SET is_hidden = ?2 WHERE user_id = ?1"
+            value = "UPDATE adverts SET is_hidden = ?1 WHERE user_id = ?2"
         )
-    void hideAllAdvertsByUserId(Long userId, Boolean statement);
+    void hideAllAdvertsByUserId(Boolean statement, Long userId);
+    @Transactional
+    @Modifying
     @Query(
             nativeQuery = true,
-            value = "UPDATE adverts SET is_hidden = ?3 WHERE user_id = ?1 AND id = ?2"
+            value = "UPDATE adverts SET is_hidden = ?1 WHERE user_id = ?2 AND id = ?3"
         )
-    void hideAdvertByUserId(Long userId, Long advertId, Boolean statement);
+    void hideAdvertByUserId(Boolean statement, Long userId, Long advertId);
 
 }
 
