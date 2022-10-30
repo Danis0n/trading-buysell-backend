@@ -1,7 +1,6 @@
 package ru.danis0n.avitoclone.dto.advert;
 
 import lombok.*;
-import ru.danis0n.avitoclone.dto.Image;
 import ru.danis0n.avitoclone.dto.type.FullType;
 
 import java.math.BigDecimal;

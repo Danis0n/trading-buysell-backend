@@ -75,6 +75,11 @@ public class AdvertController {
         return advertService.getByParams(request);
     }
 
+    @PostMapping("/get/available")
+    public List<String> getAllAvailable(HttpServletRequest request) {
+        return advertService.getAllAvailable(request);
+    }
+
     @GetMapping("/get/{id}")
     public Advert getById(@PathVariable Long id){
         return advertService.getById(id);

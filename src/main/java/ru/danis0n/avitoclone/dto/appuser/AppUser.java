@@ -1,7 +1,6 @@
 package ru.danis0n.avitoclone.dto.appuser;
 
 import lombok.*;
-import ru.danis0n.avitoclone.dto.Role;
 
 import java.util.ArrayList;
 import java.util.Collection;

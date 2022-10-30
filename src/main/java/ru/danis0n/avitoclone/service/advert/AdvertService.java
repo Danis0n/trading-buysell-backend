@@ -13,6 +13,7 @@ public interface AdvertService {
     Advert getById(Long id);
     List<Advert> getAllByUser(Long id);
     List<Advert> getByParams(HttpServletRequest request);
+    List<String> getAllAvailable(HttpServletRequest request);
     List<Advert> getAll();
     List<Advert> getLatest(Long quantity);
     List<Advert> getExamples();

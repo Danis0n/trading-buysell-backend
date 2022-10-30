@@ -3,7 +3,6 @@ package ru.danis0n.avitoclone.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.danis0n.avitoclone.dto.RegistrationRequest;
 import ru.danis0n.avitoclone.service.register.RegistrationService;
 
 import javax.servlet.http.HttpServletRequest;

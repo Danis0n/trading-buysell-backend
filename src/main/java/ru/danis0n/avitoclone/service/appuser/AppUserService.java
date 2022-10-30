@@ -1,9 +1,9 @@
 package ru.danis0n.avitoclone.service.appuser;
 
 
-import ru.danis0n.avitoclone.dto.RegistrationRequest;
+import ru.danis0n.avitoclone.dto.appuser.RegistrationRequest;
 import ru.danis0n.avitoclone.dto.appuser.AppUser;
-import ru.danis0n.avitoclone.dto.Role;
+import ru.danis0n.avitoclone.dto.appuser.Role;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 
 import javax.servlet.http.HttpServletRequest;

@@ -170,7 +170,6 @@ public class AdvertServiceImpl implements AdvertService{
         imageService.clearImageListByAd(advert);
         advert.clearList();
         buildImagesForAdvert(advert,files);
-
     }
 
     private void buildImagesForAdvert(AdvertEntity advert, MultipartFile[] files) {

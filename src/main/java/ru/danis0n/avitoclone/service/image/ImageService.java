@@ -1,7 +1,7 @@
 package ru.danis0n.avitoclone.service.image;
 
 import org.springframework.web.multipart.MultipartFile;
-import ru.danis0n.avitoclone.dto.Image;
+import ru.danis0n.avitoclone.dto.advert.Image;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.advert.ImageEntity;
 

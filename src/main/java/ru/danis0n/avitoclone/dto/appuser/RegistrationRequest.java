@@ -1,4 +1,4 @@
-package ru.danis0n.avitoclone.dto;
+package ru.danis0n.avitoclone.dto.appuser;
 
 import lombok.*;
 
