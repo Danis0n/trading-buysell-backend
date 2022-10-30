@@ -2,9 +2,13 @@ package ru.danis0n.avitoclone.service.admin;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.danis0n.avitoclone.dto.notification.Message;
+import ru.danis0n.avitoclone.entity.notification.NotificationEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
+import ru.danis0n.avitoclone.repository.NotificationRepository;
 import ru.danis0n.avitoclone.repository.user.AppUserRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
+import ru.danis0n.avitoclone.util.JsonUtil;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,6 +18,8 @@ public class AdminServiceImpl implements AdminService{
 
     private final AppUserService appUserService;
     private final AppUserRepository appUserRepository;
+    private final NotificationRepository notificationRepository;
+    private final JsonUtil jsonUtil;
 
     @Override
     public String banAppUserById(Long id, HttpServletRequest request) {
@@ -28,7 +34,7 @@ public class AdminServiceImpl implements AdminService{
             return "You can't ban yourself";
         }
 
-        manageBanned(user,"BAN");
+        manageBanned(user,"BAN",request);
         return "user '" + user.getUsername() + "' banned!";
     }
 
@@ -45,11 +51,11 @@ public class AdminServiceImpl implements AdminService{
             return "You can't unban yourself";
         }
 
-        manageBanned(user,"UNBAN");
+        manageBanned(user,"UNBAN",request);
         return "user '" + user.getUsername() + "' un-banned!";
     }
 
-    private void manageBanned(AppUserEntity user, String bannedOrNot){
+    private void manageBanned(AppUserEntity user, String bannedOrNot, HttpServletRequest request){
         user.getRoles().clear();
         switch (bannedOrNot){
             case "BAN":{
@@ -65,11 +71,18 @@ public class AdminServiceImpl implements AdminService{
             default:{
             }
         }
+
+        Message message = getMessageRequest(request);
+        if (!message.getMessage().equals("")) {
+            createNotification(message,user);
+        }
     }
 
-    @Override
-    public void enableAppUser(Long id) {
-        appUserRepository.enableAppUser(id);
+    private void createNotification(Message message, AppUserEntity user) {
+        NotificationEntity notification = new NotificationEntity();
+        notification.setUser(user);
+        notification.setMessage(message.getMessage());
+        notificationRepository.save(notification);
     }
 
     @Override
@@ -83,6 +96,11 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
+    public String hideUsersAdverts(Long id) {
+        return null;
+    }
+
+    @Override
     public String powerDeleteAdvert(Long id, HttpServletRequest request) {
         return null;
     }
@@ -90,6 +108,12 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public String notifyUser(Long id, HttpServletRequest request) {
         return null;
+    }
+
+    private Message getMessageRequest(HttpServletRequest request){
+        String jsonBody = jsonUtil.getJson(request);
+        return jsonUtil.getGson().
+                fromJson(jsonBody, Message.class);
     }
 
 }

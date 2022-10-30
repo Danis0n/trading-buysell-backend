@@ -42,6 +42,9 @@ public class AdvertEntity {
     @Column(name = "is_hidden")
     private Boolean isHidden;
 
+    @Column(name = "is_hidden_by_admin")
+    private Boolean isHiddenByAdmin;
+
     @Column(name = "date_of_creation")
     private LocalDateTime dateOfCreation;
 

@@ -7,7 +7,7 @@ public interface AdminService {
     String unBanAppUserById(Long id, HttpServletRequest request);
     String powerDeleteAdvert(Long id, HttpServletRequest request);
     String notifyUser(Long id, HttpServletRequest request);
-    void enableAppUser(Long id);
     void lockAppUser(Long id);
     void unLockAppUser(Long id);
+    String hideUsersAdverts(Long id);
 }

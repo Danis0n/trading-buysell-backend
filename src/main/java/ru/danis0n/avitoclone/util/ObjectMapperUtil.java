@@ -11,11 +11,13 @@ import ru.danis0n.avitoclone.dto.appuser.RegistrationRequest;
 import ru.danis0n.avitoclone.dto.appuser.Role;
 import ru.danis0n.avitoclone.dto.comment.Comment;
 import ru.danis0n.avitoclone.dto.comment.CommentRequest;
+import ru.danis0n.avitoclone.dto.notification.Notification;
 import ru.danis0n.avitoclone.dto.type.*;
 import ru.danis0n.avitoclone.entity.advert.AdvertAvailable;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.advert.CommentEntity;
 import ru.danis0n.avitoclone.entity.advert.ImageEntity;
+import ru.danis0n.avitoclone.entity.notification.NotificationEntity;
 import ru.danis0n.avitoclone.entity.type.*;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserInfoEntity;
@@ -149,6 +151,7 @@ public class ObjectMapperUtil {
                 location(advertEntity.getLocation()).
                 title(advertEntity.getTitle()).
                 isHidden(advertEntity.getIsHidden()).
+                isHiddenByAdmin(advertEntity.getIsHiddenByAdmin()).
                 price(advertEntity.getPrice()).
                 description(advertEntity.getDescription()).
                 dateOfCreation(advertEntity.getDateOfCreation().toString()).
@@ -201,5 +204,23 @@ public class ObjectMapperUtil {
             );
         }
         return mappedList;
+    }
+
+    public Notification mapToNotification(NotificationEntity notificationEntity) {
+        return Notification.builder().
+                id(notificationEntity.getId()).
+                message(notificationEntity.getMessage()).
+                dateOfCreation(String.valueOf(notificationEntity.getDateOfCreation())).
+                userId(String.valueOf(notificationEntity.getUser().getId())).
+                build();
+    }
+
+    public List<Notification> mapToListNotification(List<NotificationEntity> notificationEntities) {
+        List<Notification> notifications = new ArrayList<>();
+
+        for (NotificationEntity element : notificationEntities)
+            notifications.add(mapToNotification(element));
+
+        return notifications;
     }
 }

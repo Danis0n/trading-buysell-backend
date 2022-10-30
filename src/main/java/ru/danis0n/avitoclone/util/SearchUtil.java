@@ -53,7 +53,8 @@ public class SearchUtil {
                 append(getTypesForQuery(typeRequest)).
                 append(getTitleForQuery(searchRequest.getTitle())).
                 append(getLocationForQuery(searchRequest.getLocation())).
-                append(" AND is_hidden = false ");
+                append(" AND is_hidden = false").
+                append(" AND is_hidden_by_admin = false");
 
         log.info(query.toString());
         return getAllByNativeQuery(String.valueOf(query),sql);
@@ -68,6 +69,7 @@ public class SearchUtil {
                 "\tON adverts.type_id = types.id\n" +
                 "WHERE " + getTypesForQuery(getTypeRequest(request)) +
                 "AND is_hidden = false \n" +
+                "AND is_hidden_by_admin = false \n" +
                 "GROUP BY brand_type_id";
         String sql = "advertAvailableSqlResult";
 

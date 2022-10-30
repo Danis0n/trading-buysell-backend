@@ -21,6 +21,7 @@ public class Advert {
     private String description;
     private Long userId;
     private Boolean isHidden;
+    private Boolean isHiddenByAdmin;
     private FullType type;
     private String dateOfCreation;
     List<Image> images = new ArrayList<>();
