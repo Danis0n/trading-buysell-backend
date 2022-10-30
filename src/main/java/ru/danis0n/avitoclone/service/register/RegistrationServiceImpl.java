@@ -105,7 +105,7 @@ public class RegistrationServiceImpl implements RegistrationService{
 
         AppUserEntity appUser = getAppUserByUsername(username);
 
-        enableAppUser(username);
+        enableAppUser(appUser.getId());
         removeRoleFromAppUser(appUser,"ROLE_NOT_CONFIRMED");
         addRoleToAppUser(appUser,"ROLE_USER");
 
@@ -135,8 +135,8 @@ public class RegistrationServiceImpl implements RegistrationService{
         else return tokenFromRequest;
     }
 
-    private void enableAppUser(String username){
-        appUserService.enableAppUser(username);
+    private void enableAppUser(Long id){
+        appUserService.enableAppUser(id);
     }
 
     private void removeRoleFromAppUser(AppUserEntity user, String role){

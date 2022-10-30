@@ -71,12 +71,14 @@ public class SecurityConfiguration {
         String user = "ROLE_USER";
         String roleNotConfirmed = "ROLE_NOT_CONFIRMED";
 
-
         http.authorizeRequests().
                 antMatchers("/api/login","/api/token/refresh/**","/api/register/**", "/api/auth").permitAll();
 
         http.authorizeRequests().
                 antMatchers("/api/new/token").hasAnyAuthority(roleNotConfirmed);
+
+        http.authorizeRequests().
+                antMatchers("/api/admin/**").hasAnyAuthority(admin,superAdmin);
 
         http.authorizeRequests().
                 antMatchers(GET,"/api/advert/**").permitAll();

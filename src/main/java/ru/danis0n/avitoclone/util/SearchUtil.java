@@ -60,13 +60,15 @@ public class SearchUtil {
 
     public List<Available> getAvailableQuantity(HttpServletRequest request) {
 
-        String query = "SELECT brand_type_id AS id , COUNT(brand_type_id) AS quantity" +
+        String query =
+                "SELECT brand_type_id AS id ," +
+                " COUNT(brand_type_id) AS quantity" +
                 " FROM adverts \n JOIN types\n" +
                 "\tON adverts.type_id = types.id\n" +
                 "WHERE " + getTypesForQuery(getTypeRequest(request)) +
                 "GROUP BY brand_type_id";
         String sql = "advertAvailableSqlResult";
-        
+
         return mapperUtil.mapToAvailable(getBrandQuantity(query,sql));
     }
 

@@ -45,7 +45,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AppUserEntity user = findByUsername(username);
+        AppUserEntity user = getAppUserEntityByUsername(username);
         if(user == null){
             log.error("User not found in the database");
             throw new UsernameNotFoundException("User not found in the database");
@@ -82,9 +82,14 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
+    public String getUsernameFromRequest(HttpServletRequest request){
+        return jwtUtil.getUsernameFromRequest(request);
+    }
+
+    @Override
     public String saveUserPassword(Long id, String newPassword, String oldPassword, HttpServletRequest request, HttpServletResponse response) {
 
-        AppUserEntity user = findById(id);
+        AppUserEntity user = getAppUserEntityById(id);
         if(user == null)
             return "User does not exist!";
 
@@ -108,7 +113,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     @Override
     public String saveUserName(Long id, String name, HttpServletRequest request, HttpServletResponse response) {
 
-        AppUserEntity user = findById(id);
+        AppUserEntity user = getAppUserEntityById(id);
         if(user == null)
             return "User does not exist!";
 
@@ -130,7 +135,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     @Override
     public String saveUserPhone(Long id, String phone, HttpServletRequest request, HttpServletResponse response) {
 
-        AppUserEntity user = findById(id);
+        AppUserEntity user = getAppUserEntityById(id);
         if(user == null)
             return "User does not exist!";
 
@@ -152,7 +157,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     @Override
     public String saveUserEmail(Long id, String email, HttpServletRequest request, HttpServletResponse response) {
 
-        AppUserEntity user = findById(id);
+        AppUserEntity user = getAppUserEntityById(id);
         if(user == null)
             return "User does not exist!";
 
@@ -184,49 +189,18 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public String banAppUserById(Long id, HttpServletRequest request) {
-        AppUserEntity user = findById(id);
-        if(user == null){
-            return "null";
-        }
-
-        String username = getUsernameFromRequest(request);
-
-        if(user.equals(findByUsername(username))){
-            return "You can't ban yourself";
-        }
-
-        manageBanned(user,"BAN");
-        return "user '" + user.getUsername() + "' banned!";
-    }
-
-    @Override
-    public String unBanAppUserById(Long id) {
-        AppUserEntity user = findById(id);
-        if(user == null){
-            return "null";
-        }
-        manageBanned(user,"UNBAN");
-        return "user '" + user.getUsername() + "' un-banned!";
-    }
-
-    @Override
     public AppUser getAppUser(String username) {
-        AppUserEntity entity = findByUsername(username);
+        AppUserEntity entity = getAppUserEntityByUsername(username);
         return mapToAppUserWithParams(entity);
     }
 
     @Override
     public AppUserEntity getAppUserEntityByUsername(String username) {
-        return findByUsername(username);
+        return appUserRepository.findByUsername(username);
     }
 
     @Override
     public AppUserEntity getAppUserEntityById(Long id) {
-        return findById(id);
-    }
-
-    private AppUserEntity findById(Long id) {
         return appUserRepository.findById(id).orElse(null);
     }
 
@@ -263,18 +237,8 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public void enableAppUser(String username) {
-        appUserRepository.enableAppUser(username);
-    }
-
-    @Override
-    public void lockAppUser(String username){
-        appUserRepository.lockAppUser(username);
-    }
-
-    @Override
-    public void unLockAppUser(String username){
-        appUserRepository.unLockAppUser(username);
+    public void enableAppUser(Long id) {
+        appUserRepository.enableAppUser(id);
     }
 
     @Override
@@ -299,28 +263,6 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         return encoder.matches(currentPassword,DBPassword);
     }
 
-    private AppUserEntity findByUsername(String username){
-        return appUserRepository.findByUsername(username);
-    }
-
-    private void manageBanned(AppUserEntity user, String bannedOrNot){
-        user.getRoles().clear();
-        switch (bannedOrNot){
-            case "BAN":{
-                lockAppUser(user.getUsername());
-                addRoleToAppUser(user,"ROLE_BANNED");
-                break;
-            }
-            case "UNBAN":{
-                unLockAppUser(user.getUsername());
-                addRoleToAppUser(user,"ROLE_USER");
-                break;
-            }
-            default:{
-            }
-        }
-    }
-
     private AppUserEntity mapToNewAppUserEntityFromRequest(RegistrationRequest request){
         return mapperUtil.mapToNewAppUserEntityFromRequest(request);
     }
@@ -331,10 +273,6 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
 
     private void saveConfirmationToken(ConfirmationToken token){
         confirmationTokenService.saveConfirmationToken(token);
-    }
-
-    private String getUsernameFromRequest(HttpServletRequest request){
-        return jwtUtil.getUsernameFromRequest(request);
     }
 
     private AppUser mapToAppUserWithParams(AppUserEntity user){

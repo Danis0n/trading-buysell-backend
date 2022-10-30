@@ -13,20 +13,4 @@ public class AvitoCloneApplication {
         SpringApplication.run(AvitoCloneApplication.class, args);
     }
 
-//    @Bean
-    CommandLineRunner fill(AdvertService advertService, AppUserService appUserService){
-        return args -> {
-
-            String superAdmin = "ROLE_SUPER_ADMIN";
-            String admin = "ROLE_ADMIN";
-            String manager = "ROLE_MANAGER";
-            String user = "ROLE_USER";
-            String roleNotConfirmed = "ROLE_NOT_CONFIRMED";
-
-            appUserService.addRoleToAppUser(appUserService.getAppUserEntityByUsername("alex"),superAdmin);
-            appUserService.addRoleToAppUser(appUserService.getAppUserEntityByUsername("alex"),admin);
-            appUserService.addRoleToAppUser(appUserService.getAppUserEntityByUsername("alex"),manager);
-        };
-    }
-
 }

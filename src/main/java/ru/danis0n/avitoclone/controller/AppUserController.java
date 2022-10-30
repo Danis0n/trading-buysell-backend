@@ -59,16 +59,6 @@ public class AppUserController {
         return ResponseEntity.ok().body(userService.saveUserEmail(id,email,request,response));
     }
 
-    @PostMapping("/users/ban/{id}")
-    public ResponseEntity<String> banUser(@PathVariable Long id, HttpServletRequest request) {
-        return ResponseEntity.ok().body(userService.banAppUserById(id, request));
-    }
-
-    @PostMapping("/users/unban/{id}")
-    public ResponseEntity<String> unBanUser(@PathVariable Long id) {
-        return ResponseEntity.ok().body(userService.unBanAppUserById(id));
-    }
-
     @PostMapping("/role/save")
     public ResponseEntity<Role> saveRole(@RequestBody Role role) {
         URI uri = URI.create(
