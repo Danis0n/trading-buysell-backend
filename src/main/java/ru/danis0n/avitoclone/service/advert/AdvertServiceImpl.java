@@ -11,6 +11,7 @@ import ru.danis0n.avitoclone.dto.advert.Advert;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.type.FullTypeEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
+import ru.danis0n.avitoclone.repository.NotificationRepository;
 import ru.danis0n.avitoclone.repository.advert.AdvertRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.image.ImageService;
@@ -36,6 +37,7 @@ public class AdvertServiceImpl implements AdvertService{
     private final ObjectMapperUtil mapperUtil;
     private final SearchUtil searchUtil;
     private final AdvertRepository advertRepository;
+    private final NotificationRepository notificationRepository;
     private final TypeService typeService;
 
     @Override
@@ -138,6 +140,50 @@ public class AdvertServiceImpl implements AdvertService{
     @Override
     public List<Available> getAvailableQuantity(HttpServletRequest request) {
         return searchUtil.getAvailableQuantity(request);
+    }
+
+    @Override
+    public String hideUserAdvertByUserId(Long userId, Long advertId, HttpServletRequest request) {
+        AppUserEntity user = appUserService.getAppUserEntityById(userId);
+        if(findAdvertById(advertId) == null)
+            return "Advert with this id doesn't exist";
+        if (!user.getUsername().equals(getUsernameFromRequest(request)))
+            return "You don't have permissions";
+
+        advertRepository.hideAdvertByUserId(true,userId,advertId);
+        return null;
+    }
+
+    @Override
+    public String unHideUserAdvertByUserId(Long userId, Long advertId, HttpServletRequest request) {
+        AppUserEntity user = appUserService.getAppUserEntityById(userId);
+        if(findAdvertById(advertId) == null)
+            return "Advert with this id doesn't exist";
+        if (!user.getUsername().equals(getUsernameFromRequest(request)))
+            return "You don't have permissions";
+
+        advertRepository.hideAdvertByUserId(false,userId,advertId);
+        return null;
+    }
+
+    @Override
+    public String hideAllUserAdvertsByUserId(Long userId, HttpServletRequest request) {
+        AppUserEntity user = appUserService.getAppUserEntityById(userId);
+        if (!user.getUsername().equals(getUsernameFromRequest(request)))
+            return "You don't have permissions";
+
+        advertRepository.hideAllAdvertsByUserId(true,userId);
+        return null;
+    }
+
+    @Override
+    public String unHideAllUserAdvertsByUserId(Long userId, HttpServletRequest request) {
+        AppUserEntity user = appUserService.getAppUserEntityById(userId);
+        if (!user.getUsername().equals(getUsernameFromRequest(request)))
+            return "You don't have permissions";
+
+        advertRepository.hideAllAdvertsByUserId(false, userId);
+        return null;
     }
 
     private List<Advert> mapToListOfAdverts(List<AdvertEntity> advertEntities){

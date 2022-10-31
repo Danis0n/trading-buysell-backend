@@ -210,6 +210,7 @@ public class ObjectMapperUtil {
         return Notification.builder().
                 id(notificationEntity.getId()).
                 message(notificationEntity.getMessage()).
+                seenByUser(notificationEntity.isSeenByUser()).
                 dateOfCreation(String.valueOf(notificationEntity.getDateOfCreation())).
                 userId(String.valueOf(notificationEntity.getUser().getId())).
                 build();

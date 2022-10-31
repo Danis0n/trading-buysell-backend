@@ -2,7 +2,6 @@ package ru.danis0n.avitoclone.service.advert;
 
 import org.springframework.web.multipart.MultipartFile;
 import ru.danis0n.avitoclone.dto.advert.Available;
-import ru.danis0n.avitoclone.entity.advert.AdvertAvailable;
 import ru.danis0n.avitoclone.dto.advert.Advert;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,4 +19,8 @@ public interface AdvertService {
     List<Advert> getLatest(Long quantity);
     List<Advert> getExamples();
     String deleteById(HttpServletRequest request,Long id);
+    String hideUserAdvertByUserId(Long userId, Long advertId, HttpServletRequest request);
+    String unHideUserAdvertByUserId(Long userId, Long advertId, HttpServletRequest request);
+    String hideAllUserAdvertsByUserId(Long userId, HttpServletRequest request);
+    String unHideAllUserAdvertsByUserId(Long userId, HttpServletRequest request);
 }

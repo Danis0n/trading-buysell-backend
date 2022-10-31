@@ -28,9 +28,11 @@ public class NotificationEntity {
             generator = "notification_sequence"
     )
     private Long id;
+    @Column(name = "message")
     private String message;
     private LocalDateTime dateOfCreation;
-
+    @Column(name = "seen_by_user")
+    private boolean seenByUser;
     @ManyToOne
     @JoinColumn(
             nullable = false,

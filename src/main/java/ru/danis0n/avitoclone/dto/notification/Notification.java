@@ -13,5 +13,6 @@ public class Notification {
     private Long id;
     private String message;
     private String dateOfCreation;
+    private boolean seenByUser;
     private String userId;
 }
