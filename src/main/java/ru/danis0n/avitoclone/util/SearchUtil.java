@@ -112,22 +112,22 @@ public class SearchUtil {
                 query.append("main_type_id = ").append(element.getId()).append(" OR ");
             query = new StringBuilder(query.substring(0, query.length() - 4));
             query.append(" )");
+        }
 
-            if(!subType.isEmpty()) {
-                query.append(" AND (");
-                for(SubTypeEntity element: subType)
-                    query.append("sub_type_id = ").append(element.getId()).append(" OR ");
-                query = new StringBuilder(query.substring(0, query.length() - 4));
-                query.append(" )");
+        if(!subType.isEmpty()) {
+            query.append(" AND (");
+            for(SubTypeEntity element: subType)
+                query.append("sub_type_id = ").append(element.getId()).append(" OR ");
+            query = new StringBuilder(query.substring(0, query.length() - 4));
+            query.append(" )");
+        }
 
-                if(!brandType.isEmpty()) {
-                    query.append(" AND (");
-                    for(BrandTypeEntity element: brandType)
-                        query.append("brand_type_id = ").append(element.getId()).append(" OR ");
-                    query = new StringBuilder(query.substring(0, query.length() - 4));
-                    query.append(" )");
-                }
-            }
+        if(!brandType.isEmpty()) {
+            query.append(" AND (");
+            for(BrandTypeEntity element: brandType)
+                query.append("brand_type_id = ").append(element.getId()).append(" OR ");
+            query = new StringBuilder(query.substring(0, query.length() - 4));
+            query.append(" )");
         }
         return String.valueOf(query);
     }
@@ -144,22 +144,19 @@ public class SearchUtil {
 
         String[] mainTypeArray = typeRequest.getMainType();
 
-        if(!mainTypeArray[0].equals("none")){
+        if(!mainTypeArray[0].equals("none"))
             for(String element : mainTypeArray)
                 mainTypes.add(mainTypeRepository.getByName(element));
 
-            String[] subTypeArray = typeRequest.getSubType();
-            if(!subTypeArray[0].equals("none")) {
+        String[] subTypeArray = typeRequest.getSubType();
+        if(!subTypeArray[0].equals("none"))
+            for (String element: subTypeArray)
+                subType.add(subTypeRepository.getByName(element));
 
-                for (String element: subTypeArray)
-                    subType.add(subTypeRepository.getByName(element));
-
-                String[] brandTypeArray = typeRequest.getBrandType();
-                if(!brandTypeArray[0].equals("none"))
-                    for(String element : brandTypeArray)
-                        brandType.add(brandTypeRepository.getByName(element));
-            }
-        }
+        String[] brandTypeArray = typeRequest.getBrandType();
+        if(!brandTypeArray[0].equals("none"))
+            for(String element : brandTypeArray)
+                brandType.add(brandTypeRepository.getByName(element));
     }
 
     private String setJoinIfNecessary(TypeRequest typeRequest) {
