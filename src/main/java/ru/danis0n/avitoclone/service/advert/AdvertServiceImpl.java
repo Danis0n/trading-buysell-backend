@@ -138,8 +138,18 @@ public class AdvertServiceImpl implements AdvertService{
     }
 
     @Override
-    public List<Available> getAvailableQuantity(HttpServletRequest request) {
+    public List<Available> getAvailableQuantityBrand(HttpServletRequest request) {
         return searchUtil.getAvailableQuantity(request);
+    }
+
+    @Override
+    public List<Available> getAvailableQuantitySub(HttpServletRequest request) {
+        return searchUtil.getAvailableQuantitySub(request);
+    }
+
+    @Override
+    public List<Available> getAvailableQuantityMain(HttpServletRequest request) {
+        return searchUtil.getAvailableQuantityMain(request);
     }
 
     @Override

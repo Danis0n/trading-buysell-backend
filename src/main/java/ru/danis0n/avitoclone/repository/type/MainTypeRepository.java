@@ -7,4 +7,5 @@ import ru.danis0n.avitoclone.entity.type.MainTypeEntity;
 @Repository
 public interface MainTypeRepository extends JpaRepository<MainTypeEntity, Long> {
     MainTypeEntity getByName(String name);
+    MainTypeEntity getById(Long id);
 }

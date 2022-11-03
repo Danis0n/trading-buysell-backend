@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class Available {
-    private String brand;
+    private String name;
     private String quantity;
 }

@@ -23,6 +23,8 @@ import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserInfoEntity;
 import ru.danis0n.avitoclone.entity.user.RoleEntity;
 import ru.danis0n.avitoclone.repository.type.BrandTypeRepository;
+import ru.danis0n.avitoclone.repository.type.MainTypeRepository;
+import ru.danis0n.avitoclone.repository.type.SubTypeRepository;
 import ru.danis0n.avitoclone.repository.user.AppUserRepository;
 import ru.danis0n.avitoclone.service.image.ImageService;
 
@@ -38,6 +40,8 @@ public class ObjectMapperUtil {
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final BrandTypeRepository brandTypeRepository;
+    private final SubTypeRepository subTypeRepository;
+    private final MainTypeRepository mainTypeRepository;
 
     public Role mapToRole(RoleEntity roleEntity){
         Role role = new Role();
@@ -195,12 +199,31 @@ public class ObjectMapperUtil {
                 build();
     }
 
-    public List<Available> mapToAvailable(List<AdvertAvailable> availables) {
+    public List<Available> mapToAvailableBrand(List<AdvertAvailable> availables) {
         List<Available> mappedList = new ArrayList<>();
-
         for (AdvertAvailable element : availables) {
             mappedList.add(
                     new Available(brandTypeRepository.getById(element.getId()).getName(),element.getQuantity())
+            );
+        }
+        return mappedList;
+    }
+
+    public List<Available> mapToAvailableSub(List<AdvertAvailable> availables) {
+        List<Available> mappedList = new ArrayList<>();
+        for (AdvertAvailable element : availables) {
+            mappedList.add(
+                    new Available(subTypeRepository.getById(element.getId()).getName(),element.getQuantity())
+            );
+        }
+        return mappedList;
+    }
+
+    public List<Available> mapToAvailableMain(List<AdvertAvailable> availables) {
+        List<Available> mappedList = new ArrayList<>();
+        for (AdvertAvailable element : availables) {
+            mappedList.add(
+                    new Available(mainTypeRepository.getById(element.getId()).getName(),element.getQuantity())
             );
         }
         return mappedList;
@@ -238,4 +261,5 @@ public class ObjectMapperUtil {
                 name(customTypeEntity.getName()).
                 build();
     }
+
 }

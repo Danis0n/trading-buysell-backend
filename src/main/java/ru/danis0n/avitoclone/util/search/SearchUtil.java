@@ -46,11 +46,11 @@ public class SearchUtil {
 
         AdvertSearchRequest searchRequest = getSearchRequest(request);
         TypeRequest typeRequest = searchRequest.getType();
-
+        String and = isTypeInSearch(typeRequest) ? " AND " : "";
         String sql = "advertSqlResult";
         StringBuilder query = new StringBuilder("SELECT * FROM adverts \n").append(setJoinIfNecessary(typeRequest));
         query.
-                append(getPriceForQuery(searchRequest.getMinPrice(),searchRequest.getMaxPrice())).
+                append(getPriceForQuery(searchRequest.getMinPrice(),searchRequest.getMaxPrice())).append(and).
                 append(getTypesForQuery(typeRequest)).
                 append(getTitleForQuery(searchRequest.getTitle())).
                 append(getLocationForQuery(searchRequest.getLocation())).
@@ -61,18 +61,56 @@ public class SearchUtil {
 
     public List<Available> getAvailableQuantity(HttpServletRequest request) {
 
+        TypeRequest typeRequest = getTypeRequest(request);
+        String and = isTypeInSearch(typeRequest) ? " AND " : " ";
+
         String query =
                 "SELECT brand_type_id AS id ," +
                 " COUNT(brand_type_id) AS quantity" +
                 " FROM adverts \n JOIN types\n" +
                 "\tON adverts.type_id = types.id\n" +
-                "WHERE " + getTypesForQuery(getTypeRequest(request)) +
-                "AND is_hidden = false \n" +
+                "WHERE " + getTypesForQuery(typeRequest) +
+                " " + and + "is_hidden = false \n" +
                 "AND is_hidden_by_admin = false \n" +
                 "GROUP BY brand_type_id";
         String sql = "advertAvailableSqlResult";
+        return mapperUtil.mapToAvailableBrand(getBrandQuantity(query,sql));
+    }
 
-        return mapperUtil.mapToAvailable(getBrandQuantity(query,sql));
+    public List<Available> getAvailableQuantitySub(HttpServletRequest request) {
+
+        TypeRequest typeRequest = getTypeRequest(request);
+        String and = isTypeInSearch(typeRequest) ? " AND " : " ";
+
+        String query =
+                "SELECT sub_type_id AS id ," +
+                        " COUNT(sub_type_id) AS quantity" +
+                        " FROM adverts \n JOIN types\n" +
+                        "\tON adverts.type_id = types.id\n" +
+                        "WHERE " + getTypesForQuery(typeRequest) +
+                        " " + and + "is_hidden = false \n" +
+                        "AND is_hidden_by_admin = false \n" +
+                        "GROUP BY sub_type_id";
+        String sql = "advertAvailableSqlResult";
+        return mapperUtil.mapToAvailableSub(getBrandQuantity(query,sql));
+    }
+
+    public List<Available> getAvailableQuantityMain(HttpServletRequest request) {
+
+        TypeRequest typeRequest = getTypeRequest(request);
+        String and = isTypeInSearch(typeRequest) ? " AND " : " ";
+
+        String query =
+                "SELECT main_type_id AS id ," +
+                        " COUNT(main_type_id) AS quantity" +
+                        " FROM adverts \n JOIN types\n" +
+                        "\tON adverts.type_id = types.id\n" +
+                        "WHERE " + getTypesForQuery(typeRequest) +
+                        " " + and + "is_hidden = false \n" +
+                        "AND is_hidden_by_admin = false \n" +
+                        "GROUP BY main_type_id";
+        String sql = "advertAvailableSqlResult";
+        return mapperUtil.mapToAvailableMain(getBrandQuantity(query,sql));
     }
 
     private List<AdvertEntity> getAllByNativeQuery(String query, String sql) {
@@ -104,7 +142,6 @@ public class SearchUtil {
         StringBuilder query = new StringBuilder();
 
         if(!titleType.isEmpty()) {
-            query.append(" AND ");
             for(TitleTypeEntity element : titleType)
                 query.append("title_type_id = ").append(element.getId());
         }
@@ -147,17 +184,17 @@ public class SearchUtil {
         titleType.add(titleTypeRepository.getByName(typeRequest.getTitleType()));
 
         String[] mainTypeArray = typeRequest.getMainType();
-        if(!(mainTypeArray.length == 0))
+        if(mainTypeArray != null && !(mainTypeArray.length == 0))
             for(String element : mainTypeArray)
                 mainTypes.add(mainTypeRepository.getByName(element));
 
         String[] subTypeArray = typeRequest.getSubType();
-        if(!(subTypeArray.length == 0))
+        if(subTypeArray != null && !(subTypeArray.length == 0))
             for (String element: subTypeArray)
                 subType.add(subTypeRepository.getByName(element));
 
         String[] brandTypeArray = typeRequest.getBrandType();
-        if(!(brandTypeArray.length == 0))
+        if(brandTypeArray != null && !(brandTypeArray.length == 0))
             for(String element : brandTypeArray)
                 brandType.add(brandTypeRepository.getByName(element));
     }

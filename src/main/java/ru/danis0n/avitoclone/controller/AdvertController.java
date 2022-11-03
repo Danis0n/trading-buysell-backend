@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.danis0n.avitoclone.dto.advert.Available;
 import ru.danis0n.avitoclone.dto.type.CustomType;
-import ru.danis0n.avitoclone.entity.advert.AdvertAvailable;
 import ru.danis0n.avitoclone.dto.advert.Advert;
 import ru.danis0n.avitoclone.service.advert.AdvertService;
 
@@ -79,9 +78,19 @@ public class AdvertController {
         return advertService.getByParams(request);
     }
 
-    @PostMapping("/get/available")
+    @PostMapping("/get/available/brand")
     public List<Available> getAvailableQuantity(HttpServletRequest request) {
-        return advertService.getAvailableQuantity(request);
+        return advertService.getAvailableQuantityBrand(request);
+    }
+
+    @PostMapping("/get/available/sub")
+    public List<Available> getAvailableQuantitySub(HttpServletRequest request) {
+        return advertService.getAvailableQuantitySub(request);
+    }
+
+    @PostMapping("/get/available/main")
+    public List<Available> getAvailableQuantityMain(HttpServletRequest request) {
+        return advertService.getAvailableQuantityMain(request);
     }
 
     @GetMapping("/get/{id}")

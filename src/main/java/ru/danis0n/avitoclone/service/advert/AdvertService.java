@@ -15,7 +15,10 @@ public interface AdvertService {
     Advert getById(Long id);
     List<Advert> getAllByUser(Long id);
     List<Advert> getByParams(HttpServletRequest request);
-    List<Available> getAvailableQuantity(HttpServletRequest request);
+    List<Available> getAvailableQuantityBrand(HttpServletRequest request);
+    List<Available> getAvailableQuantitySub(HttpServletRequest request);
+    List<Available> getAvailableQuantityMain(HttpServletRequest request);
+
     List<Advert> getAll();
     List<Advert> getLatest(Long quantity);
     List<Advert> getExamples();
@@ -27,4 +30,5 @@ public interface AdvertService {
     List<CustomType> getBrandTypeByTitleType(String id);
     List<CustomType> getSubTypeByTitleType(String id);
     List<CustomType> getMainTypeByTitleType(String id);
+
 }
