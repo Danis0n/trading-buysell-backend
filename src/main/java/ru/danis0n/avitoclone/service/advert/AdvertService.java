@@ -3,6 +3,7 @@ package ru.danis0n.avitoclone.service.advert;
 import org.springframework.web.multipart.MultipartFile;
 import ru.danis0n.avitoclone.dto.advert.Available;
 import ru.danis0n.avitoclone.dto.advert.Advert;
+import ru.danis0n.avitoclone.dto.type.CustomType;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -23,4 +24,7 @@ public interface AdvertService {
     String unHideUserAdvertByUserId(Long userId, Long advertId, HttpServletRequest request);
     String hideAllUserAdvertsByUserId(Long userId, HttpServletRequest request);
     String unHideAllUserAdvertsByUserId(Long userId, HttpServletRequest request);
+    List<CustomType> getBrandTypeByTitleType(String id);
+    List<CustomType> getSubTypeByTitleType(String id);
+    List<CustomType> getMainTypeByTitleType(String id);
 }

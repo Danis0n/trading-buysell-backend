@@ -224,4 +224,18 @@ public class ObjectMapperUtil {
 
         return notifications;
     }
+
+    public List<CustomType> mapToListCustomType(List<CustomTypeEntity> customTypeEntities) {
+        List<CustomType> customTypes = new ArrayList<>();
+        for(CustomTypeEntity element : customTypeEntities)
+            customTypes.add(mapToCustomType(element));
+        return customTypes;
+    }
+
+    public CustomType mapToCustomType(CustomTypeEntity customTypeEntity) {
+        return CustomType.builder().
+                description(customTypeEntity.getDescription()).
+                name(customTypeEntity.getName()).
+                build();
+    }
 }

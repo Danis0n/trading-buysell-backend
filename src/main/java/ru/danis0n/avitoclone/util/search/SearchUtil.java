@@ -1,4 +1,4 @@
-package ru.danis0n.avitoclone.util;
+package ru.danis0n.avitoclone.util.search;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +18,8 @@ import ru.danis0n.avitoclone.repository.type.BrandTypeRepository;
 import ru.danis0n.avitoclone.repository.type.MainTypeRepository;
 import ru.danis0n.avitoclone.repository.type.SubTypeRepository;
 import ru.danis0n.avitoclone.repository.type.TitleTypeRepository;
+import ru.danis0n.avitoclone.util.JsonUtil;
+import ru.danis0n.avitoclone.util.ObjectMapperUtil;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;

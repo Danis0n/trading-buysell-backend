@@ -6,19 +6,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.danis0n.avitoclone.dto.advert.Available;
-import ru.danis0n.avitoclone.entity.advert.AdvertAvailable;
 import ru.danis0n.avitoclone.dto.advert.Advert;
+import ru.danis0n.avitoclone.dto.type.CustomType;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.type.FullTypeEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
-import ru.danis0n.avitoclone.repository.NotificationRepository;
 import ru.danis0n.avitoclone.repository.advert.AdvertRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.image.ImageService;
 import ru.danis0n.avitoclone.service.type.TypeService;
 import ru.danis0n.avitoclone.util.JwtUtil;
 import ru.danis0n.avitoclone.util.ObjectMapperUtil;
-import ru.danis0n.avitoclone.util.SearchUtil;
+import ru.danis0n.avitoclone.util.search.DeepSearchCheckBoxHandler;
+import ru.danis0n.avitoclone.util.search.SearchUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class AdvertServiceImpl implements AdvertService{
     private final ObjectMapperUtil mapperUtil;
     private final SearchUtil searchUtil;
     private final AdvertRepository advertRepository;
-    private final NotificationRepository notificationRepository;
+    private final DeepSearchCheckBoxHandler checkBoxHandler;
     private final TypeService typeService;
 
     @Override
@@ -184,6 +184,21 @@ public class AdvertServiceImpl implements AdvertService{
 
         advertRepository.hideAllAdvertsByUserId(false, userId);
         return null;
+    }
+
+    @Override
+    public List<CustomType> getBrandTypeByTitleType(String id) {
+        return checkBoxHandler.getBrandTypeByTitleType(id);
+    }
+
+    @Override
+    public List<CustomType> getSubTypeByTitleType(String id) {
+        return checkBoxHandler.getSubTypeByTitleType(id);
+    }
+
+    @Override
+    public List<CustomType> getMainTypeByTitleType(String id) {
+        return checkBoxHandler.getMainTypeByTitleType(id);
     }
 
     private List<Advert> mapToListOfAdverts(List<AdvertEntity> advertEntities){

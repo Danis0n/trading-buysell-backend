@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.danis0n.avitoclone.dto.advert.Available;
+import ru.danis0n.avitoclone.dto.type.CustomType;
 import ru.danis0n.avitoclone.entity.advert.AdvertAvailable;
 import ru.danis0n.avitoclone.dto.advert.Advert;
 import ru.danis0n.avitoclone.service.advert.AdvertService;
@@ -111,6 +112,21 @@ public class AdvertController {
     @PostMapping("/unhide/advert/{id}/user/{userId}")
     public ResponseEntity<String> unHideById(@PathVariable Long id, @PathVariable Long userId, HttpServletRequest request) {
         return ResponseEntity.ok().body(advertService.unHideUserAdvertByUserId(userId,id,request));
+    }
+
+    @GetMapping("/get/type/brand/title/{id}")
+    public ResponseEntity<List<CustomType>> getBrandTypeByTitleType(@PathVariable String id) {
+        return ResponseEntity.ok().body(advertService.getBrandTypeByTitleType(id));
+    }
+
+    @GetMapping("/get/type/sub/title/{id}")
+    public ResponseEntity<List<CustomType>> getSubTypeByTitleType(@PathVariable String id) {
+        return ResponseEntity.ok().body(advertService.getSubTypeByTitleType(id));
+    }
+
+    @GetMapping("/get/type/main/title/{id}")
+    public ResponseEntity<List<CustomType>> getMainTypeByTitleType(@PathVariable String id) {
+        return ResponseEntity.ok().body(advertService.getMainTypeByTitleType(id));
     }
 
 }
