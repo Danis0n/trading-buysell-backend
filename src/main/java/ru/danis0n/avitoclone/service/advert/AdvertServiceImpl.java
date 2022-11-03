@@ -271,7 +271,7 @@ public class AdvertServiceImpl implements AdvertService{
     }
 
     private List<AdvertEntity> findAllAdvertEntities(){
-        return advertRepository.findAll();
+        return advertRepository.findAllUnHidden();
     }
 
     private List<AdvertEntity> findAllAdvertEntitiesByUserId(Long id){

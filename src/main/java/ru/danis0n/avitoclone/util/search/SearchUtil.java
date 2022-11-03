@@ -146,17 +146,17 @@ public class SearchUtil {
 
         String[] mainTypeArray = typeRequest.getMainType();
 
-        if(!mainTypeArray[0].equals("none"))
+        if(!(mainTypeArray.length == 0))
             for(String element : mainTypeArray)
                 mainTypes.add(mainTypeRepository.getByName(element));
 
         String[] subTypeArray = typeRequest.getSubType();
-        if(!subTypeArray[0].equals("none"))
+        if(!(subTypeArray.length == 0))
             for (String element: subTypeArray)
                 subType.add(subTypeRepository.getByName(element));
 
         String[] brandTypeArray = typeRequest.getBrandType();
-        if(!brandTypeArray[0].equals("none"))
+        if(!(brandTypeArray.length == 0))
             for(String element : brandTypeArray)
                 brandType.add(brandTypeRepository.getByName(element));
     }
@@ -183,11 +183,11 @@ public class SearchUtil {
     }
 
     private boolean isTitle(String title) {
-        return !title.equals("none");
+        return !title.equals("");
     }
 
     private boolean isLocation(String location) {
-        return !location.equals("none");
+        return !location.equals("");
     }
 
     private AdvertSearchRequest getSearchRequest(HttpServletRequest request){

@@ -12,6 +12,12 @@ import java.util.List;
 @Repository
 public interface AdvertRepository extends JpaRepository<AdvertEntity,Long> {
 
+    @Query(
+            nativeQuery = true,
+            value = "SELECT * FROM adverts WHERE is_hidden = false AND is_hidden_by_admin = false"
+    )
+    List<AdvertEntity> findAllUnHidden();
+
     void deleteById(Long id);
     @Query(
             nativeQuery = true,
