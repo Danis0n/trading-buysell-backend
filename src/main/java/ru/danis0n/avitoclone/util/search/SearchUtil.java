@@ -49,15 +49,13 @@ public class SearchUtil {
 
         String sql = "advertSqlResult";
         StringBuilder query = new StringBuilder("SELECT * FROM adverts \n").append(setJoinIfNecessary(typeRequest));
-
         query.
-                append(getPriceForQuery(searchRequest.getMinPrice(),searchRequest.getMaxPrice())).append(" AND ").
+                append(getPriceForQuery(searchRequest.getMinPrice(),searchRequest.getMaxPrice())).
                 append(getTypesForQuery(typeRequest)).
                 append(getTitleForQuery(searchRequest.getTitle())).
                 append(getLocationForQuery(searchRequest.getLocation())).
                 append(" AND is_hidden = false").
                 append(" AND is_hidden_by_admin = false");
-
         return getAllByNativeQuery(String.valueOf(query),sql);
     }
 
@@ -105,8 +103,12 @@ public class SearchUtil {
                                      List<SubTypeEntity> subType, List<BrandTypeEntity> brandType ) {
         StringBuilder query = new StringBuilder();
 
-        for(TitleTypeEntity element : titleType)
-            query.append("title_type_id = ").append(element.getId());
+        if(!titleType.isEmpty()) {
+            query.append(" AND ");
+            for(TitleTypeEntity element : titleType)
+                query.append("title_type_id = ").append(element.getId());
+        }
+        else return "";
 
         if(!mainTypes.isEmpty()) {
             query.append(" AND (");
@@ -145,7 +147,6 @@ public class SearchUtil {
         titleType.add(titleTypeRepository.getByName(typeRequest.getTitleType()));
 
         String[] mainTypeArray = typeRequest.getMainType();
-
         if(!(mainTypeArray.length == 0))
             for(String element : mainTypeArray)
                 mainTypes.add(mainTypeRepository.getByName(element));
@@ -167,7 +168,7 @@ public class SearchUtil {
     }
 
     private boolean isTypeInSearch(TypeRequest typeRequest) {
-        return !typeRequest.getTitleType().equals("none");
+        return !typeRequest.getTitleType().equals("");
     }
 
     private StringBuilder getPriceForQuery(BigDecimal minPrice, BigDecimal maxPrice) {
