@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.danis0n.avitoclone.dto.advert.Advert;
 import ru.danis0n.avitoclone.dto.advert.Available;
+import ru.danis0n.avitoclone.dto.advert.Location;
 import ru.danis0n.avitoclone.dto.appuser.AppUser;
 import ru.danis0n.avitoclone.dto.appuser.AppUserInfo;
 import ru.danis0n.avitoclone.dto.appuser.RegistrationRequest;
@@ -13,15 +14,13 @@ import ru.danis0n.avitoclone.dto.comment.Comment;
 import ru.danis0n.avitoclone.dto.comment.CommentRequest;
 import ru.danis0n.avitoclone.dto.notification.Notification;
 import ru.danis0n.avitoclone.dto.type.*;
-import ru.danis0n.avitoclone.entity.advert.AdvertAvailable;
-import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
-import ru.danis0n.avitoclone.entity.advert.CommentEntity;
-import ru.danis0n.avitoclone.entity.advert.ImageEntity;
+import ru.danis0n.avitoclone.entity.advert.*;
 import ru.danis0n.avitoclone.entity.notification.NotificationEntity;
 import ru.danis0n.avitoclone.entity.type.*;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserInfoEntity;
 import ru.danis0n.avitoclone.entity.user.RoleEntity;
+import ru.danis0n.avitoclone.repository.LocationRepository;
 import ru.danis0n.avitoclone.repository.type.BrandTypeRepository;
 import ru.danis0n.avitoclone.repository.type.MainTypeRepository;
 import ru.danis0n.avitoclone.repository.type.SubTypeRepository;
@@ -42,6 +41,7 @@ public class ObjectMapperUtil {
     private final BrandTypeRepository brandTypeRepository;
     private final SubTypeRepository subTypeRepository;
     private final MainTypeRepository mainTypeRepository;
+    private final LocationRepository locationRepository;
 
     public Role mapToRole(RoleEntity roleEntity){
         Role role = new Role();
@@ -146,13 +146,19 @@ public class ObjectMapperUtil {
                 build();
     }
 
-    public Advert mapToAdvert(AdvertEntity advertEntity) {
+    public Location mapToLocation(LocationEntity locationEntity) {
+        return Location.builder().
+                description(locationEntity.getDescription()).
+                name(locationEntity.getName()).
+                build();
+    }
 
+    public Advert mapToAdvert(AdvertEntity advertEntity) {
         Advert advert = Advert.builder().
                 id(advertEntity.getId()).
                 userId(advertEntity.getUser().getId()).
                 type(mapToFullType(advertEntity.getType())).
-                location(advertEntity.getLocation()).
+                location(mapToLocation(advertEntity.getLocation())).
                 title(advertEntity.getTitle()).
                 isHidden(advertEntity.getIsHidden()).
                 isHiddenByAdmin(advertEntity.getIsHiddenByAdmin()).
@@ -224,6 +230,16 @@ public class ObjectMapperUtil {
         for (AdvertAvailable element : availables) {
             mappedList.add(
                     new Available(mainTypeRepository.getById(element.getId()).getName(),element.getQuantity())
+            );
+        }
+        return mappedList;
+    }
+
+    public List<Available> mapToAvailableLocation(List<AdvertAvailable> availables) {
+        List<Available> mappedList = new ArrayList<>();
+        for (AdvertAvailable element : availables) {
+            mappedList.add(
+                    new Available(locationRepository.getById(element.getId()).getName(),element.getQuantity())
             );
         }
         return mappedList;

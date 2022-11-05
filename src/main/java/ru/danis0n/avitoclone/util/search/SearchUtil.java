@@ -10,10 +10,12 @@ import ru.danis0n.avitoclone.entity.advert.AdvertAvailable;
 import ru.danis0n.avitoclone.dto.advert.AdvertSearchRequest;
 import ru.danis0n.avitoclone.dto.type.TypeRequest;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
+import ru.danis0n.avitoclone.entity.advert.LocationEntity;
 import ru.danis0n.avitoclone.entity.type.BrandTypeEntity;
 import ru.danis0n.avitoclone.entity.type.MainTypeEntity;
 import ru.danis0n.avitoclone.entity.type.SubTypeEntity;
 import ru.danis0n.avitoclone.entity.type.TitleTypeEntity;
+import ru.danis0n.avitoclone.repository.LocationRepository;
 import ru.danis0n.avitoclone.repository.type.BrandTypeRepository;
 import ru.danis0n.avitoclone.repository.type.MainTypeRepository;
 import ru.danis0n.avitoclone.repository.type.SubTypeRepository;
@@ -41,6 +43,7 @@ public class SearchUtil {
     private final MainTypeRepository mainTypeRepository;
     private final SubTypeRepository subTypeRepository;
     private final TitleTypeRepository titleTypeRepository;
+    private final LocationRepository locationRepository;
 
     public List<AdvertEntity> getByParams(HttpServletRequest request) {
 
@@ -53,13 +56,13 @@ public class SearchUtil {
                 append(getPriceForQuery(searchRequest.getMinPrice(),searchRequest.getMaxPrice())).append(and).
                 append(getTypesForQuery(typeRequest)).
                 append(getTitleForQuery(searchRequest.getTitle())).
-                append(getLocationForQuery(searchRequest.getLocation())).
+                append(getLocationForQuery(searchRequest.getLocations())).
                 append(" AND is_hidden = false").
                 append(" AND is_hidden_by_admin = false");
         return getAllByNativeQuery(String.valueOf(query),sql);
     }
 
-    public List<Available> getAvailableQuantity(HttpServletRequest request) {
+    public List<Available> getAvailableQuantityBrand(HttpServletRequest request) {
 
         TypeRequest typeRequest = getTypeRequest(request);
         String and = isTypeInSearch(typeRequest) ? " AND " : " ";
@@ -74,7 +77,18 @@ public class SearchUtil {
                 "AND is_hidden_by_admin = false \n" +
                 "GROUP BY brand_type_id";
         String sql = "advertAvailableSqlResult";
-        return mapperUtil.mapToAvailableBrand(getBrandQuantity(query,sql));
+        return mapperUtil.mapToAvailableBrand(getQuantity(query,sql));
+    }
+
+    public StringBuilder getLocationForQuery(String[] locations) {
+        List<LocationEntity> locationsEntities = setLocations(locations);
+        if(locationsEntities.isEmpty()) return new StringBuilder();
+
+        StringBuilder query = new StringBuilder(" AND ( ");
+        for (LocationEntity element : locationsEntities)
+            query.append("location_id = ").append(element.getId()).append(" OR ");
+        query = new StringBuilder(query.substring(0, query.length() - 4));
+        return query.append(" )");
     }
 
     public List<Available> getAvailableQuantitySub(HttpServletRequest request) {
@@ -92,7 +106,7 @@ public class SearchUtil {
                         "AND is_hidden_by_admin = false \n" +
                         "GROUP BY sub_type_id";
         String sql = "advertAvailableSqlResult";
-        return mapperUtil.mapToAvailableSub(getBrandQuantity(query,sql));
+        return mapperUtil.mapToAvailableSub(getQuantity(query,sql));
     }
 
     public List<Available> getAvailableQuantityMain(HttpServletRequest request) {
@@ -110,14 +124,32 @@ public class SearchUtil {
                         "AND is_hidden_by_admin = false \n" +
                         "GROUP BY main_type_id";
         String sql = "advertAvailableSqlResult";
-        return mapperUtil.mapToAvailableMain(getBrandQuantity(query,sql));
+        return mapperUtil.mapToAvailableMain(getQuantity(query,sql));
+    }
+
+    public List<Available> getAvailableQuantityLocation(HttpServletRequest request){
+        TypeRequest typeRequest = getTypeRequest(request);
+        String and = isTypeInSearch(typeRequest) ? " AND " : " ";
+
+        String query =
+                "SELECT location_id AS id ," +
+                        " COUNT(location_id) AS quantity" +
+                        " FROM adverts \n JOIN types\n" +
+                        "\tON adverts.type_id = types.id\n" +
+                        "WHERE " + getTypesForQuery(typeRequest) +
+                        " " + and + "is_hidden = false \n" +
+                        "AND is_hidden_by_admin = false \n" +
+                        "GROUP BY location_id";
+        String sql = "advertAvailableSqlResult";
+        log.info(query);
+        return mapperUtil.mapToAvailableLocation(getQuantity(query,sql));
     }
 
     private List<AdvertEntity> getAllByNativeQuery(String query, String sql) {
         return em.createNativeQuery(query,sql).getResultList();
     }
 
-    private List<AdvertAvailable> getBrandQuantity(String query, String sql) {
+    private List<AdvertAvailable> getQuantity(String query, String sql) {
         return em.createNativeQuery(query,sql).getResultList();
     }
 
@@ -173,6 +205,16 @@ public class SearchUtil {
         return String.valueOf(query);
     }
 
+    private List<LocationEntity> setLocations(String []locations) {
+        List<LocationEntity> locationEntities = new ArrayList<>();
+        if(locations != null && !(locations.length == 0))
+            for(String element : locations) {
+                locationEntities.add(locationRepository.findByName(element));
+                log.info(element);
+            }
+        return locationEntities;
+    }
+
     private void setTypeToLists(TypeRequest typeRequest,
                                 List<TitleTypeEntity> titleType,
                                 List<MainTypeEntity> mainTypes,
@@ -216,16 +258,8 @@ public class SearchUtil {
         return isTitle(title) ? String.format(" AND SIMILARITY(title, '%s' ) > 0.1", title) : "";
     }
 
-    private String getLocationForQuery(String location) {
-        return isLocation(location) ? String.format(" AND SIMILARITY(location, '%s' ) > 0.1", location) : "";
-    }
-
     private boolean isTitle(String title) {
         return !title.equals("");
-    }
-
-    private boolean isLocation(String location) {
-        return !location.equals("");
     }
 
     private AdvertSearchRequest getSearchRequest(HttpServletRequest request){
@@ -239,4 +273,5 @@ public class SearchUtil {
         return jsonUtil.getGson().
                 fromJson(jsonBody, TypeRequest.class);
     }
+
 }

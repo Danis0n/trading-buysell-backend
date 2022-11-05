@@ -37,6 +37,11 @@ public class DeepSearchCheckBoxHandler {
         return mapperUtil.mapToListCustomType(getAllByNativeQuery(query,getSql()));
     }
 
+    public List<CustomType> getLocations() {
+        String query = "SELECT * FROM location";
+        return mapperUtil.mapToListCustomType(getAllByNativeQuery(query,getSql()));
+    }
+
     private String getSql() {
         return "custom_type_result";
     }

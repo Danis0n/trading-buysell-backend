@@ -30,9 +30,6 @@ public class AdvertEntity {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "location")
-    private String location;
-
     @Column(name = "price")
     private BigDecimal price;
 
@@ -47,6 +44,13 @@ public class AdvertEntity {
 
     @Column(name = "date_of_creation")
     private LocalDateTime dateOfCreation;
+
+    @OneToOne
+    @JoinColumn(
+            nullable = true,
+            name = "location_id"
+    )
+    private LocationEntity location;
 
     @ManyToOne
     @JoinColumn(

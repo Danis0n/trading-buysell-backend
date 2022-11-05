@@ -17,7 +17,7 @@ public class Advert {
     private Long id;
     private String title;
     private BigDecimal price;
-    private String location;
+    private Location location;
     private String description;
     private Long userId;
     private Boolean isHidden;

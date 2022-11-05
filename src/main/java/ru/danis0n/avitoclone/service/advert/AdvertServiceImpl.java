@@ -11,6 +11,7 @@ import ru.danis0n.avitoclone.dto.type.CustomType;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
 import ru.danis0n.avitoclone.entity.type.FullTypeEntity;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
+import ru.danis0n.avitoclone.repository.LocationRepository;
 import ru.danis0n.avitoclone.repository.advert.AdvertRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.image.ImageService;
@@ -37,8 +38,10 @@ public class AdvertServiceImpl implements AdvertService{
     private final ObjectMapperUtil mapperUtil;
     private final SearchUtil searchUtil;
     private final AdvertRepository advertRepository;
+    private final LocationRepository locationRepository;
     private final DeepSearchCheckBoxHandler checkBoxHandler;
     private final TypeService typeService;
+
 
     @Override
     public String create(HttpServletRequest request,
@@ -139,7 +142,7 @@ public class AdvertServiceImpl implements AdvertService{
 
     @Override
     public List<Available> getAvailableQuantityBrand(HttpServletRequest request) {
-        return searchUtil.getAvailableQuantity(request);
+        return searchUtil.getAvailableQuantityBrand(request);
     }
 
     @Override
@@ -150,6 +153,11 @@ public class AdvertServiceImpl implements AdvertService{
     @Override
     public List<Available> getAvailableQuantityMain(HttpServletRequest request) {
         return searchUtil.getAvailableQuantityMain(request);
+    }
+
+    @Override
+    public List<Available> getAvailableQuantityLocation(HttpServletRequest request) {
+        return searchUtil.getAvailableQuantityLocation(request);
     }
 
     @Override
@@ -211,6 +219,12 @@ public class AdvertServiceImpl implements AdvertService{
         return checkBoxHandler.getMainTypeByTitleType(id);
     }
 
+    @Override
+    public List<CustomType> getLocations() {
+        return checkBoxHandler.getLocations();
+    }
+
+
     private List<Advert> mapToListOfAdverts(List<AdvertEntity> advertEntities){
         return mapperUtil.mapListToAdverts(advertEntities);
     }
@@ -224,7 +238,7 @@ public class AdvertServiceImpl implements AdvertService{
                              String description, BigDecimal price,
                              MultipartFile[] files){
         advert.setTitle(title);
-        advert.setLocation(location);
+        advert.setLocation(locationRepository.findByName(location));
         advert.setDescription(description);
         advert.setPrice(price);
 
@@ -240,7 +254,7 @@ public class AdvertServiceImpl implements AdvertService{
         FullTypeEntity type = typeService.handleNewTypeForAdvert(mainType,brandType,titleType,subType);
 
         advert.setTitle(title);
-        advert.setLocation(location);
+        advert.setLocation(locationRepository.findByName(location));
         advert.setDescription(description);
         advert.setPrice(price);
         advert.setType(type);

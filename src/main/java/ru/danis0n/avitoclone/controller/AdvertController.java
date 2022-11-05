@@ -93,6 +93,11 @@ public class AdvertController {
         return advertService.getAvailableQuantityMain(request);
     }
 
+    @PostMapping("/get/available/location")
+    public List<Available> getAvailableQuantityLocation(HttpServletRequest request) {
+        return advertService.getAvailableQuantityLocation(request);
+    }
+
     @GetMapping("/get/{id}")
     public Advert getById(@PathVariable Long id){
         return advertService.getById(id);
@@ -136,6 +141,11 @@ public class AdvertController {
     @GetMapping("/get/type/main/title/{id}")
     public ResponseEntity<List<CustomType>> getMainTypeByTitleType(@PathVariable String id) {
         return ResponseEntity.ok().body(advertService.getMainTypeByTitleType(id));
+    }
+
+    @GetMapping("/get/location")
+    public ResponseEntity<List<CustomType>> getLocations() {
+        return ResponseEntity.ok().body(advertService.getLocations());
     }
 
 }
