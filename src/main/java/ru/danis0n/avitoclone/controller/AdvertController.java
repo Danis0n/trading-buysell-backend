@@ -73,6 +73,11 @@ public class AdvertController {
         return advertService.getAllByUser(id);
     }
 
+    @GetMapping("/get/user/{id}/unpower")
+    public List<Advert> getAllByUserIdUnPower(@PathVariable Long id){
+        return advertService.getAllByUserUnPower(id);
+    }
+
     @PostMapping("/get/params")
     public List<Advert> getAllByParams(HttpServletRequest request){
         return advertService.getByParams(request);
@@ -108,12 +113,12 @@ public class AdvertController {
         return advertService.deleteById(request,id);
     }
 
-    @PostMapping("/hide/advert/{id}")
+    @PostMapping("/hide/advert/user/{id}")
     public ResponseEntity<String> hideAll(@PathVariable Long id, HttpServletRequest request) {
         return ResponseEntity.ok().body(advertService.hideAllUserAdvertsByUserId(id,request));
     }
 
-    @PostMapping("/unhide/advert/{id}")
+    @PostMapping("/unhide/advert/user/{id}")
     public ResponseEntity<String> unHideAll(@PathVariable Long id, HttpServletRequest request) {
         return ResponseEntity.ok().body(advertService.unHideAllUserAdvertsByUserId(id,request));
     }

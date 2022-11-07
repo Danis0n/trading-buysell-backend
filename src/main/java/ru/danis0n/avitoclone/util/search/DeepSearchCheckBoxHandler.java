@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.hql.internal.ast.SqlASTFactory;
 import org.springframework.stereotype.Component;
 import ru.danis0n.avitoclone.dto.type.CustomType;
 import ru.danis0n.avitoclone.entity.type.CustomTypeEntity;
@@ -49,5 +50,4 @@ public class DeepSearchCheckBoxHandler {
     private List<CustomTypeEntity> getAllByNativeQuery(String query, String sql) {
         return em.createNativeQuery(query,sql).getResultList();
     }
-
 }

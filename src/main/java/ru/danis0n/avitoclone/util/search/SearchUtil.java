@@ -54,41 +54,28 @@ public class SearchUtil {
         StringBuilder query = new StringBuilder("SELECT * FROM adverts \n").append(setJoinIfNecessary(typeRequest));
         query.
                 append(getPriceForQuery(searchRequest.getMinPrice(),searchRequest.getMaxPrice())).append(and).
-                append(getTypesForQuery(typeRequest)).
+                append(getSettingsForSearch(typeRequest)).
                 append(getTitleForQuery(searchRequest.getTitle())).
-                append(getLocationForQuery(searchRequest.getLocations())).
                 append(" AND is_hidden = false").
                 append(" AND is_hidden_by_admin = false");
         return getAllByNativeQuery(String.valueOf(query),sql);
     }
 
     public List<Available> getAvailableQuantityBrand(HttpServletRequest request) {
-
         TypeRequest typeRequest = getTypeRequest(request);
         String and = isTypeInSearch(typeRequest) ? " AND " : " ";
 
         String query =
                 "SELECT brand_type_id AS id ," +
-                " COUNT(brand_type_id) AS quantity" +
-                " FROM adverts \n JOIN types\n" +
-                "\tON adverts.type_id = types.id\n" +
-                "WHERE " + getTypesForQuery(typeRequest) +
-                " " + and + "is_hidden = false \n" +
-                "AND is_hidden_by_admin = false \n" +
-                "GROUP BY brand_type_id";
+                        " COUNT(brand_type_id) AS quantity" +
+                        " FROM adverts \n JOIN types\n" +
+                        "\tON adverts.type_id = types.id\n" +
+                        "WHERE " + getSettingsForSearch(typeRequest) +
+                        " " + and + "is_hidden = false \n" +
+                        "AND is_hidden_by_admin = false \n" +
+                        "GROUP BY brand_type_id";
         String sql = "advertAvailableSqlResult";
         return mapperUtil.mapToAvailableBrand(getQuantity(query,sql));
-    }
-
-    public StringBuilder getLocationForQuery(String[] locations) {
-        List<LocationEntity> locationsEntities = setLocations(locations);
-        if(locationsEntities.isEmpty()) return new StringBuilder();
-
-        StringBuilder query = new StringBuilder(" AND ( ");
-        for (LocationEntity element : locationsEntities)
-            query.append("location_id = ").append(element.getId()).append(" OR ");
-        query = new StringBuilder(query.substring(0, query.length() - 4));
-        return query.append(" )");
     }
 
     public List<Available> getAvailableQuantitySub(HttpServletRequest request) {
@@ -101,7 +88,7 @@ public class SearchUtil {
                         " COUNT(sub_type_id) AS quantity" +
                         " FROM adverts \n JOIN types\n" +
                         "\tON adverts.type_id = types.id\n" +
-                        "WHERE " + getTypesForQuery(typeRequest) +
+                        "WHERE " + getSettingsForSearch(typeRequest) +
                         " " + and + "is_hidden = false \n" +
                         "AND is_hidden_by_admin = false \n" +
                         "GROUP BY sub_type_id";
@@ -119,7 +106,7 @@ public class SearchUtil {
                         " COUNT(main_type_id) AS quantity" +
                         " FROM adverts \n JOIN types\n" +
                         "\tON adverts.type_id = types.id\n" +
-                        "WHERE " + getTypesForQuery(typeRequest) +
+                        "WHERE " + getSettingsForSearch(typeRequest) +
                         " " + and + "is_hidden = false \n" +
                         "AND is_hidden_by_admin = false \n" +
                         "GROUP BY main_type_id";
@@ -136,24 +123,15 @@ public class SearchUtil {
                         " COUNT(location_id) AS quantity" +
                         " FROM adverts \n JOIN types\n" +
                         "\tON adverts.type_id = types.id\n" +
-                        "WHERE " + getTypesForQuery(typeRequest) +
+                        "WHERE " + getSettingsForSearch(typeRequest) +
                         " " + and + "is_hidden = false \n" +
                         "AND is_hidden_by_admin = false \n" +
                         "GROUP BY location_id";
         String sql = "advertAvailableSqlResult";
-        log.info(query);
         return mapperUtil.mapToAvailableLocation(getQuantity(query,sql));
     }
 
-    private List<AdvertEntity> getAllByNativeQuery(String query, String sql) {
-        return em.createNativeQuery(query,sql).getResultList();
-    }
-
-    private List<AdvertAvailable> getQuantity(String query, String sql) {
-        return em.createNativeQuery(query,sql).getResultList();
-    }
-
-    private StringBuilder getTypesForQuery(TypeRequest typeRequest) {
+    private StringBuilder getSettingsForSearch(TypeRequest typeRequest) {
 
         if (!isTypeInSearch(typeRequest)) return new StringBuilder();
 
@@ -163,19 +141,21 @@ public class SearchUtil {
         List<MainTypeEntity> mainTypes = new ArrayList<>();
         List<SubTypeEntity> subType = new ArrayList<>();
         List<BrandTypeEntity> brandType = new ArrayList<>();
+        List<LocationEntity> locations = new ArrayList<>();
 
-        setTypeToLists(typeRequest,titleType,mainTypes,subType,brandType);
-        queryPart.append(setQueryWithTypes(titleType,mainTypes,subType,brandType));
+        setSettings(typeRequest,titleType,mainTypes,subType,brandType, locations);
+        queryPart.append(setQueryWithSettings(titleType,mainTypes,subType,brandType, locations));
+
         return queryPart;
     }
 
-    private String setQueryWithTypes(List<TitleTypeEntity> titleType, List<MainTypeEntity> mainTypes,
-                                     List<SubTypeEntity> subType, List<BrandTypeEntity> brandType ) {
+    private String setQueryWithSettings(List<TitleTypeEntity> titleType, List<MainTypeEntity> mainTypes,
+                                        List<SubTypeEntity> subType, List<BrandTypeEntity> brandType, List<LocationEntity> locations) {
         StringBuilder query = new StringBuilder();
 
         if(!titleType.isEmpty()) {
             for(TitleTypeEntity element : titleType)
-                query.append("title_type_id = ").append(element.getId());
+                query.append(" title_type_id = ").append(element.getId());
         }
         else return "";
 
@@ -202,24 +182,23 @@ public class SearchUtil {
             query = new StringBuilder(query.substring(0, query.length() - 4));
             query.append(" )");
         }
+
+        if(!locations.isEmpty()) {
+            query.append(" AND (");
+            for (LocationEntity element : locations)
+                query.append("location_id = ").append(element.getId()).append(" OR ");
+            query = new StringBuilder(query.substring(0, query.length() - 4));
+            query.append(" ) ");
+        }
+
         return String.valueOf(query);
     }
 
-    private List<LocationEntity> setLocations(String []locations) {
-        List<LocationEntity> locationEntities = new ArrayList<>();
-        if(locations != null && !(locations.length == 0))
-            for(String element : locations) {
-                locationEntities.add(locationRepository.findByName(element));
-                log.info(element);
-            }
-        return locationEntities;
-    }
-
-    private void setTypeToLists(TypeRequest typeRequest,
-                                List<TitleTypeEntity> titleType,
-                                List<MainTypeEntity> mainTypes,
-                                List<SubTypeEntity> subType,
-                                List<BrandTypeEntity> brandType) {
+    private void setSettings(TypeRequest typeRequest,
+                             List<TitleTypeEntity> titleType,
+                             List<MainTypeEntity> mainTypes,
+                             List<SubTypeEntity> subType,
+                             List<BrandTypeEntity> brandType, List<LocationEntity> locations) {
 
         if(!isTypeInSearch(typeRequest)) return;
 
@@ -239,6 +218,11 @@ public class SearchUtil {
         if(brandTypeArray != null && !(brandTypeArray.length == 0))
             for(String element : brandTypeArray)
                 brandType.add(brandTypeRepository.getByName(element));
+
+        String[] locationArray = typeRequest.getLocations();
+        if(locationArray != null && !(locationArray.length == 0))
+            for(String element : locationArray)
+                locations.add(locationRepository.findByName(element));
     }
 
     private String setJoinIfNecessary(TypeRequest typeRequest) {
@@ -272,6 +256,14 @@ public class SearchUtil {
         String jsonBody = jsonUtil.getJson(request);
         return jsonUtil.getGson().
                 fromJson(jsonBody, TypeRequest.class);
+    }
+
+    private List<AdvertEntity> getAllByNativeQuery(String query, String sql) {
+        return em.createNativeQuery(query,sql).getResultList();
+    }
+
+    private List<AdvertAvailable> getQuantity(String query, String sql) {
+        return em.createNativeQuery(query,sql).getResultList();
     }
 
 }

@@ -26,6 +26,11 @@ public interface AdvertRepository extends JpaRepository<AdvertEntity,Long> {
     List<AdvertEntity> findAllByUserId(Long userId);
     @Query(
             nativeQuery = true,
+            value = "SELECT * FROM adverts WHERE user_id = ?1 AND is_hidden = false AND is_hidden_by_admin = false"
+    )
+    List<AdvertEntity> findAllByUserIdInPower(Long id);
+    @Query(
+            nativeQuery = true,
             value = "SELECT * FROM adverts ORDER BY date_of_creation DESC LIMIT ?1"
     )
     List<AdvertEntity> findAllLatest(Long quantity);
@@ -62,7 +67,6 @@ public interface AdvertRepository extends JpaRepository<AdvertEntity,Long> {
             value = "UPDATE adverts SET is_hidden = ?1 WHERE user_id = ?2 AND id = ?3"
         )
     void hideAdvertByUserId(Boolean statement, Long userId, Long advertId);
-
 }
 
 

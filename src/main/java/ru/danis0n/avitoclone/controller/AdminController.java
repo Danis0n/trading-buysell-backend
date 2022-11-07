@@ -33,22 +33,22 @@ public class AdminController {
         return ResponseEntity.ok().body(adminService.powerDeleteAdvert(id,request));
     }
 
-    @PostMapping("/advert/hide/{id}")
+    @PostMapping("/hide/advert/user/{id}")
     public ResponseEntity<String> powerHideAll(@PathVariable Long id, HttpServletRequest request) {
         return ResponseEntity.ok().body(adminService.hideAllUserAdvertsByUserId(id,request));
     }
 
-    @PostMapping("/advert/unhide/{id}")
+    @PostMapping("/unhide/advert/user/{id}")
     public ResponseEntity<String> powerUnHideAll(@PathVariable Long id, HttpServletRequest request) {
         return ResponseEntity.ok().body(adminService.unHideAllUserAdvertsByUserId(id,request));
     }
 
-    @PostMapping("/advert/hide/{id}/user/{userId}")
+    @PostMapping("/hide/advert/{id}/user/{userId}")
     public ResponseEntity<String> powerHideById(@PathVariable Long id, @PathVariable Long userId, HttpServletRequest request) {
         return ResponseEntity.ok().body(adminService.hideUserAdvertByUserId(userId,id,request));
     }
 
-    @PostMapping("/advert/unhide/{id}/user/{userId}")
+    @PostMapping("/unhide/advert/{id}/user/{userId}")
     public ResponseEntity<String> powerUnHideById(@PathVariable Long id, @PathVariable Long userId, HttpServletRequest request) {
         return ResponseEntity.ok().body(adminService.unHideUserAdvertByUserId(userId,id,request));
     }

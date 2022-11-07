@@ -136,6 +136,12 @@ public class AdvertServiceImpl implements AdvertService{
     }
 
     @Override
+    public List<Advert> getAllByUserUnPower(Long id) {
+        List<AdvertEntity> advertsByUser = findAllAdvertEntitiesByUserIdUnPower(id);
+        return mapToListOfAdverts(advertsByUser);
+    }
+
+    @Override
     public List<Advert> getByParams(HttpServletRequest request) {
         return mapToListOfAdverts(searchUtil.getByParams(request));
     }
@@ -224,7 +230,6 @@ public class AdvertServiceImpl implements AdvertService{
         return checkBoxHandler.getLocations();
     }
 
-
     private List<Advert> mapToListOfAdverts(List<AdvertEntity> advertEntities){
         return mapperUtil.mapListToAdverts(advertEntities);
     }
@@ -258,6 +263,8 @@ public class AdvertServiceImpl implements AdvertService{
         advert.setDescription(description);
         advert.setPrice(price);
         advert.setType(type);
+        advert.setIsHidden(false);
+        advert.setIsHiddenByAdmin(false);
 
         imageService.clearImageListByAd(advert);
         advert.clearList();
@@ -300,6 +307,10 @@ public class AdvertServiceImpl implements AdvertService{
 
     private List<AdvertEntity> findAllAdvertEntitiesByUserId(Long id){
         return advertRepository.findAllByUserId(id);
+    }
+
+    private List<AdvertEntity> findAllAdvertEntitiesByUserIdUnPower(Long id){
+        return advertRepository.findAllByUserIdInPower(id);
     }
 
 }

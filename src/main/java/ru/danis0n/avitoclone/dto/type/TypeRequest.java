@@ -10,4 +10,5 @@ public class TypeRequest {
     private String[] mainType;
     private String[] subType;
     private String[] brandType;
+    private String[] locations;
 }

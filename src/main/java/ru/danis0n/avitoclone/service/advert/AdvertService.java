@@ -19,6 +19,7 @@ public interface AdvertService {
     List<Available> getAvailableQuantitySub(HttpServletRequest request);
     List<Available> getAvailableQuantityMain(HttpServletRequest request);
     List<Available> getAvailableQuantityLocation(HttpServletRequest request);
+    List<Advert> getAllByUserUnPower(Long id);
     List<Advert> getAll();
     List<Advert> getLatest(Long quantity);
     List<Advert> getExamples();

@@ -17,5 +17,4 @@ public class AdvertSearchRequest {
     private TypeRequest type;
     private BigDecimal maxPrice;
     private BigDecimal minPrice;
-    private String[] locations;
 }
