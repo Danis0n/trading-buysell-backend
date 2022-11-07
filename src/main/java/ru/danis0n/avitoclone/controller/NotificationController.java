@@ -31,7 +31,7 @@ public class NotificationController {
         return notificationService.setNotificationViewed(id,request);
     }
 
-    @PostMapping("/delete/notify/{id}")
+    @DeleteMapping("/delete/notify/{id}")
     public String deleteNotificationById(@PathVariable Long id, HttpServletRequest request){
         return notificationService.deleteNotificationById(id,request);
     }

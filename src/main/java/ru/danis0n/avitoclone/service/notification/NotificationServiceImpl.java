@@ -43,7 +43,8 @@ public class NotificationServiceImpl implements NotificationService{
         if(notification == null || !notification.getUser().getId().equals(user.getId()))
             return "Error!";
 
-        notificationRepository.setNotificationViewed(id);
+        notification.setSeenByUser(true);
+        notificationRepository.save(notification);
         return "Success!";
     }
 
@@ -65,7 +66,7 @@ public class NotificationServiceImpl implements NotificationService{
         String username = jwtUtil.getUsernameFromRequest(request);
         AppUserEntity user = appUserService.getAppUserEntityByUsername(username);
 
-        if(!user.getUsername().equals(username))
+        if(!user.getUsername().equals(appUserService.getAppUserById(id).getUsername()))
             return "Error!";
 
         return String.valueOf(
