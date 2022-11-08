@@ -29,8 +29,8 @@ public class PasswordController {
     }
 
     @PostMapping("/password/update")
-    public String restoreUpdate(@RequestParam("token") String token, HttpServletRequest request) {
-        return passwordService.restoreUpdate(token,request);
+    public String restoreUpdate(@RequestParam("token") String token, @RequestParam("password") String password) {
+        return passwordService.restoreUpdate(token,password);
     }
 
 }
