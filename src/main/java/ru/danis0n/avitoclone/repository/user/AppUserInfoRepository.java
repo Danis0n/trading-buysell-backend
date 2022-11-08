@@ -8,6 +8,7 @@ import ru.danis0n.avitoclone.entity.user.AppUserInfoEntity;
 @Repository
 public interface AppUserInfoRepository extends JpaRepository<AppUserInfoEntity, Long> {
     AppUserInfoEntity getByUser(AppUserEntity user);
+    AppUserInfoEntity getByEmail(String email);
     AppUserInfoEntity getById(Long id);
     boolean existsAppUserInfoEntityByEmail(String email);
 }

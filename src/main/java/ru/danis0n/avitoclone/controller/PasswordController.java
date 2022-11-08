@@ -6,9 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.danis0n.avitoclone.service.password.PasswordService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -18,7 +15,7 @@ public class PasswordController {
     private final PasswordService passwordService;
 
     @PostMapping("/password/restore")
-    public String restorePassword(@RequestParam("username") String username, @RequestParam("email") String email) {
+    public Boolean restorePassword(@RequestParam("username") String username, @RequestParam("email") String email) {
         return passwordService.restorePassword(username, email);
     }
 
@@ -30,6 +27,11 @@ public class PasswordController {
     @PostMapping("/password/update")
     public String restoreUpdate(@RequestParam("token") String token, @RequestParam("password") String password) {
         return passwordService.restoreUpdate(token,password);
+    }
+
+    @GetMapping("/password/restore/email/present")
+    public Boolean isEmailPresent(@RequestParam("email") String email) {
+        return passwordService.isEmailPresent(email);
     }
 
 }

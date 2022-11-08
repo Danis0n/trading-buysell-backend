@@ -8,13 +8,13 @@ import org.springframework.web.servlet.view.RedirectView;
 import ru.danis0n.avitoclone.dto.Email;
 import ru.danis0n.avitoclone.entity.token.PasswordToken;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
+import ru.danis0n.avitoclone.entity.user.AppUserInfoEntity;
 import ru.danis0n.avitoclone.repository.password.PasswordTokenRepository;
+import ru.danis0n.avitoclone.repository.user.AppUserInfoRepository;
 import ru.danis0n.avitoclone.repository.user.AppUserRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.register.email.EmailService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,15 +25,16 @@ public class PasswordServiceImpl implements PasswordService{
 
     private final PasswordTokenRepository passwordTokenRepository;
     private final AppUserRepository appUserRepository;
+    private final AppUserInfoRepository appUserInfoRepository;
     private final BCryptPasswordEncoder encoder;
     private final AppUserService appUserService;
     private final EmailService emailService;
 
     @Override
-    public String restorePassword(String username, String email) {
+    public Boolean restorePassword(String username, String email) {
         AppUserEntity user = appUserService.getAppUserEntityByUsername(username);
 
-        if(!user.getUserInfo().getEmail().equals(email)) return "Email is wrong!";
+        if(!user.getUserInfo().getEmail().equals(email)) return false;
 
         String token = UUID.randomUUID().toString();
         PasswordToken passwordToken = new PasswordToken(
@@ -53,7 +54,7 @@ public class PasswordServiceImpl implements PasswordService{
         ));
 
         passwordTokenRepository.save(passwordToken);
-        return token;
+        return true;
     }
 
     @Override
@@ -70,12 +71,11 @@ public class PasswordServiceImpl implements PasswordService{
             return "Token is already confirmed";
 
         AppUserEntity user = passwordToken.getAppUser();
-
         user.setPassword(encoder.encode(password));
         appUserRepository.save(user);
+
         passwordToken.setAppUser(user);
         passwordTokenRepository.updateConfirmedAt(token,LocalDateTime.now());
-
         return "Success";
     }
 
@@ -85,23 +85,24 @@ public class PasswordServiceImpl implements PasswordService{
         PasswordToken passwordToken = passwordTokenRepository.findByToken(token).orElse(null);
 
         if(passwordToken == null) {
-            redirectView.setUrl("http://localhost:3000/password/update?token=" + token);
-            return redirectView;
-        }
-
-        if(passwordToken.getConfirmedAt() != null) {
-            redirectView.setUrl("http://localhost:3000/password/restore/already/confirmed");
+            redirectView.setUrl("http://localhost:3000/password/restore/badtoken");
             return redirectView;
         }
 
         LocalDateTime expiredAt = passwordToken.getExpiresAt();
-        if (expiredAt.isBefore(LocalDateTime.now())) {
-            redirectView.setUrl("http://localhost:3000/password/restore/expired");
+        if(passwordToken.getConfirmedAt() != null || expiredAt.isBefore(LocalDateTime.now())) {
+            redirectView.setUrl("http://localhost:3000/password/restore/badtoken");
             return redirectView;
         }
 
-        redirectView.setUrl("http://localhost:3000/password/restore/unavailable");
+        redirectView.setUrl("http://localhost:3000/password/update?token=" + token);
         return redirectView;
+    }
+
+    @Override
+    public Boolean isEmailPresent(String email) {
+        AppUserInfoEntity info = appUserInfoRepository.getByEmail(email);
+        return info != null;
     }
 
 
