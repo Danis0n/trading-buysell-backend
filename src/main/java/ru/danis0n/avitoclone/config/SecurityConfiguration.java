@@ -72,6 +72,9 @@ public class SecurityConfiguration {
         String roleNotConfirmed = "ROLE_NOT_CONFIRMED";
 
         http.authorizeRequests().
+                antMatchers("/api/password/**").permitAll();
+
+        http.authorizeRequests().
                 antMatchers("/api/login","/api/token/refresh/**","/api/register/**", "/api/auth").permitAll();
 
         http.authorizeRequests().
