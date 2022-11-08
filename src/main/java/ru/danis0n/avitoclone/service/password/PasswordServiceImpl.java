@@ -30,7 +30,7 @@ public class PasswordServiceImpl implements PasswordService{
     private final EmailService emailService;
 
     @Override
-    public String restorePassword(String username, String email, HttpServletRequest request, HttpServletResponse response) {
+    public String restorePassword(String username, String email) {
         AppUserEntity user = appUserService.getAppUserEntityByUsername(username);
 
         if(!user.getUserInfo().getEmail().equals(email)) return "Email is wrong!";
@@ -77,7 +77,7 @@ public class PasswordServiceImpl implements PasswordService{
     }
 
     @Override
-    public RedirectView redirectPasswordUpdate(String token, HttpServletRequest request) {
+    public RedirectView redirectPasswordUpdate(String token) {
         RedirectView redirectView = new RedirectView();
         PasswordToken passwordToken = passwordTokenRepository.findByToken(token).orElse(null);
 

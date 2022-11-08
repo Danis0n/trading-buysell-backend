@@ -18,14 +18,13 @@ public class PasswordController {
     private final PasswordService passwordService;
 
     @PostMapping("/password/restore")
-    public String restorePassword(@RequestParam("username") String username, @RequestParam("email") String email,
-                                  HttpServletRequest request, HttpServletResponse response) {
-        return passwordService.restorePassword(username, email,request,response);
+    public String restorePassword(@RequestParam("username") String username, @RequestParam("email") String email) {
+        return passwordService.restorePassword(username, email);
     }
 
     @GetMapping("/password/restore/update")
-    public RedirectView redirectPasswordUpdate(@RequestParam("token") String token, HttpServletRequest request) {
-        return passwordService.redirectPasswordUpdate(token,request);
+    public RedirectView redirectPasswordUpdate(@RequestParam("token") String token) {
+        return passwordService.redirectPasswordUpdate(token);
     }
 
     @PostMapping("/password/update")
