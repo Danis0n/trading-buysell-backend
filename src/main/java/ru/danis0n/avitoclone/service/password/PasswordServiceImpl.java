@@ -66,6 +66,9 @@ public class PasswordServiceImpl implements PasswordService{
         if (expiredAt.isBefore(LocalDateTime.now()))
             return "Token is expired";
 
+        if(passwordToken.getConfirmedAt() != null)
+            return "Token is already confirmed";
+
         AppUserEntity user = passwordToken.getAppUser();
 
         user.setPassword(encoder.encode(password));
@@ -83,6 +86,11 @@ public class PasswordServiceImpl implements PasswordService{
 
         if(passwordToken == null) {
             redirectView.setUrl("http://localhost:3000/password/update?token=" + token);
+            return redirectView;
+        }
+
+        if(passwordToken.getConfirmedAt() != null) {
+            redirectView.setUrl("http://localhost:3000/password/restore/already/confirmed");
             return redirectView;
         }
 
