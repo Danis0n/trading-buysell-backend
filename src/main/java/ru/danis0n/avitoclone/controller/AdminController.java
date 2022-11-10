@@ -28,7 +28,7 @@ public class AdminController {
         return ResponseEntity.ok().body(adminService.unBanAppUserById(id,request));
     }
 
-    @PostMapping("/adverts/delete/{id}")
+    @PostMapping("/advert/delete/{id}")
     public ResponseEntity<String> powerDeleteAdvert(@PathVariable Long id, HttpServletRequest request) {
         return ResponseEntity.ok().body(adminService.powerDeleteAdvert(id,request));
     }

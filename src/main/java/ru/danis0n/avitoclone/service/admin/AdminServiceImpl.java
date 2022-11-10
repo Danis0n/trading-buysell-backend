@@ -78,7 +78,7 @@ public class AdminServiceImpl implements AdminService{
         }
 
         Message message = getMessageRequest(request);
-        if (!message.getMessage().equals("none")) {
+        if (!message.getMessage().equals("")) {
             createNotification(message,user);
         }
     }
