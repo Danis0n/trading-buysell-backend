@@ -11,6 +11,7 @@ import ru.danis0n.avitoclone.repository.advert.AdvertRepository;
 import ru.danis0n.avitoclone.repository.user.AppUserRepository;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.util.JsonUtil;
+import ru.danis0n.avitoclone.util.TypeUtil;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,6 +24,7 @@ public class AdminServiceImpl implements AdminService{
     private final NotificationRepository notificationRepository;
     private final AdvertRepository advertRepository;
     private final JsonUtil jsonUtil;
+    private final TypeUtil typeUtil;
 
     @Override
     public String banAppUserById(Long id, HttpServletRequest request) {
@@ -115,6 +117,11 @@ public class AdminServiceImpl implements AdminService{
     public String unHideAllUserAdvertsByUserId(Long userId, HttpServletRequest request) {
         advertRepository.hideAllAdvertsByUserIdAdmin(false, userId);
         return notifyUser(userId,request);
+    }
+
+    @Override
+    public String addNewType(String id, HttpServletRequest request) {
+        return typeUtil.addNewType(id,request);
     }
 
     @Override

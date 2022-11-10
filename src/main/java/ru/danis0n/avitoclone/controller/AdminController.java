@@ -2,10 +2,7 @@ package ru.danis0n.avitoclone.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.danis0n.avitoclone.service.admin.AdminService;
 
@@ -58,12 +55,9 @@ public class AdminController {
         return ResponseEntity.ok().body(adminService.notifyUser(id,request));
     }
 
-//    TODO : implement redirect for email confirmation
-    @PostMapping("/redirect")
-    public RedirectView redirect(){
-        RedirectView redirectView = new RedirectView();
-        redirectView.setUrl("https://ru.lipsum.com");
-        return redirectView;
+    @PostMapping("/types/add/{id}")
+    public ResponseEntity<String> addNewType(@PathVariable String id, HttpServletRequest request) {
+        return ResponseEntity.ok().body(adminService.addNewType(id,request));
     }
 
 }

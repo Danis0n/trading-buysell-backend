@@ -13,4 +13,5 @@ public interface AdminService {
     String unHideUserAdvertByUserId(Long userId, Long advertId, HttpServletRequest request);
     String hideAllUserAdvertsByUserId(Long userId, HttpServletRequest request);
     String unHideAllUserAdvertsByUserId(Long userId, HttpServletRequest request);
+    String addNewType(String id, HttpServletRequest request);
 }
