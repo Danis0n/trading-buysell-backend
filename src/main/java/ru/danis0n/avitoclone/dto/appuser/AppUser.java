@@ -1,6 +1,7 @@
 package ru.danis0n.avitoclone.dto.appuser;
 
 import lombok.*;
+import ru.danis0n.avitoclone.dto.advert.Image;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +19,7 @@ public class AppUser {
     private AppUserInfo info;
     private boolean enabled;
     private boolean locked;
+    private Image image;
 
     private Collection<Role> roles = new ArrayList<>();
 

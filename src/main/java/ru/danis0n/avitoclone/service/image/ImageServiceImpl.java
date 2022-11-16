@@ -32,9 +32,12 @@ public class ImageServiceImpl implements ImageService {
         image.setContentType(file.getContentType());
         image.setData(file.getBytes());
         image.setSize(file.getSize());
-        image.setAdvert(advert);
-        imageRepository.save(image);
 
+        if(advert != null) {
+            image.setAdvert(advert);
+        }
+
+        imageRepository.save(image);
         return image;
     }
 

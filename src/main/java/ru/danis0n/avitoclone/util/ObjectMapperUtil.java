@@ -73,6 +73,7 @@ public class ObjectMapperUtil {
 
         return AppUser.builder().
                 id(userEntity.getId()).
+                image(imageService.mapToImage(userEntity.getAvatar())).
                 username(userEntity.getUsername()).
                 locked(userEntity.isLocked()).
                 enabled(userEntity.isEnabled()).

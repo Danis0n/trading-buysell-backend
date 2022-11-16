@@ -34,6 +34,8 @@ public class PasswordServiceImpl implements PasswordService{
     public Boolean restorePassword(String username, String email) {
         AppUserEntity user = appUserService.getAppUserEntityByUsername(username);
 
+        if(user == null) return false;
+
         if(!user.getUserInfo().getEmail().equals(email)) return false;
 
         String token = UUID.randomUUID().toString();

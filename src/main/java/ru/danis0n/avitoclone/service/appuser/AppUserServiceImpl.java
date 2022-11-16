@@ -9,9 +9,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import ru.danis0n.avitoclone.dto.advert.Image;
 import ru.danis0n.avitoclone.dto.appuser.RegistrationRequest;
 import ru.danis0n.avitoclone.dto.appuser.AppUser;
 import ru.danis0n.avitoclone.dto.appuser.Role;
+import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
+import ru.danis0n.avitoclone.entity.advert.ImageEntity;
 import ru.danis0n.avitoclone.entity.token.ConfirmationToken;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.entity.user.RoleEntity;
@@ -19,11 +23,13 @@ import ru.danis0n.avitoclone.repository.user.AppUserInfoRepository;
 import ru.danis0n.avitoclone.repository.user.AppUserRepository;
 import ru.danis0n.avitoclone.repository.RoleRepository;
 import ru.danis0n.avitoclone.service.confirm.ConfirmationTokenService;
+import ru.danis0n.avitoclone.service.image.ImageService;
 import ru.danis0n.avitoclone.util.JwtUtil;
 import ru.danis0n.avitoclone.util.ObjectMapperUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +43,7 @@ import java.util.UUID;
 public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     private final AppUserRepository appUserRepository;
     private final AppUserInfoRepository appUserInfoRepository;
+    private final ImageService imageService;
     private final RoleRepository roleRepository;
     private final ObjectMapperUtil mapperUtil;
     private final JwtUtil jwtUtil;
@@ -68,6 +75,16 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         AppUserEntity entity = mapToNewAppUserEntityFromRequest(userRequest);
         saveUser(entity);
         addRoleToAppUser(entity,"ROLE_NOT_CONFIRMED");
+
+        if(userRequest.getFile() != null) {
+            try {
+                ImageEntity image = imageService.saveFile(userRequest.getFile(),null);
+                entity.setAvatar(image);
+                saveUser(entity);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         String token = UUID.randomUUID().toString();
 
@@ -174,6 +191,27 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         user.getUserInfo().setEmail(email);
         saveUser(user);
         return "Success!";
+    }
+
+    @Override
+    public Boolean saveUserImage(Long id, MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
+
+        AppUserEntity user = getAppUserEntityById(id);
+
+        String username = getUsernameFromRequest(request);
+        if(!user.getUsername().equals(username)) {
+            return false;
+        }
+
+        try {
+            ImageEntity image = imageService.saveFile(file,null);
+            user.setAvatar(image);
+            saveUser(user);
+        }  catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return true;
     }
 
     private boolean validateNotUser(String username1, String username2) {

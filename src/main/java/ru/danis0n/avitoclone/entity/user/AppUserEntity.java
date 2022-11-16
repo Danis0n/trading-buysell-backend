@@ -3,6 +3,7 @@ package ru.danis0n.avitoclone.entity.user;
 
 import lombok.*;
 import ru.danis0n.avitoclone.entity.advert.AdvertEntity;
+import ru.danis0n.avitoclone.entity.advert.ImageEntity;
 
 import javax.persistence.*;
 import java.util.*;
@@ -47,6 +48,10 @@ public class AppUserEntity {
             mappedBy = "user"
     )
     private Set<AdvertEntity> adverts = new HashSet<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "avatar_id", referencedColumnName = "id")
+    private ImageEntity avatar;
 
     public void addRoleToAppUser(RoleEntity role){
         roles.add(role);

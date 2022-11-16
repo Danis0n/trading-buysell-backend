@@ -1,6 +1,7 @@
 package ru.danis0n.avitoclone.dto.appuser;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @ToString
@@ -13,4 +14,5 @@ public class RegistrationRequest {
     private String password;
     private String email;
     private String phone;
+    private MultipartFile file;
 }

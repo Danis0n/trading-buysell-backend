@@ -137,7 +137,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public String notifyUser(Long id, HttpServletRequest request) {
         Message message = getMessageRequest(request);
-        if (!message.getMessage().equals("none")) {
+        if (!message.getMessage().equals("")) {
             createNotification(message,appUserService.getAppUserEntityById(id));
             return "User has been notified";
         }

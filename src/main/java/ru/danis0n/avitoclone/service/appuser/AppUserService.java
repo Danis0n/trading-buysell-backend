@@ -1,6 +1,7 @@
 package ru.danis0n.avitoclone.service.appuser;
 
 
+import org.springframework.web.multipart.MultipartFile;
 import ru.danis0n.avitoclone.dto.appuser.RegistrationRequest;
 import ru.danis0n.avitoclone.dto.appuser.AppUser;
 import ru.danis0n.avitoclone.dto.appuser.Role;
@@ -28,4 +29,5 @@ public interface AppUserService {
     String saveUserName(Long id, String name, HttpServletRequest request, HttpServletResponse response);
     String saveUserPhone(Long id, String phone, HttpServletRequest request, HttpServletResponse response);
     String saveUserEmail(Long id, String email, HttpServletRequest request, HttpServletResponse response);
+    Boolean saveUserImage(Long id, MultipartFile file, HttpServletRequest request, HttpServletResponse response);
 }

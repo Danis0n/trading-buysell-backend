@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.danis0n.avitoclone.dto.appuser.AppUser;
 import ru.danis0n.avitoclone.dto.appuser.Role;
@@ -57,6 +58,12 @@ public class AppUserController {
     public ResponseEntity<String> saveUserEmail(@PathVariable Long id, @RequestParam("email") String email,
                                                 HttpServletRequest request, HttpServletResponse response){
         return ResponseEntity.ok().body(userService.saveUserEmail(id,email,request,response));
+    }
+
+    @PostMapping("/users/{id}/image/save")
+    public ResponseEntity<Boolean> saveUserImage(@PathVariable Long id, @RequestParam("file") MultipartFile file,
+                                                HttpServletRequest request, HttpServletResponse response){
+        return ResponseEntity.ok().body(userService.saveUserImage(id,file,request,response));
     }
 
     @PostMapping("/role/save")

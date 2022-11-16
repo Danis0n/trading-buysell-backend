@@ -55,12 +55,7 @@ public class RegistrationServiceImpl implements RegistrationService{
     private String tokenConfirmed;
 
     @Override
-    public String register(HttpServletRequest request, HttpServletResponse response) {
-
-        RegistrationRequest registrationRequest = new Gson().fromJson(
-                jsonUtil.getJson(request),
-                RegistrationRequest.class
-        );
+    public String register(HttpServletRequest request, HttpServletResponse response, RegistrationRequest registrationRequest) {
 
         if(isValidEmail(registrationRequest.getEmail())){
             return(emailIsNotValid);
