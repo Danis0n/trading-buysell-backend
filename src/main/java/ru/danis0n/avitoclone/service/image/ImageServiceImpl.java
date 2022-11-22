@@ -43,6 +43,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Image mapToImage(ImageEntity entity) {
+        if(entity == null) return null;
         String downloadURL = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/images/display/")
                 .path(entity.getId())

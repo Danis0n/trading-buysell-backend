@@ -70,6 +70,7 @@ public class SecurityConfiguration {
         String manager = "ROLE_MANAGER";
         String user = "ROLE_USER";
         String roleNotConfirmed = "ROLE_NOT_CONFIRMED";
+        String banned = "ROLE_BANNED";
 
         http.authorizeRequests().
                 antMatchers("/api/password/**").permitAll();
@@ -103,7 +104,7 @@ public class SecurityConfiguration {
         http.authorizeRequests().
                 antMatchers(GET, "/api/users/**").permitAll();
         http.authorizeRequests().
-                antMatchers(POST,"/api/users/**").hasAnyAuthority(superAdmin,admin,user);
+                antMatchers(POST,"/api/users/**").hasAnyAuthority(superAdmin,admin,user,roleNotConfirmed,banned);
         http.authorizeRequests().
                 antMatchers(POST,"/api/role/**").hasAnyAuthority(superAdmin,admin);
 

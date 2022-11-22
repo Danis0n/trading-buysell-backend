@@ -45,6 +45,7 @@ public class AuthServiceImpl implements AuthService{
             if(!validateToken(appUser, refreshToken) || !validateTime(refreshToken) ){
                 deleteToken(appUser);
                 manageOutOfDate(response);
+                log.info("here");
                 return;
             }
 

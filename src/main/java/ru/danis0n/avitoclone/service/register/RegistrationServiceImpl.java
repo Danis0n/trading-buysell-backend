@@ -1,26 +1,35 @@
 package ru.danis0n.avitoclone.service.register;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.RedirectView;
+import ru.danis0n.avitoclone.dto.AuthResponse;
 import ru.danis0n.avitoclone.dto.Email;
 import ru.danis0n.avitoclone.dto.appuser.RegistrationRequest;
 import ru.danis0n.avitoclone.entity.user.AppUserEntity;
 import ru.danis0n.avitoclone.entity.token.ConfirmationToken;
 import ru.danis0n.avitoclone.service.appuser.AppUserService;
 import ru.danis0n.avitoclone.service.confirm.ConfirmationTokenService;
+import ru.danis0n.avitoclone.service.refresh.RefreshTokenService;
 import ru.danis0n.avitoclone.service.register.email.EmailService;
 import ru.danis0n.avitoclone.util.JsonUtil;
 import ru.danis0n.avitoclone.util.JwtUtil;
+import ru.danis0n.avitoclone.util.ObjectMapperUtil;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @Service
@@ -30,7 +39,6 @@ public class RegistrationServiceImpl implements RegistrationService{
     private final AppUserService appUserService;
     private final EmailService emailService;
     private final JwtUtil jwtUtil;
-    private final JsonUtil jsonUtil;
     private final ConfirmationTokenService confirmationTokenService;
 
     @Value("${spring.config.registration.confirm.link}")
@@ -58,10 +66,11 @@ public class RegistrationServiceImpl implements RegistrationService{
     public String register(HttpServletRequest request, HttpServletResponse response, RegistrationRequest registrationRequest) {
 
         if(isValidEmail(registrationRequest.getEmail())){
-            return(emailIsNotValid);
+            return emailIsNotValid;
         }
-        if(isValidUsername(registrationRequest.getUsername())){
-            return(usernameIsNotValid);
+
+        if(isValidUsername(registrationRequest.getUsername())) {
+            return usernameIsNotValid;
         }
 
         String token = saveAppUserWithToken(registrationRequest);
@@ -75,24 +84,24 @@ public class RegistrationServiceImpl implements RegistrationService{
                 null
         ));
 
-        return token;
+        return "Okay";
     }
 
     @Override
-    public String confirmToken(String token) {
+    public RedirectView confirmToken(String token) {
         ConfirmationToken confirmationToken = getToken(token);
 
-        if(confirmationToken == null){
-            return tokenNotFound;
-        }
+        RedirectView redirectView = new RedirectView();
 
-        if(confirmationToken.getConfirmedAt() != null){
-            return(emailAlreadyConfirmed);
+        if(confirmationToken == null){
+            redirectView.setUrl("http://localhost:3000/register/token/badtoken");
+            return redirectView;
         }
 
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
-        if (expiredAt.isBefore(LocalDateTime.now())) {
-            return(tokenExpired);
+        if (expiredAt.isBefore(LocalDateTime.now()) || confirmationToken.getConfirmedAt() != null) {
+            redirectView.setUrl("http://localhost:3000/register/token/badtoken");
+            return redirectView;
         }
 
         setConfirmedAt(token);
@@ -104,30 +113,35 @@ public class RegistrationServiceImpl implements RegistrationService{
         removeRoleFromAppUser(appUser,"ROLE_NOT_CONFIRMED");
         addRoleToAppUser(appUser,"ROLE_USER");
 
-        return tokenConfirmed;
+        redirectView.setUrl("http://localhost:3000/register/success");
+        return redirectView;
     }
 
     @Override
     public String updateToken(HttpServletRequest request) {
 
-        String tokenFromRequest = request.getHeader(AUTHORIZATION);
-    
-        if(tokenFromRequest != null && tokenFromRequest.startsWith("Bearer ")){
+        String username = jwtUtil.getUsernameFromRequest(request);
+        AppUserEntity user = getAppUserByUsername(username);
+        String token = UUID.randomUUID().toString();
 
-            String username = getUsernameFromToken(tokenFromRequest);
-            AppUserEntity user = getAppUserByUsername(username);
-            String token = UUID.randomUUID().toString();
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                user
+        );
+        saveToken(confirmationToken);
 
-            ConfirmationToken confirmationToken = new ConfirmationToken(
-                    token,
-                    LocalDateTime.now(),
-                    LocalDateTime.now().plusDays(1),
-                    user
-            );
-            saveToken(confirmationToken);
-            return token;
-        }
-        else return tokenFromRequest;
+        String link = confirmLink + token;
+
+        emailService.sendSimpleMail(new Email(
+                user.getUserInfo().getEmail(),
+                link,
+                "Hey!",
+                null
+        ));
+
+        return "Okay";
     }
 
     private void enableAppUser(Long id){

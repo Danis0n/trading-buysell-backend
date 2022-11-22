@@ -66,6 +66,11 @@ public class AppUserController {
         return ResponseEntity.ok().body(userService.saveUserImage(id,file,request,response));
     }
 
+    @DeleteMapping("/users/{id}/image/delete")
+    public ResponseEntity<Boolean> deleteUserImage(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response){
+        return ResponseEntity.ok().body(userService.deleteUserImage(id,request,response));
+    }
+
     @PostMapping("/role/save")
     public ResponseEntity<Role> saveRole(@RequestBody Role role) {
         URI uri = URI.create(

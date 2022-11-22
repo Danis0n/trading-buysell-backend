@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
 import ru.danis0n.avitoclone.dto.appuser.RegistrationRequest;
 import ru.danis0n.avitoclone.service.register.RegistrationService;
 
@@ -31,7 +32,7 @@ public class RegistrationController {
     }
 
     @GetMapping("/register/confirm")
-    public String confirm(@RequestParam("token") String token){
+    public RedirectView confirm(@RequestParam("token") String token){
         return registrationService.confirmToken(token);
     }
 

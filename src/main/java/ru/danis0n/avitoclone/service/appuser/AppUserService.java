@@ -30,4 +30,5 @@ public interface AppUserService {
     String saveUserPhone(Long id, String phone, HttpServletRequest request, HttpServletResponse response);
     String saveUserEmail(Long id, String email, HttpServletRequest request, HttpServletResponse response);
     Boolean saveUserImage(Long id, MultipartFile file, HttpServletRequest request, HttpServletResponse response);
+    Boolean deleteUserImage(Long id, HttpServletRequest request, HttpServletResponse response);
 }

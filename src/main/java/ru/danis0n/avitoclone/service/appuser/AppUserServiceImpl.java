@@ -210,6 +210,19 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         }  catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return true;
+    }
+
+    @Override
+    public Boolean deleteUserImage(Long id, HttpServletRequest request, HttpServletResponse response) {
+        AppUserEntity user = getAppUserEntityById(id);
+
+        String username = getUsernameFromRequest(request);
+        if(!user.getUsername().equals(username)) {
+            return false;
+        }
+        user.setAvatar(null);
+        saveUser(user);
 
         return true;
     }
